@@ -1,60 +1,51 @@
 import express from 'express';
-
+import Person from './models/person.js';
 // Import the whole package as a single default exported object
 import pkg from 'body-parser';
 // Destructure to get the function you need
+
+import testRoutes from './routes/testRoutes.js';
+import dbRoutes from './routes/dbRoutes.js';
+import jsonRoutes from './routes/jsonRoutes.js';
+
 
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connect, Schema, model } from 'mongoose';
 import { mkdirSync, writeFile } from 'fs';
 import { join } from 'path';
+
 const app = express();
 const port = 3000;
 const url = 'mongodb://127.0.0.1:27017/slowyounet';
 const { json } = pkg;
 
 app.use(json()); // Middleware to parse JSON bodies
-app.use(express.static('public'));
 
+
+
+app.use('/t', testRoutes);
+app.use('/db', dbRoutes);
+app.use('/json', jsonRoutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'json')));
+
+
 
 connect(url)
   .then(() => console.log('Connected to MongoDB with Mongoose'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
-// Add the provided code snippet here
-const personSchema = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  givenname: {
-    type: String,
-    required: true
-  },
-  familyname: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true
-  },
-  phone: {
-    type: Number,
-    required: true
-  },
-  organization: {
-    type: String,
-    required: true
-  }
-});
-const Person = model('Person', personSchema, 'personer'); // Explicitly specifying the collection name
 
-// Your route definitions follow here
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
 
 app.get('/api/personer/:id', async (req, res) => {
   try {
@@ -131,20 +122,6 @@ app.delete('/api/personer/:id', async (req, res) => {
 });
 
 
-async function writeDocumentsToJson() {
-  try {
-    const personList = await Person.find();
-    const dirPath = join(__dirname, 'json');
-    mkdirSync(dirPath, { recursive: true }); // Create the directory if it doesn't exist
-    const filePath = join(dirPath, 'personer.json');
-    writeFile(filePath, JSON.stringify(personList, null, 2), function(err) {
-      if (err) throw err;
-      console.log('Data successfully written to ' + filePath);
-    });
-  } catch (error) {
-    console.error('Failed to write documents to JSON:', error);
-  }
-}
 
 
 // ...
@@ -152,5 +129,7 @@ async function writeDocumentsToJson() {
 // Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
-  writeDocumentsToJson(); // Write documents to JSON when the server starts
+ // writeDocumentsToJson(); // Write documents to JSON when the server starts
 });
+
+export default app;
