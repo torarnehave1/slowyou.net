@@ -1,0 +1,21 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name slowyou.net www.slowyou.net;
+
+    root /var/www/html/slowyou.net;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;  # Adjust PHP version as needed
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}

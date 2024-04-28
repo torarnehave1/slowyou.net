@@ -1,0 +1,50 @@
+# HTTPS server configuration for slowyou.net
+server {
+    listen 443 ssl http2; # Listen on HTTPS port with SSL and HTTP/2 enabled
+    listen [::]:443 ssl http2; # Listen on HTTPS port for IPv6 with SSL and HTTP/2 enabled
+    server_name slowyou.net www.slowyou.net; # Domain names for this server
+
+    # SSL Certificate Configuration
+    ssl_certificate /etc/letsencrypt/live/slowyou.net/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/slowyou.net/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # Standard SSL options provided by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # DH parameters for SSL - improves security
+
+    # Set the directory where the application files and static files are located
+    root /var/www/html/slowyou.net; # Root directory for the files
+    index index.html index.htm index.php; # Default files to serve if a directory is requested
+
+    # Serve static files and PHP scripts from the 'public' subdirectory
+    location / {
+        try_files $uri $uri/ /public/$uri /public/$uri/ @nodejs; # Check files in public before passing to Node.js
+    }
+
+    # PHP execution settings, assuming PHP-FPM is used
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf; # Use the fastcgi-php preset configuration
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock; # Path to the PHP-FPM socket
+    }
+
+    # Node.js proxy configuration
+    location @nodejs {
+        proxy_pass http://localhost:3000; # Proxy pass to Node.js app on port 3000
+        include /etc/nginx/proxy_params; # Include proxy parameters
+        proxy_set_header X-Forwarded-Host $host; # Set the header for proxy host
+        proxy_set_header X-Forwarded-Server $host; # Set the header for proxy server
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; # Forward the real user IP to Node.js
+    }
+
+    # Deny access to .htaccess files
+    location ~ /\.ht {
+        deny all; # Deny all access to files starting with .ht
+    }
+}
+
+# HTTP server configuration for redirecting to HTTPS
+server {
+    listen 80; # Listen on the standard HTTP port
+    listen [::]:80; # Listen on the standard HTTP port for IPv6
+    server_name slowyou.net www.slowyou.net; # Domain names for this server
+
+    return 301 https://$server_name$request_uri; # Redirect all HTTP requests to HTTPS
+}
