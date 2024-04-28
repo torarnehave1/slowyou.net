@@ -1,7 +1,5 @@
 /* menu.css */
 
-/* menu.css */
-
 .navbar {
     position: fixed;
     top: 0;
@@ -12,8 +10,6 @@
     background-color: #f8f8f8;
     z-index: 1000; /* Ensure the navbar is above other elements */
   }
-  
-  /* Your other CSS rules... */
   
   .logo-container {
     display: flex;
@@ -42,16 +38,17 @@
   
   /* Styles for screens with a maximum width of 600px */
   @media (max-width: 600px) {
-    .navbar {
-      flex-direction: column;
-    }
-  
     .nav-menu {
       flex-direction: column;
-      align-items: center;
+      display: none;
     }
   
     .nav-item {
       margin: 0.5em 0;
+    }
+  
+    /* Show the menu when the checkbox is checked */
+    #menu-checkbox:checked + .nav-menu {
+      display: flex;
     }
   }
