@@ -1,0 +1,36 @@
+server {
+    # Server listening on standard HTTP and HTTPS ports
+    listen 80;
+    listen [::]:80;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    # Domain names for this server
+    server_name slowyou.net www.slowyou.net;
+
+    # SSL Configuration
+    ssl_certificate /etc/letsencrypt/live/slowyou.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/slowyou.net/privkey.pem;
+
+    # Define the root directory for static files
+    root /var/www/html/slowyou.net/public;
+
+    # Specify the default index files
+    index index.html index.htm;
+
+    # Main location block
+    location / {
+        # Try to serve file directly, fallback to 404 if not found
+        try_files $uri $uri/ =404;
+    }
+
+    # Optional: Redirect HTTP to HTTPS
+    # Uncomment the following lines if you want to ensure that all traffic goes over HTTPS.
+    # if ($scheme = http) {
+    #     return 301 https://$host$request_uri;
+    # }
+
+    # SSL Parameters (recommended by Mozilla and Let's Encrypt for security)
+    include /etc/letsencrypt/options-ssl-nginx.conf; # Managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # Managed by Certbot
+}
