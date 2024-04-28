@@ -210,7 +210,7 @@ button:hover {
 
 
 #hero {
-    background: url('Hero.png') no-repeat center center/cover;
+    background: url('hero.png') no-repeat center center/cover;
     height: 100vh; /* 100% of the viewport height */
     color: white; /* Text color */
     display: flex;
