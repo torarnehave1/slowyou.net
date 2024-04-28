@@ -1,11 +1,19 @@
 /* menu.css */
 
+/* menu.css */
+
 .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     padding: 1em;
     background-color: #f8f8f8;
+    z-index: 1000; /* Ensure the navbar is above other elements */
   }
+  
+  /* Your other CSS rules... */
   
   .logo-container {
     display: flex;
