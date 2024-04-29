@@ -50,7 +50,7 @@ const config = {
   issuerBaseURL: 'https://dev-l5gohk1fiankh7si.eu.auth0.com'
 };
 
-app.use(auth(config));
+
 
 
 const app = express();
@@ -58,7 +58,7 @@ const port = 3000;
 const { json } = pkg;
 
 app.use(json()); // Middleware to parse JSON bodies
-
+app.use(auth(config));
 
 
 app.use('/t', testRoutes);
