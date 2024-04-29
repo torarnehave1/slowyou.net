@@ -48,7 +48,7 @@ const config = {
   authRequired: false,
   auth0Logout: true,
   secret: LOGIN_SECRET,
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://slowyou.net',
   clientID: '40Whs58sxGo70SRCLYMiPStTreE3yoMV',
   issuerBaseURL: 'https://dev-l5gohk1fiankh7si.eu.auth0.com'
 };
@@ -90,9 +90,7 @@ connect(MONGO_DB_URL)
   .catch(err => console.error('Could not connect to MongoDB', err));
 
 
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  });
+  
 
 app.get('/api/personer/:id', async (req, res) => {
   try {
@@ -183,11 +181,13 @@ app.get('/profile', requiresAuth(), (req, res) => {
   //res.sendFile(path.join(__dirname, 'public', 'profile.html'));
 });
 
-
-
 app.get('/', (req, res) => {
-  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+//app.get('/login-status', (req, res) => {
+  //res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+//});
 
 
 // ...
