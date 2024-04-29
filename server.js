@@ -8,7 +8,7 @@ import testRoutes from './routes/testRoutes.js';
 import dbRoutes from './routes/dbRoutes.js';
 import jsonRoutes from './routes/jsonRoutes.js';
 import path from 'path';
-import { fileURLToPath } from 'MONGODB_URI';
+import { fileURLToPath } from 'url';
 import { connect, Schema, model } from 'mongoose';
 import { mkdirSync, writeFile } from 'fs';
 import { join } from 'path';
