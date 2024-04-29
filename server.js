@@ -15,8 +15,10 @@ import { join } from 'path';
 import dotenv from 'dotenv';
 
 import { auth } from 'express-openid-connect';
-import { requiresAuth } from 'express-openid-connect';
+//import { requiresAuth } from 'express-openid-connect';
 
+import pkg from 'express-openid-connect';
+const { requiresAuth } = pkg;
 
 
 dotenv.config();
