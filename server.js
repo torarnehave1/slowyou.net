@@ -139,6 +139,7 @@ app.get('/api/personer', async (req, res) => {
   }
 });
 
+
 // Update - Update a person by ID
 app.put('/api/personer/:id', async (req, res) => {
   try {
@@ -166,7 +167,14 @@ app.delete('/api/personer/:id', async (req, res) => {
   }
 });
 
-
+app.use((err, req, res, next) => {
+  if (err) {
+    console.error(err);
+    res.status(500).render('error', { message: 'An error occurred during authentication.' });
+  } else {
+    next();
+  }
+});
 
 app.get('/profile', requiresAuth(), (req, res) => {
   res.send(JSON.stringify(req.oidc.user));
