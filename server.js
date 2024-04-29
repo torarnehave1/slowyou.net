@@ -78,6 +78,8 @@ app.use('/static', express.static(path.join(__dirname, 'json')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/signin', express.static(path.join(__dirname, 'signin')));
 app.use('/logo', express.static(path.join(__dirname, 'logo')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/error', express.static(path.join(__dirname, 'error')));
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
