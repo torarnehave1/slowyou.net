@@ -3,12 +3,14 @@ import { join } from 'path';
 import { mkdirSync, writeFile } from 'fs';
 import Person from './models/person.js'; // adjust the path to match your file structure
 import { connect, Schema, model } from 'mongoose';
-
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 const url = 'mongodb://127.0.0.1:27017/slowyounet';
 
