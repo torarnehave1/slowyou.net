@@ -61,6 +61,9 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/signin', express.static(path.join(__dirname, 'signin')));
 app.use('/logo', express.static(path.join(__dirname, 'logo')));
 
+app.get('/support', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'support.html'));
+});
 
 connect(MONGO_DB_URL)
   .then(() => console.log('Connected to MongoDB with Mongoose'))
