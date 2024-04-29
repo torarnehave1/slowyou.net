@@ -15,6 +15,7 @@ import { join } from 'path';
 import dotenv from 'dotenv';
 
 import { auth } from 'express-openid-connect';
+import { requiresAuth } from 'express-openid-connect';
 
 
 
@@ -162,6 +163,15 @@ app.delete('/api/personer/:id', async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
+
+
+
+app.get('/profile', requiresAuth(), (req, res) => {
+  res.send(JSON.stringify(req.oidc.user));
+  //res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
+
 
 app.get('/', (req, res) => {
   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
