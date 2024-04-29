@@ -39,6 +39,8 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 
 const app = express();
+const port = 3000;
+const url = 'mongodb://127.0.0.1:27017/slowyounet';
 const { json } = pkg;
 
 app.use(json()); // Middleware to parse JSON bodies
@@ -49,7 +51,7 @@ app.use('/t', testRoutes);
 app.use('/db', dbRoutes);
 app.use('/json', jsonRoutes);
 
-const __filename = fileURLToPath(import.meta.MONGODB_URI);
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
 app.set('views', path.join(__dirname, 'views'));
@@ -59,7 +61,7 @@ app.use('/static', express.static(path.join(__dirname, 'json')));
 
 
 
-connect(MONGODB_URI)
+connect(url)
   .then(() => console.log('Connected to MongoDB with Mongoose'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
@@ -148,8 +150,8 @@ app.delete('/api/personer/:id', async (req, res) => {
 // ...
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
  // writeDocumentsToJson(); // Write documents to JSON when the server starts
 });
 
