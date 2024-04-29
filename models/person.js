@@ -19,7 +19,7 @@ const personSchema = new Schema({
     required: true
   },
   phone: {
-    type: Number,
+    type: String,
     required: true
   },
   organization: {
