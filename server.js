@@ -7,17 +7,38 @@ import pkg from 'body-parser';
 import testRoutes from './routes/testRoutes.js';
 import dbRoutes from './routes/dbRoutes.js';
 import jsonRoutes from './routes/jsonRoutes.js';
-
-
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'MONGODB_URI';
 import { connect, Schema, model } from 'mongoose';
 import { mkdirSync, writeFile } from 'fs';
 import { join } from 'path';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
+const API_ENDPOINT = process.env.API_ENDPOINT;
+const API_PROJECT_ID = process.env.API_PROJECT_ID;
+const API_DATABASE_KEY = process.env.API_DATABASE_KEY;
+const API_COLLECTION_KEY = process.env.API_COLLECTION_KEY;
+const API_FUNCTION_ID = process.env.API_FUNCTION_ID;
+const DB_HOST = process.env.DB_HOST;
+const DB_USER = process.env.DB_USER;
+const DB_PASSWORD = process.env.DB_PASSWORD;
+const DB_NAME = process.env.DB_NAME;
+const PORT = process.env.PORT;
+const DUMMY_DB_HOST = process.env.DUMMY_DB_HOST;
+const DUMMY_ENV = process.env.DUMMY_ENV;
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_USER = process.env.GITHUB_USER;
+const GITHUB_REPO = process.env.GITHUB_REPO;
+const GITHUB_BRANCH = process.env.GITHUB_BRANCH;
+const GITHUB_PATH = process.env.GITHUB_PATH;
+const MONGODB_URI = process.env.MONGODB_URI;
+
+
 
 const app = express();
-const port = 3000;
-const url = 'mongodb://127.0.0.1:27017/slowyounet';
 const { json } = pkg;
 
 app.use(json()); // Middleware to parse JSON bodies
@@ -28,7 +49,7 @@ app.use('/t', testRoutes);
 app.use('/db', dbRoutes);
 app.use('/json', jsonRoutes);
 
-const __filename = fileURLToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.MONGODB_URI);
 const __dirname = path.dirname(__filename);
 app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
 app.set('views', path.join(__dirname, 'views'));
@@ -38,7 +59,7 @@ app.use('/static', express.static(path.join(__dirname, 'json')));
 
 
 
-connect(url)
+connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB with Mongoose'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
@@ -127,8 +148,8 @@ app.delete('/api/personer/:id', async (req, res) => {
 // ...
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
  // writeDocumentsToJson(); // Write documents to JSON when the server starts
 });
 
