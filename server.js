@@ -14,6 +14,10 @@ import { mkdirSync, writeFile } from 'fs';
 import { join } from 'path';
 import dotenv from 'dotenv';
 
+import { auth } from 'express-openid-connect';
+
+
+
 dotenv.config();
 
 
@@ -35,7 +39,18 @@ const GITHUB_REPO = process.env.GITHUB_REPO;
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH;
 const GITHUB_PATH = process.env.GITHUB_PATH;
 const MONGO_DB_URL = process.env.MONGO_DB_URL;
+const LOGIN_SECRET = process.env.LOGIN_SECRET;
 
+const config = {
+  authRequired: false,
+  auth0Logout: true,
+  secret: LOGIN_SECRET,
+  baseURL: 'http://localhost:3000',
+  clientID: '40Whs58sxGo70SRCLYMiPStTreE3yoMV',
+  issuerBaseURL: 'https://dev-l5gohk1fiankh7si.eu.auth0.com'
+};
+
+app.use(auth(config));
 
 
 const app = express();
@@ -148,7 +163,9 @@ app.delete('/api/personer/:id', async (req, res) => {
   }
 });
 
-
+app.get('/', (req, res) => {
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+});
 
 
 // ...
