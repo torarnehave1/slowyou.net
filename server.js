@@ -59,6 +59,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/static', express.static(path.join(__dirname, 'json')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/signin', express.static(path.join(__dirname, 'signin')));
+app.use('/logo', express.static(path.join(__dirname, 'logo')));
 
 
 connect(MONGO_DB_URL)
