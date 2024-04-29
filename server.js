@@ -34,13 +34,12 @@ const GITHUB_USER = process.env.GITHUB_USER;
 const GITHUB_REPO = process.env.GITHUB_REPO;
 const GITHUB_BRANCH = process.env.GITHUB_BRANCH;
 const GITHUB_PATH = process.env.GITHUB_PATH;
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGO_DB_URL = process.env.MONGO_DB_URL;
 
 
 
 const app = express();
 const port = 3000;
-const url = 'mongodb://127.0.0.1:27017/slowyounet';
 const { json } = pkg;
 
 app.use(json()); // Middleware to parse JSON bodies
@@ -61,7 +60,7 @@ app.use('/static', express.static(path.join(__dirname, 'json')));
 
 
 
-connect(url)
+connect(MONGO_DB_URL)
   .then(() => console.log('Connected to MongoDB with Mongoose'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
