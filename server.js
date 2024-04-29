@@ -1,7 +1,7 @@
 import express from 'express';
 import Person from './models/person.js';
 // Import the whole package as a single default exported object
-import pkg from 'body-parser';
+import bpkg from 'body-parser';
 // Destructure to get the function you need
 
 import testRoutes from './routes/testRoutes.js';
@@ -58,7 +58,7 @@ const config = {
 
 const app = express();
 const port = 3000;
-const { json } = pkg;
+const { json } = bpkg;
 
 app.use(json()); // Middleware to parse JSON bodies
 app.use(auth(config));
