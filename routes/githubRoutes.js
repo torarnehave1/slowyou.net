@@ -62,5 +62,57 @@ router.get("/issue-titles", async (req, res) => {
       res.status(500).json({ error: "Error fetching issues" });
     }
   });
+
+
+
   
+  
+  router.get('/json-issues/:id', async (req, res) => {
+    const { id } = req.params;
+    const owner = 'torarnehave1'; // Replace with actual owner
+    const repo = 'slowyouGPT'; // Replace with actual repo
+  
+    const octokit = new Octokit({
+      auth: process.env.ACCESS_TOKEN, // Access token from environment variable
+    });
+  
+    try {
+      const response = await octokit.request(`GET /repos/${owner}/${repo}/issues/${id}`, {
+        headers: {
+          'Accept': 'application/vnd.github+json',
+        },
+      });
+  
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error fetching issue:', error);
+      res.status(500).json({ error: 'Error fetching issue' });
+    }
+  });
+
+
+  router.get('/html-issues/:id', async (req, res) => {
+    const { id } = req.params;
+    const owner = 'torarnehave1'; // Replace with actual owner
+    const repo = 'slowyouGPT'; // Replace with actual repo
+  
+    const octokit = new Octokit({
+      auth: process.env.ACCESS_TOKEN, // Access token from environment variable
+    });
+  
+    try {
+      const response = await octokit.request(`GET /repos/${owner}/${repo}/issues/${id}`, {
+        headers: {
+          'Accept': 'application/vnd.github.html',
+        },
+      });
+  
+      res.render('issue', { body_html: response.data.body_html });
+    } catch (error) {
+      console.error('Error fetching issue:', error);
+      res.status(500).json({ error: 'Error fetching issue' });
+    }
+  });
+
+
   export default router;
