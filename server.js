@@ -63,6 +63,10 @@ const { json } = bpkg;
 app.use(json()); // Middleware to parse JSON bodies
 app.use(auth(config));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 
 app.use('/t', testRoutes);
 app.use('/db', dbRoutes);
@@ -74,6 +78,7 @@ app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use('/static', express.static(path.join(__dirname, 'json')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/signin', express.static(path.join(__dirname, 'signin')));
@@ -181,9 +186,7 @@ app.get('/profile', requiresAuth(), (req, res) => {
   //res.sendFile(path.join(__dirname, 'public', 'profile.html'));
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+
 
 //app.get('/login-status', (req, res) => {
   //res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
