@@ -131,7 +131,7 @@ router.get('/run-script/:videoId', (req, res) => {
 });
 
 router.get('/run-test-script', (req, res) => {
-  const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py')]);
+  const pythonProcess = spawn('python3', [join(__dirname, '..', 'public', 'youtubepar.py')]);
 
   let rawData = '';
 
