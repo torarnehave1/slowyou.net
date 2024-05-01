@@ -94,21 +94,21 @@ router.get('/extract-id/:url', (req, res, next) => {
     return res.status(400).send('No video ID found in URL');
   }
 
-  res.send(`Video ID: ${videoId}`);
   console.log(`Video ID: ${videoId}`);
+  res.send(`/t/run-script/${videoId}`);
 });
 
-import { spawn } from 'child_process';
 
+router.get('/run-script/:videoId', (req, res) => {
+  const videoId = req.params.videoId;
+  const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
 
-
-
-router.get('/run-script', (req, res) => {
-  const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtube.py')]);
+  let transcript = '';
 
   pythonProcess.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-    res.send(data.toString());
+    const dataString = data.toString();
+    console.log(dataString);
+    transcript += dataString;
   });
 
   pythonProcess.stderr.on('data', (data) => {
@@ -118,8 +118,95 @@ router.get('/run-script', (req, res) => {
 
   pythonProcess.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
+    if (code !== 0) {
+      return res.status(500).send(`Python script exited with code ${code}`);
+    }
+    try {
+      const jsonData = JSON.parse(transcript);
+      res.render('you-tldr', { transcript: jsonData });
+    } catch (err) {
+      res.status(500).send('Error parsing JSON data');
+    }
   });
 });
+
+router.get('/run-test-script', (req, res) => {
+  const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py')]);
+
+  let rawData = '';
+
+  pythonProcess.stdout.on('data', (data) => {
+    rawData += data.toString();  // Append data to rawData
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+    res.status(500).send(data.toString());
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+    if (code !== 0) {
+      return res.status(500).send(`Python script exited with code ${code}`);
+    }
+    try {
+      const jsonData = JSON.parse(rawData);  // Parse the complete rawData into JSON
+      res.render('you-tldr', { transcript: jsonData });  // Assuming jsonData is an array to be used in the view
+    } catch (err) {
+      
+      console.error('Failed to parse JSON:', err);
+      res.status(500).send('Error parsing JSON data');
+    }
+  });
+});
+
+
+import { spawn } from 'child_process';
+
+router.get('/youtldr/:url', (req, res) => {
+  const { url } = req.params;
+
+  if (!url) {
+    return res.status(400).send('No URL provided');
+  }
+
+  const videoId = url.split('/').pop().split('?')[0];
+
+  if (!videoId) {
+    return res.status(400).send('No video ID found in URL');
+  }
+
+  console.log(`Video ID: ${videoId}`);
+
+  const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
+
+  let transcript = '';
+
+  pythonProcess.stdout.on('data', (data) => {
+    const dataString = data.toString();
+    console.log(dataString);
+    transcript += dataString;
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`stderr: ${data}`);
+    res.status(500).send(data.toString());
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+    if (code !== 0) {
+      return res.status(500).send(`Python script exited with code ${code}`);
+    }
+    try {
+      const jsonData = JSON.parse(transcript);
+      res.render('you-tldr', { transcript: jsonData });
+    } catch (err) {
+      res.status(500).send('Error parsing JSON data');
+    }
+  });
+});
+
 
 export default router;
 
