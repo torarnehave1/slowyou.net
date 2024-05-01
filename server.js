@@ -129,5 +129,29 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+const http = require('http');
+
+// Your existing server setup code...
+
+// After your server has started, make a GET request to the route
+http.get('http://localhost:3000/t/run-script/X2uV1V1M_3g', (res) => {
+  let data = '';
+
+  // A chunk of data has been received.
+  res.on('data', (chunk) => {
+    data += chunk;
+  });
+
+  // The whole response has been received.
+  res.on('end', () => {
+    console.log(data);
+  });
+
+}).on("error", (err) => {
+  console.log("Error: " + err.message);
+});
+
+
+
 
 export default app;
