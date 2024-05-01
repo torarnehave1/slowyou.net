@@ -3,20 +3,17 @@
 <body>
   <h1>Input Form</h1>
   <form id="inputForm">
-    <input type="text" id="inputField" placeholder="Enter data" required>
+    <input type="text" id="inputField" placeholder="Enter YouTube URL" required>
     <button type="submit">Submit</button>
   </form>
 
   <script>
     document.getElementById('inputForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      const data = document.getElementById('inputField').value;
-      const response = await fetch('/api/py', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data }),
+      const url = document.getElementById('inputField').value;
+      const encodedUrl = encodeURIComponent(url);
+      const response = await fetch(`/t/extract-id/${encodedUrl}`, {
+        method: 'GET',
       });
       const result = await response.text();
       console.log(result);
