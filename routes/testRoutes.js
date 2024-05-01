@@ -101,7 +101,7 @@ router.get('/extract-id/:url', (req, res, next) => {
 
 router.get('/run-script/:videoId', (req, res) => {
   const videoId = req.params.videoId;
-  const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
+  const pythonProcess = spawn('python3', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
 
   let transcript = '';
 
