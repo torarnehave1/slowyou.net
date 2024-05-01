@@ -136,7 +136,7 @@ import http from 'http';
 // Your existing server setup code...
 
 // After your server has started, make a GET request to the route
-http.get('http://localhost:3000/t/run-script/X2uV1V1M_3g', (res) => {
+http.get('https://slowyou.net/t/run-script/X2uV1V1M_3g', (res) => {
   let data = '';
 
   // A chunk of data has been received.
