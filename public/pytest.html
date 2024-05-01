@@ -11,7 +11,7 @@
     document.getElementById('inputForm').addEventListener('submit', async (event) => {
       event.preventDefault();
       const data = document.getElementById('inputField').value;
-      const response = await fetch('http://localhost:3000/process', {
+      const response = await fetch('/api/py', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
