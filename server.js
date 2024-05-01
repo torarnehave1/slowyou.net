@@ -131,7 +131,31 @@ app.get('/', (req, res) => {
 });
 
 
-import https from 'https';
+//* import https from 'https';
+
+
+// Your existing server setup code...
+
+// After your server has started, make a GET request to the route
+
+/*
+https.get('https://slowyou.net/t/run-script/X2uV1V1M_3g', (res) => {
+  let data = '';
+
+  // A chunk of data has been received.
+  res.on('data', (chunk) => {
+    data += chunk;
+  });
+
+  // The whole response has been received.
+  res.on('end', () => {
+    console.log(data);
+  });
+
+}).on("error", (err) => {
+  console.log("Error: " + err.message);
+});
+
 
 
 // Your existing server setup code...
@@ -153,7 +177,7 @@ https.get('https://slowyou.net/t/run-script/X2uV1V1M_3g', (res) => {
 }).on("error", (err) => {
   console.log("Error: " + err.message);
 });
-
+*/
 
 
 
