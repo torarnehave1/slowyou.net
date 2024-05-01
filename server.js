@@ -129,7 +129,9 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-const http = require('http');
+
+
+import http from 'http';
 
 // Your existing server setup code...
 
