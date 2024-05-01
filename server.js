@@ -131,12 +131,13 @@ app.get('/', (req, res) => {
 });
 
 
-import http from 'http';
+import https from 'https';
+
 
 // Your existing server setup code...
 
 // After your server has started, make a GET request to the route
-http.get('https://slowyou.net/t/run-script/X2uV1V1M_3g', (res) => {
+https.get('https://slowyou.net/t/run-script/X2uV1V1M_3g', (res) => {
   let data = '';
 
   // A chunk of data has been received.
