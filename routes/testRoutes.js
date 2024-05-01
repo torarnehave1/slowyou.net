@@ -178,7 +178,7 @@ router.get('/youtldr/:url', (req, res) => {
 
   console.log(`Video ID: ${videoId}`);
 
-  const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
+  const pythonProcess = spawn('python3', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
 
   let transcript = '';
 
