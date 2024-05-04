@@ -75,7 +75,7 @@ router.get('/search', async (req, res) => {
 
       const videoInfo = response.data.items[0]; // Get the first item from the response
   
-      const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
+      const pythonProcess = spawn('python3', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
   
       let transcript = '';
   
