@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap Tabs Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>WhisperingWinds: Ethereal Video Insights for Everyone!</h2>
+        <p class="lead">Analyze your YouTube videos with WhisperingWinds: Ethereal Video Insights for Everyone!</p>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= activeTab === 'tab1' ? 'active' : '' %>" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="<%= activeTab === 'tab1' ? 'true' : 'false' %>">Transcribe</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= activeTab === 'tab2' ? 'active' : '' %>" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="<%= activeTab === 'tab2' ? 'true' : 'false' %>">Search</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link <%= activeTab === 'tab3' ? 'active' : '' %>" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab2" aria-selected="<%= activeTab === 'tab3' ? 'true' : 'false' %>">Intro</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade <%= activeTab === 'tab1' ? 'show active' : '' %>" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+                <p class="mt-4">Transcribe</p>
+                <%-  include('partials/submeny-slowyou-tldr') %>
+                <%- include('partials/trans') %>
+            </div>
+            <div class="tab-pane fade <%= activeTab === 'tab2' ? 'show active' : '' %>" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+                <p class="mt-4">Search</p>
+                <!-- Possibly the search results or other relevant information -->
+
+                <%- include('partials/searchyoutube') %>
+            </div>
+
+            <div class="tab-pane fade <%= activeTab === 'tab3' ? 'show active' : '' %>" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+                <p class="mt-4">Intro to WhisperingWinds</p>
+               <p> <p class="lead">Welcome to the cutting edge of video engagement with WhisperingWinds, exclusively available at SlowYou.net
+                for our partners. This innovative tool revolutionizes how you interact with YouTube content by not
+                only searching videos but also transcribing them effortlessly. Perfect for educators, researchers, and
+                content creators, WhisperingWinds offers a streamlined approach to access spoken content in written
+                form, expanding your reach and enhancing accessibility. With WhisperingWinds, dive deeper into
+                the vast ocean of YouTube videos and transform auditory information into actionable insights.
+                Join us on this transformative journey and leverage the full potential of video content like
+                never before.</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

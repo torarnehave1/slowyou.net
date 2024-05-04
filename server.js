@@ -16,6 +16,7 @@ import { Octokit } from "@octokit/core";
 import githubRoutes from './routes/githubRoutes.js';
 import serveIndex from 'serve-index';
 import pyprocess from './routes/pyprocess.js';
+import youtubroutes  from "./routes/route_youtube.js"
 
 const { requiresAuth } = pkg;
 
@@ -71,6 +72,7 @@ app.use('/json', jsonRoutes);
 app.use('/api/personer', personRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/py", pyprocess);
+app.use('/youtube', youtubroutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
