@@ -7,24 +7,26 @@ config({ path: './sendgrid.env' });
 
 // Set SendGrid API key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+console.log(process.env.SENDGRID_API_KEY)
+
 
 const router = express.Router();
 
 // Route to render the email form
-router.get('/email', (req, res) => {
+router.get('/email-view', (req, res) => {
   res.render('view_email_send');
 });
 
 // Route to handle the form submission
 router.post('/send-email', (req, res) => {
-  const { to, subject, message } = req.body;
-
+  const { to, subject } = req.body;
+const message = 'adsfasfas'
   const msg = {
-    to: to,
+    to: 'torarnehave@gmail.com',
     from: 'post@slowyou.net', // Change to your verified sender
-    subject: subject,
-    text: message,
-    html: `<strong>${message}</strong>`,
+    subject: 'Dette er en melding',
+    text: 'text i meldingen',
+    html: `<strong>${message}</strong>`
   };
 
   sgMail

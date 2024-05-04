@@ -17,6 +17,7 @@ import githubRoutes from './routes/githubRoutes.js';
 import serveIndex from 'serve-index';
 import pyprocess from './routes/pyprocess.js';
 import youtubroutes  from "./routes/route_youtube.js"
+import emailroutes from "./routes/route_email.js"
 
 const { requiresAuth } = pkg;
 
@@ -73,6 +74,7 @@ app.use('/api/personer', personRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/py", pyprocess);
 app.use('/youtube', youtubroutes);
+app.use('/email', emailroutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
