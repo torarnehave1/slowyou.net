@@ -7,6 +7,9 @@ import { appendFile } from 'fs';
 import axios from 'axios';
 import { connect, Schema, model } from 'mongoose';
 import { spawn } from 'child_process';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const apiKey = process.env.YOUTUBE_API_KEY;
 const apiUrl = 'https://www.googleapis.com/youtube/v3/search';
@@ -30,14 +33,22 @@ router.get('/search', async (req, res) => {
           part: 'id,snippet',
           q: req.query.q, // 'Mindfulness',
           maxResults: 10,
-          key: 'AIzaSyDCU6jz1cY4TJb9uMn_EoHs63wd7w-hRGk',//process.env.YOUTUBE_API_KEY,
+          key: process.env.YOUTUBE_API_KEY,
           type: 'video'
         },
       });
   
       //res.render('youtube_test', { activeTab: 'tab2', items: response.data.items });
-      res.render('view_youtube_test', { activeTab: 'tab2', items: response.data.items, transcript: [] });
-      //res.render('youtube_search_results', { items: response.data.items });
+      //res.render('view_youtube_test', { activeTab: 'tab2', items: response.data.items, transcript: [] });
+      
+      res.render('view_youtube_test', { 
+        activeTab: 'tab2', 
+        items: response.data.items, 
+        transcript: [], 
+        logoUrl: '/partials/logo_ww.png' 
+      });
+
+      //logoUrl: '/path/to/logo.png' //res.render('youtube_search_results', { items: response.data.items });
       //res.json(response.data);
       //console.log('response.data:', response.data);
     } catch (error) {
@@ -57,10 +68,11 @@ router.get('/search', async (req, res) => {
         params: {
           part: 'snippet,statistics',
           id: videoId,
-          key: 'AIzaSyDCU6jz1cY4TJb9uMn_EoHs63wd7w-hRGk', //process.env.YOUTUBE_API_KEY,
+          key: process.env.YOUTUBE_API_KEY,
         },
       });
-  
+
+
       const videoInfo = response.data.items[0]; // Get the first item from the response
   
       const pythonProcess = spawn('python', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
@@ -86,7 +98,11 @@ router.get('/search', async (req, res) => {
         try {
           const jsonData = JSON.parse(transcript);
           // Add videoInfo to the render function
-          res.render('view_youtube_test', { activeTab: 'tab1', items: [videoInfo], transcript: jsonData });
+          res.render('view_youtube_test',
+           { activeTab: 'tab1',
+            items: [videoInfo], 
+            transcript: jsonData, 
+          });
   
         } catch (err) {
           res.status(500).send('Error parsing JSON data');
