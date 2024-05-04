@@ -20,8 +20,6 @@ import youtubroutes  from "./routes/route_youtube.js"
 import emailroutes from "./routes/route_email.js"
 
 const { requiresAuth } = pkg;
-
-
 dotenv.config();
 
 
@@ -62,6 +60,9 @@ const port = 3000;
 const { json } = bpkg;
 
 app.use(json()); // Middleware to parse JSON bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(auth(config));
 
 

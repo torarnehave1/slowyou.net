@@ -21,6 +21,7 @@
     "express-openid-connect": "^2.17.1",
     "mongodb": "^6.5.0",
     "mongoose": "^8.3.2",
+    "nodemailer": "^6.9.13",
     "serve-index": "^1.9.1"
   },
   "jest": {
