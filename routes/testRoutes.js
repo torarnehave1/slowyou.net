@@ -21,7 +21,11 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
+  
 router.get('/message', (req, res) => {
+  let app = express.application();
+  app.set('views', path.join(__dirname, 'modules/youtube/views'));
+
   res.render('test', { message: 'This is a test message' });
 });
 

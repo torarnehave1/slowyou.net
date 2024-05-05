@@ -16,9 +16,9 @@ import { Octokit } from "@octokit/core";
 import githubRoutes from './routes/githubRoutes.js';
 import serveIndex from 'serve-index';
 import pyprocess from './routes/pyprocess.js';
-import youtubroutes  from "./routes/route_youtube.js"
-import emailroutes from "./routes/route_email.js"
+import youtubroutes  from "./modules/youtube/route_youtube.js"
 
+import emailroutes from "./routes/route_email.js"
 const { requiresAuth } = pkg;
 dotenv.config();
 
@@ -79,6 +79,8 @@ app.use('/email', emailroutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
 app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
 app.set('views', path.join(__dirname, 'views'));
 

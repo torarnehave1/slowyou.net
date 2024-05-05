@@ -20,10 +20,16 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
+
+
 //http://localhost:3000/youtube/search?q=Mindfulness
-router.get('/message', (req, res) => {
-    res.render('test', { message: 'This is a test message' });
-  });
+
+router.get('/test', (req, res) => {
+
+  console.log(__dirname);
+
+  res.render('test', { message: 'This is a test message from the Youtube END POINT' });
+});
 
 
 router.get('/search', async (req, res) => {
@@ -41,6 +47,8 @@ router.get('/search', async (req, res) => {
       //res.render('youtube_test', { activeTab: 'tab2', items: response.data.items });
       //res.render('view_youtube_test', { activeTab: 'tab2', items: response.data.items, transcript: [] });
       
+      //res.render(path.join(__dirname, 'modules/youtube/views/view_youtube_test'), { /* your data */ });
+
       res.render('view_youtube_test', { 
         activeTab: 'tab2', 
         items: response.data.items, 
@@ -98,6 +106,8 @@ router.get('/search', async (req, res) => {
         try {
           const jsonData = JSON.parse(transcript);
           // Add videoInfo to the render function
+
+          
           res.render('view_youtube_test',
            { activeTab: 'tab1',
             items: [videoInfo], 
