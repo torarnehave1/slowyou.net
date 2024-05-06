@@ -4,7 +4,7 @@
 This documentation covers the YouTube API routes for the Express server.
 
 ## Routes
-- **/message**: This route renders a test message on the page.
+- **/test**: This route renders a test message on the page.
 - **/search**: This route searches for YouTube videos based on a query and renders the results on the page.
 - **/trans/:videoId**: This route fetches the transcript for a YouTube video and renders the video information and transcript on the page.
 

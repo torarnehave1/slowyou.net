@@ -13,8 +13,8 @@ import { auth } from 'express-openid-connect';
 import personRoutes from './routes/personRoutes.js';
 import pkg from 'express-openid-connect';
 import { Octokit } from "@octokit/core";
-import githubRoutes from './routes/githubRoutes.js';
-import serveIndex from 'serve-index';
+import githubRoutes from './modules/github/route_github.js';
+//import serveIndex from 'serve-index';
 import pyprocess from './routes/pyprocess.js';
 import youtubroutes  from "./modules/youtube/route_youtube.js"
 
@@ -63,6 +63,12 @@ app.use(json()); // Middleware to parse JSON bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
+
 app.use(auth(config));
 
 
@@ -85,13 +91,19 @@ app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/static', express.static(path.join(__dirname, 'json'))); 
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/signin', express.static(path.join(__dirname, 'signin')));
+app.use('/logo', express.static(path.join(__dirname, 'logo')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/error', express.static(path.join(__dirname, 'error')));
 
-app.use('/static', express.static(path.join(__dirname, 'json')), serveIndex(path.join(__dirname, 'json'), {'icons': false}));
-app.use('/assets', express.static(path.join(__dirname, 'assets')), serveIndex(path.join(__dirname, 'assets'), {'icons': false}));
-app.use('/signin', express.static(path.join(__dirname, 'signin')), serveIndex(path.join(__dirname, 'signin'), {'icons': false}));
-app.use('/logo', express.static(path.join(__dirname, 'logo')), serveIndex(path.join(__dirname, 'logo'), {'icons': false}));
-app.use('/images', express.static(path.join(__dirname, 'images')), serveIndex(path.join(__dirname, 'images'), {'icons': false}));
-app.use('/error', express.static(path.join(__dirname, 'error')), serveIndex(path.join(__dirname, 'error'), {'icons': false}));
+
+//app.use('/assets', express.static(path.join(__dirname, 'assets')), serveIndex(path.join(__dirname, 'assets'), {'icons': false}));
+//app.use('/signin', express.static(path.join(__dirname, 'signin')), serveIndex(path.join(__dirname, 'signin'), {'icons': false}));
+//app.use('/logo', express.static(path.join(__dirname, 'logo')), serveIndex(path.join(__dirname, 'logo'), {'icons': false}));
+//app.use('/images', express.static(path.join(__dirname, 'images')), serveIndex(path.join(__dirname, 'images'), {'icons': false}));
+//app.use('/error', express.static(path.join(__dirname, 'error')), serveIndex(path.join(__dirname, 'error'), {'icons': false}));
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
@@ -133,9 +145,7 @@ app.listen(port, () => {
  // writeDocumentsToJson(); // Write documents to JSON when the server starts
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+
 
 
 //* import https from 'https';

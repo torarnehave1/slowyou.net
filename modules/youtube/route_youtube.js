@@ -49,7 +49,7 @@ router.get('/search', async (req, res) => {
       
       //res.render(path.join(__dirname, 'modules/youtube/views/view_youtube_test'), { /* your data */ });
 
-      res.render('view_youtube_test', { 
+      res.render('view_youtube_wjspering', { 
         activeTab: 'tab2', 
         items: response.data.items, 
         transcript: [], 
@@ -108,7 +108,7 @@ router.get('/search', async (req, res) => {
           // Add videoInfo to the render function
 
           
-          res.render('view_youtube_test',
+          res.render('view_youtube_wjspering',
            { activeTab: 'tab1',
             items: [videoInfo], 
             transcript: jsonData, 
