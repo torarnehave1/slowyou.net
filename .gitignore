@@ -1,3 +1,5 @@
 # .gitignore
 .env
 sendgrid.env
+folder_structur.md
+sendemail.py
