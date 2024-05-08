@@ -17,8 +17,9 @@ import githubRoutes from './modules/github/route_github.js';
 //import serveIndex from 'serve-index';
 import pyprocess from './routes/pyprocess.js';
 import youtubroutes  from "./modules/youtube/route_youtube.js"
+import emailroutes from "./modules/email/routes_email.js"
+import crmroutes from"./modules/crm/routes_crm.js"
 
-import emailroutes from "./routes/route_email.js"
 const { requiresAuth } = pkg;
 dotenv.config();
 
@@ -77,11 +78,12 @@ app.use(auth(config));
 app.use('/t', testRoutes);
 app.use('/db', dbRoutes);
 app.use('/json', jsonRoutes);
-app.use('/api/personer', personRoutes);
+app.use('/p', personRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/py", pyprocess);
 app.use('/youtube', youtubroutes);
-app.use('/email', emailroutes);
+app.use('/e', emailroutes);
+app.use('/crm',crmroutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
