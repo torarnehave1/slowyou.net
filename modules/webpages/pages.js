@@ -43,5 +43,10 @@ router.get('/faq', (req, res) => {
     
     res.sendFile(path.join(filePath, 'public/landpages/slowyoutrening.html'));
   });
+
+  router.get('/slowgpt', (req, res) => {
+    
+    res.sendFile(path.join(filePath, 'public/courses/slowyougpt.html'));
+  });
   
   export default router;
