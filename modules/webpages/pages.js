@@ -1,14 +1,28 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+
+
+
 dotenv.config();
 
 
-
+//Root for this endpoint are /w/endpointname app.use('/w', webpagesroutes);
 
 
 const router = express.Router();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const filePath = path.resolve(__dirname, '..', '..');
+
+
+
 router.get('/test', (req, res) => {
+ 
+  console.log(filePath);
   
     res.render('test', { message: 'This is a test message from the WPages END POINT' });
   });
@@ -23,5 +37,11 @@ router.get('/faq', (req, res) => {
     res.render('view_faq', { faqs: faqs });
   });
 
+
+
+  router.get('/slow', (req, res) => {
+    
+    res.sendFile(path.join(filePath, 'public/landpages/slowyoutrening.html'));
+  });
   
   export default router;
