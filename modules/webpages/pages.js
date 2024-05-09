@@ -9,8 +9,6 @@ dotenv.config();
 const router = express.Router();
 
 router.get('/test', (req, res) => {
-
-    console.log(__dirname);
   
     res.render('test', { message: 'This is a test message from the WPages END POINT' });
   });
