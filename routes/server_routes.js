@@ -25,3 +25,5 @@ router.get('/run-command', (req, res) => {
     res.send('Command executed successfully.');
   });
 
+export default router;
+
