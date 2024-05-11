@@ -20,6 +20,7 @@ import youtubroutes  from "./modules/youtube/route_youtube.js"
 import emailroutes from "./modules/email/routes_email.js"
 import crmroutes from"./modules/crm/routes_crm.js"
 import webpagesroutes from "./modules/webpages/pages.js"
+import cmd from './routes/server_routes.js';
 
 const { requiresAuth } = pkg;
 dotenv.config();
@@ -86,6 +87,7 @@ app.use('/youtube', youtubroutes);
 app.use('/e', emailroutes);
 app.use('/crm',crmroutes);
 app.use('/w', webpagesroutes);
+app.use('/cmd,cmd);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
