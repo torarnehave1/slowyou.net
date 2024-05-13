@@ -20,6 +20,7 @@ import youtubroutes  from "./modules/youtube/route_youtube.js"
 import emailroutes from "./modules/email/routes_email.js"
 import crmroutes from"./modules/crm/routes_crm.js"
 import webpagesroutes from "./modules/webpages/pages.js"
+import cmd from './routes/server_routes.js';
 
 const { requiresAuth } = pkg;
 dotenv.config();

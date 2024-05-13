@@ -38,7 +38,7 @@ router.get('/search', async (req, res) => {
         params: {
           part: 'id,snippet',
           q: req.query.q, // 'Mindfulness',
-          maxResults: 10,
+          maxResults: 50,
           key: process.env.YOUTUBE_API_KEY,
           type: 'video'
         },
@@ -67,7 +67,7 @@ router.get('/search', async (req, res) => {
   
 
 
-  router.get('/trans/:videoId', async (req, res) => {
+  router.get('/trans2/:videoId', async (req, res) => {
     const videoId = req.params.videoId;
   
     try {
@@ -84,7 +84,7 @@ router.get('/search', async (req, res) => {
       const videoInfo = response.data.items[0]; // Get the first item from the response
   
       //const pythonProcess = spawn('python3', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
-      const pythonProcess = spawn('python3', [join(__dirname, '..', '..', 'public', 'youtubepar.py'), videoId]);
+      const pythonProcess = spawn('python', [join(__dirname, '..', '..', 'modules','micro', 'transcript_pdf.py'), videoId]);
       let transcript = '';
   
       pythonProcess.stdout.on('data', (data) => {
@@ -106,7 +106,12 @@ router.get('/search', async (req, res) => {
         try {
           const jsonData = JSON.parse(transcript);
           // Add videoInfo to the render function
-
+    
+          // Call the Python script to write the transcript to a PDF
+          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'public', 'transcript_topdf.py'), transcript, '-o', `${videoId}.pdf`]);
+          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_topdf.py'), transcript, '-o', `${videoId}.pdf`]);
+          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_topdf.py'), transcript, '-o', join(__dirname, '..', '..', 'public','pdf_video_transcripts' `${videoId}.pdf`)]);
+          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_topdf.py'), {transcript: jsonData}, '-o', join(__dirname, '..', '..', 'transcripts', 'pdf', `${videoId}.pdf`)]);
           
           res.render('view_youtube_wjspering',
            { activeTab: 'tab1',
@@ -124,5 +129,67 @@ router.get('/search', async (req, res) => {
     }
   });
   
+  router.get('/trans/:videoId', async (req, res) => {
+    const videoId = req.params.videoId;
+
+    try {
+        // Get video information from YouTube API
+        const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+            params: {
+                part: 'snippet,statistics',
+                id: videoId,
+                key: process.env.YOUTUBE_API_KEY,
+            },
+        });
+
+        const videoInfo = response.data.items[0]; // Get the first item from the response
+
+        const pythonProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_pdf.py'), videoId]);
+        let transcript = '';
+
+        pythonProcess.stdout.on('data', (data) => {
+            transcript += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+            // Ensure to end the process on stderr and avoid sending multiple responses
+            if (!res.headersSent) {
+                res.status(500).send(data.toString());
+            }
+        });
+
+        pythonProcess.on('close', (code) => {
+            if (code !== 0) {
+                if (!res.headersSent) {
+                    return res.status(500).send(`Python script exited with code ${code}`);
+                }
+            } else {
+                try {
+                    const jsonData = JSON.parse(transcript);
+                    if (!res.headersSent) {
+                        res.render('view_youtube_wjspering', {
+                            activeTab: 'tab1',
+                            items: [videoInfo],
+                            transcript: jsonData,
+                        });
+                    }
+                } catch (err) {
+                    if (!res.headersSent) {
+                        res.status(500).send('Error parsing JSON data');
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching video information:', error);
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Error fetching video information' });
+        }
+    }
+});
+
+
+
 
   export default router;
