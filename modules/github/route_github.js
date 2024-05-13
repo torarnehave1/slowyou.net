@@ -1,6 +1,7 @@
 import express from "express";
 import { Octokit } from "@octokit/core";
 
+// api/github
 
 const accessToken = process.env.ACCESS_TOKEN;
 const owner = process.env.OWNER;
@@ -127,9 +128,18 @@ router.get("/issue-titles", async (req, res) => {
         const response = await octokit.request('POST /repos/{owner}/{repo}/issues', {
             owner: 'torarnehave1',  // Replace 'torarnehave1' with your GitHub username or organization name
             repo: 'slowyouGPT',     // Replace 'slowyouGPT' with your repository name
-            title: 'Hardcoded Title',  // Your issue title
-            body: 'Hardcoded issue body'  // Your issue body content
-        });
+            title: 'TA Hardcoded Title',  // Your issue title
+            body: `TT Hardcoded issue
+            #Title
+
+            This is a *Markdown* formatted issue body. You can **bold**, _italicize_, and create lists:
+            
+            - Item 1
+            - Item 2
+            - Item 3`,  // Your issue body content
+            labels: ['tor','bug','documentation','help wanted','question'],
+       projects:''
+          });
   
         // Send the issue URL back as a response
         res.json({ issueUrl: response.data.html_url });
