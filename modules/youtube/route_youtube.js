@@ -20,6 +20,9 @@ const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
+// Creat e comment on this code with suggestion TODO
+// Create a new route for the YouTube API
+
 
 
 //http://localhost:3000/youtube/search?q=Mindfulness
@@ -66,69 +69,6 @@ router.get('/search', async (req, res) => {
   });
   
 
-
-  router.get('/trans2/:videoId', async (req, res) => {
-    const videoId = req.params.videoId;
-  
-    try {
-      // Get video information from YouTube API
-      const response = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
-        params: {
-          part: 'snippet,statistics',
-          id: videoId,
-          key: process.env.YOUTUBE_API_KEY,
-        },
-      });
-
-
-      const videoInfo = response.data.items[0]; // Get the first item from the response
-  
-      //const pythonProcess = spawn('python3', [join(__dirname, '..', 'public', 'youtubepar.py'), videoId]);
-      const pythonProcess = spawn('python', [join(__dirname, '..', '..', 'modules','micro', 'transcript_pdf.py'), videoId]);
-      let transcript = '';
-  
-      pythonProcess.stdout.on('data', (data) => {
-        const dataString = data.toString();
-        console.log(dataString);
-        transcript += dataString;
-      });
-  
-      pythonProcess.stderr.on('data', (data) => {
-        console.error(`stderr: ${data}`);
-        res.status(500).send(data.toString());
-      });
-  
-      pythonProcess.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-        if (code !== 0) {
-          return res.status(500).send(`Python script exited with code ${code}`);
-        }
-        try {
-          const jsonData = JSON.parse(transcript);
-          // Add videoInfo to the render function
-    
-          // Call the Python script to write the transcript to a PDF
-          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'public', 'transcript_topdf.py'), transcript, '-o', `${videoId}.pdf`]);
-          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_topdf.py'), transcript, '-o', `${videoId}.pdf`]);
-          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_topdf.py'), transcript, '-o', join(__dirname, '..', '..', 'public','pdf_video_transcripts' `${videoId}.pdf`)]);
-          //const pythonPdfProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_topdf.py'), {transcript: jsonData}, '-o', join(__dirname, '..', '..', 'transcripts', 'pdf', `${videoId}.pdf`)]);
-          
-          res.render('view_youtube_wjspering',
-           { activeTab: 'tab1',
-            items: [videoInfo], 
-            transcript: jsonData, 
-          });
-  
-        } catch (err) {
-          res.status(500).send('Error parsing JSON data');
-        }
-      });
-    } catch (error) {
-      console.error('Error fetching video information:', error);
-      res.status(500).json({ error: 'Error fetching video information' });
-    }
-  });
-  
   router.get('/trans/:videoId', async (req, res) => {
     const videoId = req.params.videoId;
 
@@ -143,6 +83,8 @@ router.get('/search', async (req, res) => {
         });
 
         const videoInfo = response.data.items[0]; // Get the first item from the response
+      
+        // Change this into python3 in production
 
         const pythonProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_pdf.py'), videoId]);
         let transcript = '';

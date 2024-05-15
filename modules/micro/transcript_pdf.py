@@ -5,6 +5,17 @@ import xhtml2pdf.pisa as pisa
 from functools import reduce
 from youtube_transcript_api import YouTubeTranscriptApi
 
+# 14052024
+#Tor Arne Haave
+#Micro
+#Transcript PDF
+#https://github.com/Noroff-SWE-22F/14052024/blob/main/Transcript%20PDF.py
+
+#This script is used to generate a PDF transcript of a YouTube video. It uses the YouTubeTranscriptApi to retrieve the transcript of the video and then converts it to a JSON formatted string. The JSON string is then passed to the printPdf function which wraps the text and generates a PDF file. The PDF file is saved in the
+# Run the code with python transcript_pdf.py gL4j-a-g9pA
+# gL4j-a-g9pA = Example youtubevideoID
+#https://youtu.be/gL4j-a-g9pA?si=mFWjqxF2qGdJIdzf
+
 def wrap(text, width):
     """Wrap text for better formatting in PDF."""
     return reduce(lambda line, word, width=width: '%s%s%s' %
