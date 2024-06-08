@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { compare } from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new Schema({
   fullName: { type: String, required: true },
@@ -35,7 +35,7 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.comparePassword = function(candidatePassword) {
-  return compare(candidatePassword, this.password);
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 export default model('User', userSchema);
