@@ -69,15 +69,13 @@ app.use('/e', emailRoutes);
 app.use('/crm', crmRoutes);
 app.use('/w', webpagesRoutes);
 app.use('/g', groq);
-app.use('/s', security);
+
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
 });
 
-app.get('/profile', requiresAuth(), (req, res) => {
-  res.send(JSON.stringify(req.oidc.user));
-});
+
 
 connect(process.env.MONGO_DB_URL)
   .then(() => console.log('Connected to MongoDB with Mongoose'))
