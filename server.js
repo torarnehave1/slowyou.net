@@ -1,21 +1,25 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import testRoutes from './routes/testRoutes.js';
-import dbRoutes from './modules/mongodb/dbRoutes.js';
-import jsonRoutes from './routes/jsonRoutes.js';
+//import dbRoutes from './modules/mongodb/dbRoutes.js';
+//import jsonRoutes from './routes/jsonRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connect } from 'mongoose';
 import dotenv from 'dotenv';
-import { auth } from 'express-openid-connect';
-import personRoutes from './routes/personRoutes.js';
-import githubRoutes from './modules/github/route_github.js';
-import pyprocess from './routes/pyprocess.js';
-import youtubeRoutes from "./modules/youtube/route_youtube.js";
-import emailRoutes from "./modules/email/routes_email.js";
-import crmRoutes from "./modules/crm/routes_crm.js";
+//import { auth } from 'express-openid-connect';
+//import personRoutes from './routes/personRoutes.js';
+//import githubRoutes from './modules/github/route_github.js';
+//import pyprocess from './routes/pyprocess.js';
+//import youtubeRoutes from "./modules/youtube/route_youtube.js";
+//import emailRoutes from "./modules/email/routes_email.js";
+//import crmRoutes from "./modules/crm/routes_crm.js";
 import webpagesRoutes from "./modules/webpages/pages.js";
-import groq from './modules/api/groq.js';
+//import groq from './modules/api/groq.js';
+import cookieParser from 'cookie-parser';
+import userRoutes from './routes/user_routes.js'; // Import the user routes
+import protectedRoutes from './routes/protected.js';
+
+
 //import security from './modules/security/routes_security.js';
 
 dotenv.config(); // Load environment variables
@@ -36,6 +40,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -55,29 +60,34 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.use(auth(config));
+
 
 // Routes
-app.use('/t', testRoutes);
-app.use('/db', dbRoutes);
-app.use('/json', jsonRoutes);
-app.use('/p', personRoutes);
-app.use("/api/github", githubRoutes);
-app.use("/api/py", pyprocess);
-app.use('/youtube', youtubeRoutes);
-app.use('/e', emailRoutes);
-app.use('/crm', crmRoutes);
+//app.use('/t', testRoutes);
+//app.use('/db', dbRoutes);
+//app.use('/json', jsonRoutes);
+//app.use('/p', personRoutes);
+//app.use("/api/github", githubRoutes);
+//app.use("/api/py", pyprocess);
+//app.use('/youtube', youtubeRoutes);
+//app.use('/e', emailRoutes);
+//app.use('/crm', crmRoutes);
 app.use('/w', webpagesRoutes);
-app.use('/g', groq);
+//app.use('/g', groq);
+app.use('/a', userRoutes);
+app.use('/prot', protectedRoutes);
 
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
 });
 
+const s = process.env.MONGO_DB_URL
 
+console.log(s)
 
 connect(process.env.MONGO_DB_URL)
+
   .then(() => console.log('Connected to MongoDB with Mongoose'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
