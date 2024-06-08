@@ -136,23 +136,34 @@
 
                 const responseData = await response.json(); // Parse JSON response
 
-                messageDiv.textContent = responseData.message;
-
                 if (response.ok) {
+                    messageDiv.textContent = responseData.message;
                     messageDiv.classList.remove('error');
                     messageDiv.classList.add('success');
                     // Optionally, you can redirect the user to another page upon successful registration
                     // window.location.href = '/success.html';
                 } else {
-                    messageDiv.classList.add('error');
-                    messageDiv.classList.remove('success');
+                    handleServerError(response, responseData);
                 }
             } catch (err) {
-                console.error('Error occurred:', err);
-                messageDiv.textContent = 'An error occurred while registering.';
+                console.error('Network error occurred:', err);
+                messageDiv.textContent = 'A network error occurred while registering. Please try again later.';
                 messageDiv.classList.add('error');
                 messageDiv.classList.remove('success');
             }
+        }
+
+        function handleServerError(response, responseData) {
+            const messageDiv = document.getElementById('message');
+            if (response.status === 400) {
+                messageDiv.textContent = 'Validation error: ' + responseData.message;
+            } else if (response.status === 500) {
+                messageDiv.textContent = 'Server error: Please try again later.';
+            } else {
+                messageDiv.textContent = 'An unexpected error occurred: ' + responseData.message;
+            }
+            messageDiv.classList.add('error');
+            messageDiv.classList.remove('success');
         }
     </script>
 </body>
