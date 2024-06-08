@@ -1,128 +1,89 @@
 import express from 'express';
-import bpkg from 'body-parser';
+import bodyParser from 'body-parser';
 import testRoutes from './routes/testRoutes.js';
-import dbRoutes from './routes/dbRoutes.js';
+import dbRoutes from './modules/mongodb/dbRoutes.js';
 import jsonRoutes from './routes/jsonRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { connect, Schema, model } from 'mongoose';
-import { mkdirSync, writeFile } from 'fs';
-import { join } from 'path';
+import { connect } from 'mongoose';
 import dotenv from 'dotenv';
 import { auth } from 'express-openid-connect';
 import personRoutes from './routes/personRoutes.js';
-import pkg from 'express-openid-connect';
-import { Octokit } from "@octokit/core";
 import githubRoutes from './modules/github/route_github.js';
-//import serveIndex from 'serve-index';
 import pyprocess from './routes/pyprocess.js';
-import youtubroutes  from "./modules/youtube/route_youtube.js"
-import emailroutes from "./modules/email/routes_email.js"
-import crmroutes from"./modules/crm/routes_crm.js"
-import webpagesroutes from "./modules/webpages/pages.js"
-import cmd from './routes/server_routes.js';
+import youtubeRoutes from "./modules/youtube/route_youtube.js";
+import emailRoutes from "./modules/email/routes_email.js";
+import crmRoutes from "./modules/crm/routes_crm.js";
+import webpagesRoutes from "./modules/webpages/pages.js";
+import groq from './modules/api/groq.js';
+//import security from './modules/security/routes_security.js';
 
-const { requiresAuth } = pkg;
-dotenv.config();
+dotenv.config(); // Load environment variables
 
-
-const API_ENDPOINT = process.env.API_ENDPOINT;
-const API_PROJECT_ID = process.env.API_PROJECT_ID;
-const API_DATABASE_KEY = process.env.API_DATABASE_KEY;
-const API_COLLECTION_KEY = process.env.API_COLLECTION_KEY;
-const API_FUNCTION_ID = process.env.API_FUNCTION_ID;
-const DB_HOST = process.env.DB_HOST;
-const DB_USER = process.env.DB_USER;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_NAME = process.env.DB_NAME;
-const PORT = process.env.PORT;
-const DUMMY_DB_HOST = process.env.DUMMY_DB_HOST;
-const DUMMY_ENV = process.env.DUMMY_ENV;
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const GITHUB_USER = process.env.GITHUB_USER;
-const GITHUB_REPO = process.env.GITHUB_REPO;
-const GITHUB_BRANCH = process.env.GITHUB_BRANCH;
-const GITHUB_PATH = process.env.GITHUB_PATH;
-const MONGO_DB_URL = process.env.MONGO_DB_URL;
-
-
-const LOGIN_SECRET = process.env.LOGIN_SECRET;
+const app = express();
+const port = process.env.PORT || 3000;
 
 const config = {
   authRequired: false,
   auth0Logout: true,
-  secret: LOGIN_SECRET,
-  baseURL: 'https://slowyou.net',
-  clientID: '40Whs58sxGo70SRCLYMiPStTreE3yoMV',
+  secret: process.env.LOGIN_SECRET,
+  baseURL: `http://localhost:${port}`,
+  clientID: process.env.GITHUB_CLIENTID,
   issuerBaseURL: 'https://dev-l5gohk1fiankh7si.eu.auth0.com'
 };
-
-
-
-
-const app = express();
-const port = 3000;
-const { json } = bpkg;
-
-app.use(json()); // Middleware to parse JSON bodies
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-
-
-app.use(auth(config));
-
-
-
-
-app.use('/t', testRoutes);
-app.use('/db', dbRoutes);
-app.use('/json', jsonRoutes);
-app.use('/p', personRoutes);
-app.use("/api/github", githubRoutes);
-app.use("/api/py", pyprocess);
-app.use('/youtube', youtubroutes);
-app.use('/e', emailroutes);
-app.use('/crm',crmroutes);
-app.use('/w', webpagesroutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
 app.set('views', path.join(__dirname, 'views'));
 
+// Static files
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/static', express.static(path.join(__dirname, 'json'))); 
+app.use('/static', express.static(path.join(__dirname, 'json')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/signin', express.static(path.join(__dirname, 'signin')));
 app.use('/logo', express.static(path.join(__dirname, 'logo')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/error', express.static(path.join(__dirname, 'error')));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
-//app.use('/assets', express.static(path.join(__dirname, 'assets')), serveIndex(path.join(__dirname, 'assets'), {'icons': false}));
-//app.use('/signin', express.static(path.join(__dirname, 'signin')), serveIndex(path.join(__dirname, 'signin'), {'icons': false}));
-//app.use('/logo', express.static(path.join(__dirname, 'logo')), serveIndex(path.join(__dirname, 'logo'), {'icons': false}));
-//app.use('/images', express.static(path.join(__dirname, 'images')), serveIndex(path.join(__dirname, 'images'), {'icons': false}));
-//app.use('/error', express.static(path.join(__dirname, 'error')), serveIndex(path.join(__dirname, 'error'), {'icons': false}));
+app.use(auth(config));
+
+// Routes
+app.use('/t', testRoutes);
+app.use('/db', dbRoutes);
+app.use('/json', jsonRoutes);
+app.use('/p', personRoutes);
+app.use("/api/github", githubRoutes);
+app.use("/api/py", pyprocess);
+app.use('/youtube', youtubeRoutes);
+app.use('/e', emailRoutes);
+app.use('/crm', crmRoutes);
+app.use('/w', webpagesRoutes);
+app.use('/g', groq);
+app.use('/s', security);
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
 });
 
-connect(MONGO_DB_URL)
+app.get('/profile', requiresAuth(), (req, res) => {
+  res.send(JSON.stringify(req.oidc.user));
+});
+
+connect(process.env.MONGO_DB_URL)
   .then(() => console.log('Connected to MongoDB with Mongoose'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
-
-  
-
+// Error handling middleware
 app.use((err, req, res, next) => {
   if (err) {
     console.error(err);
@@ -132,77 +93,8 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.get('/profile', requiresAuth(), (req, res) => {
-  res.send(JSON.stringify(req.oidc.user));
-  //res.sendFile(path.join(__dirname, 'public', 'profile.html'));
-});
-
-
-
-//app.get('/login-status', (req, res) => {
-  //res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
-//});
-
-
-// ...
-
-// Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
- // writeDocumentsToJson(); // Write documents to JSON when the server starts
 });
-
-
-
-
-//* import https from 'https';
-
-
-// Your existing server setup code...
-
-// After your server has started, make a GET request to the route
-
-/*
-https.get('https://slowyou.net/t/run-script/X2uV1V1M_3g', (res) => {
-  let data = '';
-
-  // A chunk of data has been received.
-  res.on('data', (chunk) => {
-    data += chunk;
-  });
-
-  // The whole response has been received.
-  res.on('end', () => {
-    console.log(data);
-  });
-
-}).on("error", (err) => {
-  console.log("Error: " + err.message);
-});
-
-
-
-// Your existing server setup code...
-
-// After your server has started, make a GET request to the route
-https.get('https://slowyou.net/t/run-script/X2uV1V1M_3g', (res) => {
-  let data = '';
-
-  // A chunk of data has been received.
-  res.on('data', (chunk) => {
-    data += chunk;
-  });
-
-  // The whole response has been received.
-  res.on('end', () => {
-    console.log(data);
-  });
-
-}).on("error", (err) => {
-  console.log("Error: " + err.message);
-});
-*/
-
-
 
 export default app;
