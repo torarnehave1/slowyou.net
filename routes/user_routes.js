@@ -27,20 +27,28 @@ async function createUser(userData) {
 }
 
 router.get('/register2', async (req, res) => {
-    const token = crypto.randomBytes(20).toString('hex');
-    await createUser({
-        _id: new mongoose.Types.ObjectId(),
-        fullName: 'SlowYou Experten',
-        username: 'torarnehave@gmail.com',
-        password: await bcrypt.hash('Mandala1.', 10), // Hash the password
-        dateOfBirth: new Date('1990-01-01'),
-        createdAt: new Date(),
-        emailVerificationToken: token,
-        emailVerificationTokenExpires: Date.now() + 3600000,
-    });
+    try {
+        const token = crypto.randomBytes(20).toString('hex');
+        const hashedPassword = await bcrypt.hash('Mandala1.', 10);
 
-    res.send('User registration completed');
+        const user = {
+            _id: new mongoose.Types.ObjectId(),
+            fullName: 'SlowYou Experten',
+            username: 'torarnehave@gmail.com',
+            password: hashedPassword,
+            dateOfBirth: new Date('1990-01-01'),
+            createdAt: new Date(),
+            emailVerificationToken: token,
+            emailVerificationTokenExpires: Date.now() + 3600000,
+        };
 
+        await createUser(user);
+
+        res.send('User registration completed');
+    } catch (error) {
+        console.error('Error during user registration:', error);
+        res.status(500).send('An error occurred during user registration');
+    }
 });
 
 router.post('/registerbak', async (req, res) => {
