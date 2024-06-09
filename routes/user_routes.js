@@ -30,6 +30,7 @@ router.get('/register2', async (req, res) => {
     const token = crypto.randomBytes(20).toString('hex');
     await createUser({
         _id: new mongoose.Types.ObjectId(),
+        fullName: 'SlowYou Experten',
         username: 'torarnehave@gmail.com',
         password: await bcrypt.hash('Mandala1.', 10), // Hash the password
         dateOfBirth: new Date('1990-01-01'),
