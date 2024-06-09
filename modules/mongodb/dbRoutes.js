@@ -14,9 +14,11 @@ router.get('/test', (req, res) => {
   res.render('test', { message });
 });
 
-router.get('/constring', (req, res) => {
+const mongoose = require('mongoose');
+
+router.get('/test', (req, res) => {
   const dbState = mongoose.connection.readyState;
-  const message = dbState === 1 ? 'Database connection successful' : 'Database connection failed';
+  let message = dbState === 1 ? 'Database connection successful' : 'Database connection failed';
   
   // Get the connection URI
   const connectionUri = mongoose.connection.client.s.url;
@@ -24,8 +26,12 @@ router.get('/constring', (req, res) => {
   // Grab the first 20 characters of the connection URI
   const truncatedUri = connectionUri.substring(0, 20);
 
-  res.render('test', { message, truncatedUri });
+  // Concatenate the message with the truncated connection string
+  message += ` - Connected to: ${truncatedUri}`;
+
+  res.render('test', { message });
 });
+
 
 
 // Read - Get all persons
