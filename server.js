@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-//import dbRoutes from './modules/mongodb/dbRoutes.js';
+import dbRoutes from './modules/mongodb/dbRoutes.js';
 //import jsonRoutes from './routes/jsonRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -64,7 +64,7 @@ app.get('/', (req, res) => {
 
 // Routes
 //app.use('/t', testRoutes);
-//app.use('/db', dbRoutes);
+app.use('/db', dbRoutes);
 //app.use('/json', jsonRoutes);
 //app.use('/p', personRoutes);
 //app.use("/api/github", githubRoutes);
