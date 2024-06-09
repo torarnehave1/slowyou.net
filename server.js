@@ -8,7 +8,7 @@ import { connect } from 'mongoose';
 import dotenv from 'dotenv';
 //import { auth } from 'express-openid-connect';
 //import personRoutes from './routes/personRoutes.js';
-//import githubRoutes from './modules/github/route_github.js';
+import githubRoutes from './modules/github/route_github.js';
 //import pyprocess from './routes/pyprocess.js';
 import youtubeRoutes from "./modules/youtube/route_youtube.js";
 //import emailRoutes from "./modules/email/routes_email.js";
@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
 app.use('/db', dbRoutes);
 //app.use('/json', jsonRoutes);
 //app.use('/p', personRoutes);
-//app.use("/api/github", githubRoutes);
+app.use("/api/github", githubRoutes);
 //app.use("/api/py", pyprocess);
 app.use('/youtube', youtubeRoutes);
 //app.use('/e', emailRoutes);
