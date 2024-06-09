@@ -2,6 +2,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Person from '../../models/person.js';
+import User from '../../models/User.js'; // Import the User model
 
 
 
@@ -32,6 +33,25 @@ router.get('/constring', (req, res) => {
   res.render('test', { message });
 });
 
+const mockUser = {
+  fullName: 'John Doe',
+  username: 'john@example.com',
+  password: 'fadfadfasfhhhkkllooppøøæ0',
+  emailVerificationToken: '123456789',
+};
+
+router.get('/mockup', async (req, res) => {
+  try {
+    // Create a new user document using the mockup user object
+    const newUser = new User(mockUser);
+    // Save the user to the database
+    await newUser.save();
+    res.status(201).send(newUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error adding mockup user to the database');
+  }
+});
 
 
 // Read - Get all persons
