@@ -128,7 +128,7 @@ router.post('/register', async (req, res) => {
           from: 'slowyou.net@gmail.com',
           to: user.username,
           subject: emailTemplates.email.verification.subject,
-          text: emailTemplates.email.verification.body.replace('{verificationLink}', `http://localhost:5000/a/verify-email?token=${emailVerificationToken}`)
+          text: emailTemplates.email.verification.body.replace('{verificationLink}', `https://slowyou.net/a/verify-email?token=${emailVerificationToken}`)
       };
 
       try {
