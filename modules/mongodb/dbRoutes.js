@@ -14,9 +14,9 @@ router.get('/test', (req, res) => {
   res.render('test', { message });
 });
 
-const mongoose = require('mongoose');
 
-router.get('/test', (req, res) => {
+
+router.get('/constring', (req, res) => {
   const dbState = mongoose.connection.readyState;
   let message = dbState === 1 ? 'Database connection successful' : 'Database connection failed';
   
