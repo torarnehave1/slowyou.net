@@ -28,7 +28,7 @@ function isAuthenticated(req, res, next) {
     }
 }
 
-// Protected route
+// Protected route app.use('/prot', protectedRoutes);
 router.get('/protected', isAuthenticated, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('username');
