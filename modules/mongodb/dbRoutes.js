@@ -3,8 +3,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import Person from '../../models/person.js';
 import User from '../../models/User.js'; // Import the User model
+import crypto from 'crypto';
 
 
+const token = crypto.randomBytes(20).toString('hex');
 
 
 const router = express.Router();
@@ -37,7 +39,7 @@ const mockUser = {
   fullName: 'John Doe',
   username: 'john@example.com',
   password: 'fadfadfasfhhhkkllooppøøæ0',
-  emailVerificationToken: '123456789',
+  emailVerificationToken: token,
 };
 
 router.get('/mockup', async (req, res) => {
