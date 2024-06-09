@@ -4,10 +4,10 @@ import mongoose from 'mongoose';
 import Person from '../../models/person.js';
 import User from '../../models/User.js'; // Import the User model
 import crypto from 'crypto';
-
+import bcrypt from 'bcryptjs';
 
 const token = crypto.randomBytes(20).toString('hex');
-
+const hashedPassword = await bcrypt.hash('Mandala1.', 10);
 
 const router = express.Router();
 
@@ -38,7 +38,7 @@ router.get('/constring', (req, res) => {
 const mockUser = {
   fullName: 'John Doe',
   username: 'john@example.com',
-  password: 'fadfadfasfhhhkkllooppøøæ0',
+  password: hashedPassword,
   emailVerificationToken: token,
 };
 
