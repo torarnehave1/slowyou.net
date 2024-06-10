@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Conversation Page</title>
+    <script>
+        async function findUser() {
+            const userId = document.getElementById('userIdInput').value;
+            const response = await fetch(`/users/${userId}`);
+            const user = await response.json();
+            if (user) {
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+            } else {
+                document.getElementById('userName').textContent = 'User not found';
+                document.getElementById('userEmail').textContent = '';
+            }
+        }
+
+        async function saveConversation() {
+            const conversationId = document.getElementById('conversationId').value;
+            const message = document.getElementById('messageInput').value;
+
+            const response = await fetch(`/conversations/${conversationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+
+            if (response.ok) {
+                alert('Conversation saved successfully');
+            } else {
+                alert('Error saving conversation');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Conversation Page</h1>
+    <label for="userIdInput">User ID:</label>
+    <input type="text" id="userIdInput" />
+    <button onclick="findUser()">Find User</button>
+    <br />
+    <label for="conversationId">Conversation ID:</label>
+    <input type="text" id="conversationId" />
+    <br />
+    <label for="messageInput">Message:</label>
+    <input type="text" id="messageInput" />
+    <button onclick="saveConversation()">Save Conversation</button>
+    <br />
+    <div>
+        <h2 id="userName"></h2>
+        <p id="userEmail"></p>
+    </div>
+</body>
+</html>

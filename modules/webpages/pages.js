@@ -37,7 +37,7 @@ router.get('/faq', (req, res) => {
     res.render('view_faq', { faqs: faqs });
   });
 
-
+ 
 
   router.get('/slow', (req, res) => {
     
