@@ -31,7 +31,8 @@ const userSchema = new Schema({
     type: Boolean,
     required: true,
     default: false
-  }
+  },
+  WebPage: { type: String, required: true },
 });
 
 userSchema.methods.comparePassword = function(candidatePassword) {

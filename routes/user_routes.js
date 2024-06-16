@@ -80,7 +80,7 @@ router.post('/registerbak', async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-  const { fullName, username, password } = req.body;
+  const { fromPage,fullName, username, password } = req.body;
   console.log(req.body);
 
   const emailVerificationToken = crypto.randomBytes(20).toString('hex');
@@ -110,7 +110,8 @@ router.post('/register', async (req, res) => {
         username: username,
           password: hashedPassword,
           emailVerificationToken,
-          emailVerificationTokenExpires
+          emailVerificationTokenExpires,
+          Webpage: fromPage
       });
 
       await user.save();
