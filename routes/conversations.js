@@ -5,51 +5,27 @@ import Conversation from '../models/Conversation.js'; // Import the Conversation
 const router = express.Router();
 
 // GET all conversations
-router.get('/', async (req, res) => {
-  try {
-    const conversations = await Conversation.find();
-    res.json(conversations);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error retrieving conversations');
-  }
+
+
+router.get('/gris', async (req, res) => {
+
+  res.send('Hello, world!');
 });
 
-// GET a conversation by ID
-router.get('/:id', async (req, res) => {
+// Route to save a conversation note
+router.post('/addnote', async (req, res) => {
   try {
-    const conversation = await Conversation.findById(req.params.id);
-    if (!conversation) {
-      return res.status(404).send('Conversation not found');
-    }
-    res.json(conversation);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error retrieving conversation');
-  }
-});
-
-// POST a new conversation with a user
-router.post('/', async (req, res) => {
-  try {
-    const { userId, message } = req.body;
-
-    // Find the user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).send('User not found');
-    }
-
-    // Create a new conversation
-    const conversation = await Conversation.create({
-      userId,
-      messages: [{ text: message, sender: 'user' }]
+    const { contactName, contactId, note, quality, date } = req.body;
+    const conversation = new Conversation({
+      Name: contactName,
+      note: [{userId: contactId, text: note, conversation_quality: quality, mentor: 'TAH' }],
+      date
     });
-
-    res.status(201).json(conversation);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error creating conversation');
+    const savedConversation = await conversation.save();
+    res.status(201).json(savedConversation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error saving conversation');
   }
 });
 

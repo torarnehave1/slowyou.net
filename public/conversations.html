@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Conversation Page</title>
+    <title>User and Conversation Page</title>
     <script>
         async function findUser() {
-            const userId = document.getElementById('userIdInput').value;
-            const response = await fetch(`/users/${userId}`);
-            const user = await response.json();
-            if (user) {
-                document.getElementById('userName').textContent = user.name;
-                document.getElementById('userEmail').textContent = user.email;
+            const searchTerm = document.getElementById('searchTerm').value;
+            const response = await fetch(`/users?search=${searchTerm}`);
+            const users = await response.json();
+            if (users.length > 0) {
+                const userId = users[0].id;
+                document.getElementById('userId').textContent = userId;
+                document.getElementById('userName').textContent = users[0].fullName;
+                document.getElementById('userEmail').textContent = users[0].username;
             } else {
                 document.getElementById('userName').textContent = 'User not found';
                 document.getElementById('userEmail').textContent = '';
+                document.getElementById('userId').textContent = '';
             }
         }
 
         async function saveConversation() {
             const conversationId = document.getElementById('conversationId').value;
+            const userId = document.getElementById('userId').textContent;
             const message = document.getElementById('messageInput').value;
 
             const response = await fetch(`/conversations/${conversationId}`, {
@@ -25,7 +29,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ message })
+                body: JSON.stringify({ userId, message })
             });
 
             if (response.ok) {
@@ -37,9 +41,9 @@
     </script>
 </head>
 <body>
-    <h1>Conversation Page</h1>
-    <label for="userIdInput">User ID:</label>
-    <input type="text" id="userIdInput" />
+    <h1>User and Conversation Page</h1>
+    <label for="searchTerm">Search Term (name or email):</label>
+    <input type="text" id="searchTerm" />
     <button onclick="findUser()">Find User</button>
     <br />
     <label for="conversationId">Conversation ID:</label>
@@ -52,6 +56,7 @@
     <div>
         <h2 id="userName"></h2>
         <p id="userEmail"></p>
+        <p id="userId"></p>
     </div>
 </body>
 </html>

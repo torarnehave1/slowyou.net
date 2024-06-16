@@ -1,28 +1,27 @@
 import mongoose from 'mongoose';
 
 const conversationSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+  Name: {
+    type: String,
     required: true
   },
-  messages: [{
+  note: [{
+    userId: {
+      type: String,
+      required: true
+    },
     text: {
       type: String,
       required: true
     },
     sender: {
       type: String,
-      required: true
+      required: false
     },
     timestamp: {
       type: Date,
       default: Date.now
     },
-    message_from: { 
-        type: String,
-         required: true 
-        },
   conversation_quality: { 
     type: Number, 
     required: true 

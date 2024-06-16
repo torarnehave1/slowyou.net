@@ -38,7 +38,10 @@ router.get('/faq', (req, res) => {
   });
 
  
-
+  router.get('/bodymind', (req, res) => {
+    
+    res.sendFile(path.join(filePath, 'public/landpages/waitinglist.html'));
+  });
   router.get('/slow', (req, res) => {
     
     res.sendFile(path.join(filePath, 'public/landpages/slowyoutrening.html'));

@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import { connect } from 'mongoose';
 import dotenv from 'dotenv';
 //import { auth } from 'express-openid-connect';
-//import personRoutes from './routes/personRoutes.js';
+import personRoutes from './routes/personRoutes.js';
 import githubRoutes from './modules/github/route_github.js';
 //import pyprocess from './routes/pyprocess.js';
 import youtubeRoutes from "./modules/youtube/route_youtube.js";
@@ -18,7 +18,9 @@ import webpagesRoutes from "./modules/webpages/pages.js";
 import cookieParser from 'cookie-parser';
 import userRoutes from './routes/user_routes.js'; // Import the user routes
 import protectedRoutes from './routes/protected.js';
-
+import contacts_route from './routes/contacts.js';
+import conversations_route from './routes/conversations.js';
+import products_route from './routes/products_route.js';
 
 //import security from './modules/security/routes_security.js';
 
@@ -66,7 +68,7 @@ app.get('/', (req, res) => {
 //app.use('/t', testRoutes);
 app.use('/db', dbRoutes);
 //app.use('/json', jsonRoutes);
-//app.use('/p', personRoutes);
+app.use('/p', personRoutes);
 app.use("/api/github", githubRoutes);
 //app.use("/api/py", pyprocess);
 app.use('/youtube', youtubeRoutes);
@@ -76,6 +78,9 @@ app.use('/w', webpagesRoutes);
 //app.use('/g', groq);
 app.use('/a', userRoutes);
 app.use('/prot', protectedRoutes);
+app.use('/c/',contacts_route);
+app.use('/n',conversations_route);
+app.use('/products',products_route);
 
 
 app.get('/support', (req, res) => {
