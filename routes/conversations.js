@@ -1,6 +1,6 @@
 import express from 'express';
 import User from '../models/User.js'; // Import the User model
-import Conversation from '../models/Conversation.js'; // Import the Conversation model
+import Conversation from '../models/conversation.js'; // Import the Conversation model
 
 const router = express.Router();
 
