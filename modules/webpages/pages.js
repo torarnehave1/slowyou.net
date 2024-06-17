@@ -37,6 +37,12 @@ router.get('/faq', (req, res) => {
     res.render('view_faq', { faqs: faqs });
   });
 
+  
+  router.get('/coma', (req, res) => {
+    
+    res.sendFile(path.join(filePath, 'public/challenges/coma10day.html'));
+  });
+ 
  
   router.get('/bodymind', (req, res) => {
     
