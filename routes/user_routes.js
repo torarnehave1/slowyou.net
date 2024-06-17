@@ -19,13 +19,20 @@ const JWT_SECRET = process.env.JWT_SECRET; // Replace with your secret key
 
 router.delete('/users/:id', async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.params._id);
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+       
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+        await User.deleteOne({ _id: userId });
         res.status(200).json({ message: 'User deleted successfully.' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'An error occurred while deleting the user.' });
     }
 });
+
 
 async function createUser(userData) {
     const user = new User(userData);
