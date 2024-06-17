@@ -32,7 +32,7 @@ const userSchema = new Schema({
     required: true,
     default: false
   },
-  WebPage: { type: String, required: true },
+  webpage: { type: String, required: false },
 });
 
 userSchema.methods.comparePassword = function(candidatePassword) {

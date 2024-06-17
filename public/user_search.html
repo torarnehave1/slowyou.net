@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Search</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .result-item {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .result-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .fullname {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .email {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .phone {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .label {
+            flex-grow: 1;
+            background-color: red;
+            border-radius: 10px;
+            padding: 5px;
+            color: white;
+            text-align: center;
+        }
+
+        .note-section {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <div class="form-group">
+        <label for="search">Search for name or email address:</label>
+        <input type="text" class="form-control" id="search" name="search" placeholder="Enter name or email address">
+    </div>
+    <div id="searchResults" class="list-group"></div>
+
+    <div id="noteSection" class="note-section card">
+        <div class="card-body">
+            <h5 class="card-title">Add Note for <span id="contactName"></span></h5>
+            <div class="form-group">
+                <label for="note">Note:</label>
+                <textarea class="form-control" id="note" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="quality">Quality of Conversation:</label>
+                <select class="form-control" id="quality">
+                    <option>4</option>
+                    <option>3</option>
+                    <option>2</option>
+                    <option>1</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date and Time:</label>
+                <input type="datetime-local" class="form-control" id="date">
+            </div>
+            <button id="saveNote" class="btn btn-primary">Save Note</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedContactId = null;
+
+        const searchContact = async () => {
+            const query = document.getElementById('search').value;
+            try {
+                const response = await fetch(`/a/search/${query}`, {
+                    headers: {
+                        'Accept': 'application/json' // Request JSON response
+                    }
+                });
+                if (!response.ok) {
+                    console.error(`Network response was not ok. Status Code: ${response.status}`);
+                    throw new Error(`Network response was not ok. Status Code: ${response.status}`);
+                }
+                if (!response.headers.get('content-type')?.includes('application/json')) {
+                    throw new Error('Response not in JSON format.');
+                }
+                const data = await response.json();
+                displaySearchResults(data);
+            } catch (error) {
+                console.error('Error searching for contact:', error);
+            }
+        };
+
+        const deleteUser = async (userId) => {
+            try {
+                const response = await fetch(`/a/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                alert(data.message);
+                // Optionally, refresh the search results after deleting the user
+                searchContact();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('An error occurred while deleting the user.');
+            }
+        };
+
+        const displaySearchResults = (results) => {
+            const searchResults = document.getElementById('searchResults');
+            searchResults.innerHTML = ''; // Clear previous results
+            results.forEach(result => {
+                const listItem = document.createElement('div');
+                listItem.className = "list-group-item result-item d-flex align-items-center";
+                listItem.innerHTML = `
+                    <div class="fullname mr-3">${result.fullName}</div>
+                    <div class="email mr-3">${result.username}</div>
+                    <button class="btn btn-danger delete-button" onclick="deleteUser('${result._id}')">Delete</button>
+                `;
+                listItem.id = `${result._id}`;
+                listItem.addEventListener('click', () => showNoteSection(result._id, result.fullName));
+                searchResults.appendChild(listItem);
+            });
+        };
+
+        const showNoteSection = (contactId, contactName) => {
+            selectedContactId = contactId;
+            document.getElementById('contactName').innerText = contactName;
+            document.getElementById('noteSection').style.display = 'block';
+        };
+
+        const saveNote = async () => {
+            const note = document.getElementById('note').value;
+            const quality = document.getElementById('quality').value;
+            const date = document.getElementById('date').value;
+
+            const payload = {
+                contactName: document.getElementById('contactName').innerText,
+                contactId: selectedContactId,
+                note: note,
+                quality: quality,
+                date: date
+            };
+
+            try {
+                const response = await fetch('/n/addnote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    console.error(`Failed to save note. Status Code: ${response.status}`);
+                    throw new Error(`Failed to save note. Status Code: ${response.status}`);
+                }
+
+                alert('Note saved successfully');
+                document.getElementById('noteSection').style.display = 'none';
+                document.getElementById('note').value = '';
+                document.getElementById('quality').value = '4';
+                document.getElementById('date').value = '';
+            } catch (error) {
+                console.error('Error saving note:', error);
+            }
+        };
+
+        document.getElementById('saveNote').addEventListener('click', saveNote);
+
+        // Add an event listener to the search field to listen for keystrokes
+        document.getElementById('search').addEventListener('input', searchContact);
+    </script>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -102,6 +102,16 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadMenu();
+
+            const queryParams = new URLSearchParams(window.location.search);
+        const fromPageValue = queryParams.get('fromPage'); // Get the 'fromPage' parameter
+
+        // Check if the 'fromPage' parameter exists
+        if (fromPageValue) {
+            // Set the value of the hidden input field
+            document.getElementById('fromPage').value = fromPageValue;
+        }
+    
         });
 
         function validatePassword() {
