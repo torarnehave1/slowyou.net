@@ -28,18 +28,30 @@ const filePath = path.resolve(__dirname, '..', '..');
 
 function isAuthenticated(req, res, next) {
   try {
-      const token = req.cookies.jwtToken;
-      if (!token) {
-          return res.redirect('/login');
-      }
+    const token = req.cookies.jwtToken;
+    if (!token) {
+      console.log('No token provided. Redirecting to login.');
+      return res.redirect('/login.html'); // Redirect to login if no token
+    }
 
-      const decoded = jwt.verify(token, JWT_SECRET);
-      req.user = decoded;
-      next();
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
   } catch (ex) {
-    return res.redirect('/login');
+    console.log('Token verification failed:', ex.message);
+    return res.redirect('/login.html'); // Redirect to login if token verification fails
   }
 }
+// Protected route app.use('/prot', protectedRoutes);
+router.get('/protected', isAuthenticated, async (req, res) => {
+  try {
+      const user = await User.findById(req.user.id).select('username');
+      res.send(`You are authenticated as ${user.username}`);
+  } catch (ex) {
+      console.error(ex);
+      res.status(500).send('An error occurred while processing your request.');
+  }
+});
 
 
 router.get('/test', (req, res) => {
@@ -59,27 +71,33 @@ router.get('/faq', (req, res) => {
     res.render('view_faq', { faqs: faqs });
   });
 
-  router.get('/protected', isAuthenticated, async (req, res) => {
+  
+  router.get('/contacts', isAuthenticated, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('username');
         //res.send(`You are authenticated as ${user.username}`);
-        res.sendFile(path.join(filePath, 'public/users/user_search.html'));
-
+        res.sendFile(path.join(filePath, 'public/contacts/contacts.html'));
+  
     } catch (ex) {
-        console.error(ex);
+      console.error(ex);
         res.status(500).send('An error occurred while processing your request.');
     }
-});
-
+      
+    
+  });
+  
 router.get('/users', isAuthenticated, async (req, res) => {
   try {
       const user = await User.findById(req.user.id).select('username');
       //res.send(`You are authenticated as ${user.username}`);
-      res.sendFile(path.join(filePath, 'public/users/user_search.html'));
+      res.sendFile(path.join(filePath, 'public/users/users.html'));
 
   } catch (ex) {
-    
+    console.error(ex);
+      res.status(500).send('An error occurred while processing your request.');
   }
+    
+  
 });
 
   
