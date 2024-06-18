@@ -1,9 +1,21 @@
 import { Router } from 'express';
-
 import Product from '../models/product.js';
+import Vegvisr from '../models/vegvisr.js';
 
 
 const router = Router();
+
+
+//Get all vegvisrs
+
+router.get('/vegvisr', async (req, res) => {
+
+  const vegvisrs = await Vegvisr.find({});
+console.log(vegvisrs);
+  res.json(vegvisrs);
+
+});
+
 
 router.post('/add', async (req, res) => {
   const { productName, description, category } = req.body;
