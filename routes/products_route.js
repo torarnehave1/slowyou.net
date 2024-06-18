@@ -9,12 +9,16 @@ const router = Router();
 //Get all vegvisrs
 
 router.get('/vegvisr', async (req, res) => {
-
-  const vegvisrs = await Vegvisr.find({});
-console.log(vegvisrs);
-  res.json(vegvisrs);
-
+  try {
+    const vegvisrs = await Vegvisr.find({});
+    console.log(vegvisrs);
+    res.json(vegvisrs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Error retrieving vegvisrs' });
+  }
 });
+
 
 
 router.post('/add', async (req, res) => {

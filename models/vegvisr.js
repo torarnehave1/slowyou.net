@@ -2,9 +2,7 @@ import { Schema, model } from 'mongoose';
 
 // Define the schema
 const vegvisrSchema = new Schema({
-  _id: {
-    $oid: Schema.Types.ObjectId
-  },
+  _id: Schema.Types.ObjectId,
   Date: {
     type: String,
     required: true
@@ -17,9 +15,9 @@ const vegvisrSchema = new Schema({
     type: Number,
     required: true
   }
-});
+}, { collection: 'vegvisr' });
 
 // Create the model
-const Vegvisr = model('vegvisr', vegvisrSchema);
+const Vegvisr = model('Vegvisr', vegvisrSchema);
 
 export default Vegvisr;
