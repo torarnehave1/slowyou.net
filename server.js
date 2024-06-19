@@ -21,6 +21,7 @@ import protectedRoutes from './routes/protected.js';
 import contacts_route from './routes/contacts.js';
 import conversations_route from './routes/conversations.js';
 import products_route from './routes/products_route.js';
+import vegvisr_route from './modules/vegvisr/vegvisr_route.js';
 
 //import security from './modules/security/routes_security.js';
 
@@ -81,6 +82,7 @@ app.use('/prot', protectedRoutes);
 app.use('/c/',contacts_route);
 app.use('/n',conversations_route);
 app.use('/products',products_route);
+app.use('/vegvisr', vegvisr_route);
 
 
 app.get('/support', (req, res) => {
