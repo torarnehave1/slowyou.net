@@ -29,4 +29,26 @@ router.post('/addnote', async (req, res) => {
   }
 });
 
+
+// Route to search for a conversation note by userId
+router.get('/findnotes/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const notes = await Conversation.find({ 'note.userId': userId });
+    res.status(200).json(notes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error finding conversation');
+  }
+});
+
+//What does the server.js say about the conversations routes what is the root
+//app.use('/conversations', conversationsRoutes);
+//The root for this endpoint is /conversations
+
+
+// The root for this endpoint is '/n'
+
+
+
 export default router;
