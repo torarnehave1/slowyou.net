@@ -22,13 +22,31 @@ import contacts_route from './routes/contacts.js';
 import conversations_route from './routes/conversations.js';
 import products_route from './routes/products_route.js';
 import vegvisr_route from './modules/vegvisr/vegvisr_route.js';
-
+import rateLimit from 'express-rate-limit'; //Security to protect from brute force
+import morgan from 'morgan'; //Log funcionality
 //import security from './modules/security/routes_security.js';
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
+
+
+
 
 dotenv.config(); // Load environment variables
 
 const app = express();
+app.use(limiter);
+
+
+
+
 const port = process.env.PORT || 3000;
+
+const logger = morgan('combined');
+app.use(logger);
 
 const config = {
   authRequired: false,
