@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">SlowYou Kunngjøringer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="d-flex flex-column pt-5 hero-background">
+    
+    <div id="menu-container"></div> <!-- Placeholder for the menu -->
+
+    <section id="hero" class="mt-4">
+        <div class="container">
+            <h2 class="display-2 text-center mb-4" id="announcementTitle">SlowYou</h2>
+
+            <h1 class="display-4 text-center mb-4" id="announcementMainTitle">Kunngjøringer</h1>
+            <h2 class="lead text-center mb-4" id="announcementSubtitle"></h2>
+            <p class="text-dark p-5 rounded mx-auto text-left d-flex justify-content-center align-items-center flex-column h-auto overflow-hidden" style="background-color: rgba(255, 255, 255, 0.8);" id="announcementText">
+                <strong>Estetisk Forskning Undersøkelser</strong><br>
+                Hei alle sammen,<br><br>
+                Vi starter et nytt forskningsprosjekt for å utforske opprinnelsen til skjønnhet... I bunn og grunn, når finner vi noe kollektivt vakkert, og når ser vi hver enkelt skjønnhet forskjellig?<br><br>
+                Vi gjør dette ved å sammenligne de personaliserte modellene folk lager med svarene i flere nye undersøkelser.<br><br>
+                Den første undersøkelsen handler om demografi, hvordan påvirker ting som alder, kjønn, land, etc hva vi finner vakkert?<br><br>
+                Ta undersøkelsen på <a href="https://www.slowyou.com/surveys" id="surveyLink">slowyou.com/surveys</a>.
+            </p>
+        </div>
+    </section>
+
+    <div class="content d-flex justify-content-center align-items-center container mt-4">
+        <!-- Your other content -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function loadJSON(url, callback) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => callback(data))
+                .catch(error => console.error('Error loading JSON:', error));
+        }
+
+        function loadNavbar() {
+            loadJSON(`/languages/navbar_${language}.json`, function(data) {
+                document.getElementById('navHome').innerText = data.navHome;
+                document.getElementById('navFeatures').innerText = data.navFeatures;
+                document.getElementById('navPricing').innerText = data.navPricing;
+                document.getElementById('navFAQs').innerText = data.navFAQs;
+                document.getElementById('navAbout').innerText = data.navAbout;
+                document.getElementById('loginButton').innerText = data.loginButton;
+                document.getElementById('signupButton').innerText = data.signupButton;
+                document.getElementById('logoutButton').innerText = data.logoutButton;
+            });
+        }
+
+        function loadAnnouncementPage(language) {
+            loadJSON(`/languages/slowyou_announcements_${language}.json`, function(data) {
+                document.getElementById('pageTitle').innerText = data.pageTitle;
+                document.getElementById('announcementTitle').innerText = data.announcementTitle;
+                document.getElementById('announcementMainTitle').innerText = data.announcementMainTitle;
+                document.getElementById('announcementSubtitle').innerText = data.announcementSubtitle;
+                document.getElementById('announcementText').innerText = data.announcementText;
+                document.getElementById('titleLanguage').innerText = data.titleLanguage;
+                document.getElementById('learnMoreButton').innerText = data.learnMoreButton;
+            });
+        }
+
+        function initializeLanguageSelector() {
+            console.log("Initializing language selector");
+            document.getElementById('languageSelector').addEventListener('change', function() {
+                const selectedLanguage = this.value;
+                localStorage.setItem('preferredLanguage', selectedLanguage);
+                loadAnnouncementPage(selectedLanguage);
+            });
+    
+            const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
+            document.getElementById('languageSelector').value = preferredLanguage;
+            loadAnnouncementPage(preferredLanguage);
+        }
+    
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    
+        function checkAuthStatus() {
+            console.log("Checking auth status");
+            const token = getCookie('jwtToken');
+            console.log('Token found:', token);
+    
+            if (token) {
+                document.getElementById('auth-buttons').classList.add('d-none');
+                document.getElementById('logout-buttons').classList.remove('d-none');
+                document.getElementById('logoutButton').addEventListener('click', () => {
+                    document.cookie = 'jwtToken=; Max-Age=0; path=/; SameSite=Lax;'; // Clear the cookie
+                    location.reload();
+                });
+            } else {
+                document.getElementById('auth-buttons').classList.remove('d-none');
+                document.getElementById('logout-buttons').classList.add('d-none');
+            }
+        }
+    
+        function loadMenu() {
+            fetch('../../menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                    initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                    checkAuthStatus(); // Check auth status after loading the menu
+                    loadNavbar(); // Load the navbar data
+                })
+                .catch(error => console.error('Error loading menu:', error));
+        }
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM fully loaded and parsed");
+            loadMenu();
+        });
+    </script>
+    
+</body>
+</html>

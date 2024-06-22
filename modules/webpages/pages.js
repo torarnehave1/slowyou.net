@@ -86,6 +86,24 @@ router.get('/faq', (req, res) => {
     
   });
   
+
+  router.get('/anno', isAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('username');
+        //res.send(`You are authenticated as ${user.username}`);
+        res.sendFile(path.join(filePath, 'modules/announcements/announcements.html'));
+  
+    } catch (ex) {
+      console.error(ex);
+        res.status(500).send('An error occurred while processing your request.');
+    }
+      
+    
+  });
+
+
+
+
 router.get('/users', isAuthenticated, async (req, res) => {
   try {
       const user = await User.findById(req.user.id).select('username');
