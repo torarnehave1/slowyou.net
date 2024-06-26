@@ -19,9 +19,16 @@ const contactSchema = new mongoose.Schema({
     default: ""
   },
   Phone: {
-    type: Number,
+    type: String,
     required: true
   }
+  ,
+  Status: {
+    type: String,
+    enum: ["Active", "Ended", "Pause"],
+    default: "Active"
+  }
+  
 });
 
 const Contact = mongoose.model('Contact', contactSchema);

@@ -96,7 +96,8 @@ router.post('/api/personer/addnew', async (req, res) => {
       const contacts = await Contact.find({
         $or: [
           { FullName: { $regex: `^${req.params.name}`, $options: 'i' } },
-          { Email: { $regex: `^${req.params.name}`, $options: 'i' } }
+          { Email: { $regex: `^${req.params.name}`, $options: 'i' } },
+          { Status: { $regex: `^${req.params.name}`, $options: 'i' } }
         ]
       });
       if (!contacts) {

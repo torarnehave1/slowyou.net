@@ -3,23 +3,70 @@ import { Router } from 'express';
 const router = Router();
 import Contact from '../models/contact.js';
 
+//
+//app.use('/c/',contacts_route);
+
 // Definer ruten for å søke etter kontakter
-router.get('/search', async (req, res) => {
-  const query = req.query.query; // Hent søkestrengen fra URL-parameteren 'query'
+router.get('/api/contacts/search/:name', async (req, res) => {
   try {
-    // Utfør søket basert på navn 
-    const contacts = await Contact.find({Name: query});
-    // Returner resultatene som JSON-respons
-    // res.json(contacts);
-
-
-   console.log(contacts.email);
-   // res.send(contacts);
+    const contacts = await Contact.find({
+      $or: [
+        { FullName: { $regex: `^${req.params.name}`, $options: 'i' } },
+        { Email: { $regex: `^${req.params.name}`, $options: 'i' } },
+        { Status: { $regex: `^${req.params.name}`, $options: 'i' } }
+      ]
+    });
+    if (!contacts) {
+      return res.status(404).send({ message: 'Contact not found' });
+    }
+    res.json(contacts);
   } catch (error) {
-    console.error('Error searching for contacts:', error);
-    // Returner feilmelding hvis det oppstår en feil
-    res.status(500).send('Error searching for contacts');
+    console.error('Failed to fetch contact:', error);
+    res.status(500).send({ error: 'Error fetching contact' });
   }
+});
+
+
+// Define route to update Contact Status by ID
+router.put('/status/:id', async (req, res) => {
+    console.log(req.params.id);
+    console.log(req.body.status);
+
+    try {
+      const contact = await Contact.findById(req.params.id);
+      if (!contact) {
+        return res.status(404).send({ message: 'Contact not found' });
+      }
+      if (req.body.status) {
+        contact.Status = req.body.status;
+      }
+      if (req.body.Phone) {
+        contact.Phone = req.body.Phone;
+      }
+      await contact.save();
+      res.send(contact.Status);
+
+    } catch (error) {
+      console.error('Failed to update contact status:', error);
+      res.status(500).send({ error: 'Error updating contact status' });
+    }
+});
+
+router.delete('/contacts/:id', async (req, res) => {
+  console.log(req.params.id);
+  try {
+    const ContactID = req.params.id;
+    const contact = await Contact.findById(ContactID);
+   
+    if (!contact) {
+        return res.status(404).json({ message: 'Contact not found.' });
+    }
+    await Contact.deleteOne({ _id: ContactID });
+    res.status(200).json({ message: 'Contact deleted successfully.' });
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred while deleting the Contact.' });
+}
 });
 
 // Eksporter routeren for å gjøre den tilgjengelig for resten av applikasjonen

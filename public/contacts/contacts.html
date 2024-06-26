@@ -40,17 +40,41 @@
 
         .label {
             flex-grow: 1;
-            background-color: red;
+            background-color: rgb(229, 202, 143);
             border-radius: 10px;
-            padding: 5px;
             color: white;
             text-align: center;
+            margin-right: 10px;
         }
 
         .note-section {
             display: none;
             margin-top: 20px;
         }
+
+        .status-select{
+            flex-grow: 1;
+            background-color: rgb(178, 173, 163);
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            margin-left: 10px;
+            margin-right: 10px;
+
+        }
+
+        .select-all {
+            margin-right: 10px;
+        }
+
+        .fullname{
+            flex-grow: 1;
+            margin-right: 10px;
+            margin-left: 10px;
+            font-weight: bold;
+
+        }
+        
     </style>
 </head>
 <body class="container mt-5">
@@ -58,7 +82,27 @@
         <label for="search">Search for name or email address:</label>
         <input type="text" class="form-control" id="search" name="search" placeholder="Enter name or email address">
     </div>
-    <div id="searchResults" class="list-group"></div>
+    
+    <div class="form-group">
+        <label for="status">Filter by status:</label>
+        <select class="form-control" id="status">
+            <option value="">All</option>
+            <option value="Active">Active</option>
+            <option value="Ended">Ended</option>
+            <option value="Pause">Pause</option>
+        </select>
+    </div>
+    
+    <div class="list-group-item select-all">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="selectAll" />
+            <label class="form-check-label" for="selectAll">Select All</label>
+        </div>
+    </div>
+
+    <div id="searchResults" class="list-group">
+        
+    </div>
 
     <div id="noteSection" class="note-section card">
         <div class="card-body">
@@ -90,7 +134,32 @@
         const searchContact = async () => {
             const query = document.getElementById('search').value;
             try {
-                const response = await fetch(`/p/api/contacts/search/${query}`, {
+                const response = await fetch(`/c/api/contacts/search/${query}`, {
+                    headers: {
+                        'Accept': 'application/json' // Request JSON response
+                    }
+                });
+                if (!response.ok) {
+                    console.error(`Network response was not ok. Status Code: ${response.status}`);
+                    throw new Error(`Network response was not ok. Status Code: ${response.status}`);
+                }
+                if (!response.headers.get('content-type')?.includes('application/json')) {
+                    throw new Error('Response not in JSON format.');
+                }
+                const data = await response.json();
+                displaySearchResults(data);
+            } catch (error) {
+                console.error('Error searching for contact:', error);
+            }
+        };
+
+
+
+        const searchContactStatus = async () => {
+            const query = document.getElementById('status').value;
+            console.log('Searching for status:', query);
+            try {
+                const response = await fetch(`/c/api/contacts/search/${query}`, {
                     headers: {
                         'Accept': 'application/json' // Request JSON response
                     }
@@ -112,19 +181,71 @@
         const displaySearchResults = (results) => {
             const searchResults = document.getElementById('searchResults');
             searchResults.innerHTML = ''; // Clear previous results
+            
+            const selectAllCheckbox = document.getElementById('selectAll');
+            selectAllCheckbox.checked = false;
+
+            
             results.forEach(result => {
                 const listItem = document.createElement('div');
                 listItem.className = "list-group-item result-item d-flex align-items-center";
                 listItem.innerHTML = `
-                    <div class="fullname mr-3">${result.FullName}</div>
+                <input type="checkbox" class="select-checkbox" data-contact-id="${result._id}" />
+                    <div class="fullname">${result.FullName}</div>
                     <div class="email mr-3">${result.Email}</div>
                     <div class="phone mr-3">${result.Phone}</div>
                     <div class="label">${result.Label}</div>
+                    <label for="status-${result._id}" class="sr-only">Status</label>
+                        <select id="status-${result._id}" class="status-select" data-contact-id="${result._id}">
+                            <option value="Active" ${result.Status === 'Active' ? 'selected' : ''}>Active</option>
+                            <option value="Ended" ${result.Status === 'Ended' ? 'selected' : ''}>Ended</option>
+                            <option value="Pause" ${result.Status === 'Pause' ? 'selected' : ''}>Pause</option>
+                        </select>
+                    <button class="btn btn-danger delete-button" onclick="deleteContact('${result._id}')">Delete</button>
                 `;
                 listItem.id = `${result._id}`;
+                listItem.querySelector('.status-select').addEventListener('change', () => {
+                    const selectedStatus = listItem.querySelector('.status-select').value;
+                    const contactId = listItem.querySelector('.status-select').dataset.contactId;
+                    updateStatus(contactId, selectedStatus);
+                });
                 listItem.addEventListener('click', () => showNoteSection(result._id, result.FullName));
                 searchResults.appendChild(listItem);
             });
+        };
+        const deleteContact = async (contactId) => {
+            try {
+                const response = await fetch(`/c/contacts/${contactId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                //alert(data.message);
+                // Optionally, refresh the search results after deleting the user
+                searchContact();
+            } catch (error) {
+                console.error('Error deleting Contact:', error);
+                alert('An error occurred while deleting the Contact.');
+            }
+        };
+        const updateStatus = async (contactId, selectedStatus) => {
+            try {
+                const response = await fetch(`/c/status/${contactId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: selectedStatus })
+                });
+                if (!response.ok) {
+                    console.error(`Network response was not ok. Status Code: ${response.status}`);
+                    throw new Error(`Network response was not ok. Status Code: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
         };
 
         const showNoteSection = (contactId, contactName) => {
@@ -170,10 +291,67 @@
             }
         };
 
+
+        const updateDatabase = async () => {
+    const selectedItems = getSelectedItems();
+
+    if (selectedItems.length > 0) {
+        try {
+            const response = await fetch('/api/update-contacts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ contactIds: selectedItems })
+            });
+
+            if (!response.ok) {
+                console.error(`Failed to update contacts. Status Code: ${response.status}`);
+                throw new Error(`Failed to update contacts. Status Code: ${response.status}`);
+            }
+
+            console.log('Contacts updated successfully!');
+        } catch (error) {
+            console.error('Error updating contacts:', error);
+        }
+    }
+};
+
+
+
+        document.getElementById('selectAll').addEventListener('change', (e) => {
+   
+            const selectAllCheckbox = e.target;
+            const checkboxes = document.querySelectorAll('.select-checkbox');
+
+             if (selectAllCheckbox.checked) {
+                checkboxes.forEach((checkbox) => {
+                checkbox.checked = true;
+        });
+                } else {
+                checkboxes.forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+    }
+});
+
+const getSelectedItems = () => {
+    const selectedItems = [];
+    const checkboxes = document.querySelectorAll('.select-checkbox');
+
+    checkboxes.forEach((checkbox) => {
+        if (checkbox.checked) {
+            selectedItems.push(checkbox.dataset.contactId);
+        }
+    });
+
+    return selectedItems;
+};
         document.getElementById('saveNote').addEventListener('click', saveNote);
 
         // Add an event listener to the search field to listen for keystrokes
         document.getElementById('search').addEventListener('input', searchContact);
+        document.getElementById('status').addEventListener('change', searchContactStatus);
     </script>
 
     <!-- Bootstrap JS and dependencies -->
