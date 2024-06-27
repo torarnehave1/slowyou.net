@@ -1,5 +1,5 @@
 {
-    "title": "User Registration",
+    "pageTitleUserReg": "Brukerregistrering",
     "emailLabel": "Email:",
     "passwordLabel": "Password:",
     "confirmPasswordLabel": "Confirm Password:",

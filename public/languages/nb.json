@@ -34,8 +34,19 @@
         "announcementMainTitle": "Kunngjøringer",
         "announcementSubtitle": "",
         "announcementText": "Estetisk Forskning Undersøkelser\nHei alle sammen,\nVi starter et nytt forskningsprosjekt for å utforske opprinnelsen til skjønnhet... I bunn og grunn, når finner vi noe kollektivt vakkert, og når ser vi hver enkelt skjønnhet forskjellig?\nVi gjør dette ved å sammenligne de personaliserte modellene folk lager med svarene i flere nye undersøkelser.\nDen første undersøkelsen handler om demografi, hvordan påvirker ting som alder, kjønn, land, etc hva vi finner vakkert?\nTa undersøkelsen på slowyou.com/surveys.",
-        "learnMoreButton": "",
-        "titleLanguage": "Velg språk:"
+        
+        "maintitlefirstpage": "SlowYou™",
+        "forgotpasswordtitle": "Glemt Passord",
+        "forgotpasswordlink": "Glemt Passord",
+        
+        "heroTitle": "Enkel Væren,  Samskapende liv.",
+            "heroSubtitle": "Reisen Innover",
+            "heroText1": "«Enkel Væren, Samskapende liv» er mer enn et prinsipp; det er en måte å leve på. Det inviterer deg til å tre inn i en verden hvor hver handling er fylt med mening, og hvert øyeblikk er en mulighet for vekst og glede. Det kaller deg til et liv hvor du ikke lenger er en tilskuer, men en levende deltaker i skapelsens dans.",
+            "heroText2": "Denne filosofien ber deg ikke om å endre hvem du er, men om å bli dypere det du virkelig er—et vesen av lys, kjærlighet og uendelig potensiale. Når du blar gjennom sidene på denne nettsiden og i ditt liv, husk at veien til en grenseløs eksistens ligger i den enkle anstrengelsen av å være tro mot din natur. La denne kunnskapen lede deg mens du navigerer i verdens kompleksiteter med eleganse og ynde, og omfavner den grenseløse gleden ved simpelthen å være.",
+            "learnMoreButton": "Lær Mer",
+            "titlelanguage": "Velg Språk:"
+    
+          
     }
     
 
