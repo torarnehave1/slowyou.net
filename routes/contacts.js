@@ -69,6 +69,6 @@ router.delete('/contacts/:id', async (req, res) => {
 }
 });
 
-// Eksporter routeren for å gjøre den tilgjengelig for resten av applikasjonen
+
 export default router;
 

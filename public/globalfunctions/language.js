@@ -18,6 +18,17 @@ function loadLanguage(language) {
             document.getElementById('heroText2').innerText = data.heroText2;
             document.getElementById('learnMoreButton').innerText = data.learnMoreButton;
             document.getElementById('maintitlefirstpage').innerText = data.maintitlefirstpage;
+            document.getElementById('fullNameLabel').innerText = data.fullNameLabel;
+            document.getElementById('loginTitle').innerText = data.loginTitle;
+            document.getElementById('forgotpasswordtitle').innerText = data.forgotpasswordtitle;
+            document.getElementById('forgotpasswordlink').innerText = data.forgotpasswordlink;
+            document.getElementById('usernameLabel').innerText = data.usernameLabel;
+            document.getElementById('loginButton').innerText = data.loginButton;
+            document.getElementById('sendResetLinkButton').innerText = data.sendResetLinkButton;
+            document.getElementById('forgotpasswordtitle').innerText = data.forgotpasswordtitle;
+            document.getElementById('forgotpasswordlink').innerText = data.forgotpasswordlink;
+            document.getElementById('message').innerText = data.message;
+            document.getElementById('pageTitleUserReg').innerText = data.pageTitleUserReg;
         });
 }
 

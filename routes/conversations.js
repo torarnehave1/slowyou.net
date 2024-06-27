@@ -5,7 +5,7 @@ import Conversation from '../models/conversation.js'; // Import the Conversation
 const router = express.Router();
 
 // GET all conversations
-
+//app.use('/n',conversations_route);
 
 router.get('/gris', async (req, res) => {
 
@@ -34,7 +34,7 @@ router.post('/addnote', async (req, res) => {
 router.get('/findnotes/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    const notes = await Conversation.find({ 'note.userId': userId });
+    const notes = await Conversation.find({ 'note.0.userId': userId });
     res.status(200).json(notes);
   } catch (error) {
     console.error(error);

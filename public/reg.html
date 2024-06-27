@@ -19,7 +19,7 @@
     
     <section id="hero" class="mt-4">
     <div class="container">
-        <h2 class="text-center my-4" id="title">User Registration</h2>
+        <h2 class="text-center my-4" id="pageTitleUserReg">User Registration</h2>
         <form id="registrationForm" action="/a/register" method="post" class="form-container" onsubmit="event.preventDefault(); registerUser();">
             <input type="hidden" id="fromPage" name="fromPage" value="">
             <div class="form-group">
@@ -41,7 +41,7 @@
             <div class="alert alert-info" role="alert" id="securityMessage">
                 Your password is not stored as plain text. Instead, it is transformed using strong encryption techniques, making it unreadable and ensuring it is stored securely. This means that even if someone gains access to the stored data, they cannot see your actual password.
             </div>
-            <button type="submit" class="btn btn-primary btn-block" id="submitButton">Register</button>
+            <button type="submit" class="btn btn-primary btn-block" id="signupButton">Register</button>
             <div id="message" class="message"></div>
         </form>
         
@@ -55,20 +55,22 @@
 
     <!-- Menu and Language Script -->
     <script>
-        function loadLanguage(language) {
-            fetch(`/languages/${language}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('title').innerText = data.title;
-                    document.getElementById('fullNameLabel').innerText = data.fullNameLabel;
-                    document.getElementById('emailLabel').innerText = data.emailLabel;
-                    document.getElementById('passwordLabel').innerText = data.passwordLabel;
-                    document.getElementById('confirmPasswordLabel').innerText = data.confirmPasswordLabel;
-                    document.getElementById('securityMessage').innerText = data.securityMessage;
-                    document.getElementById('submitButton').innerText = data.submitButton;
-                });
-        }
 
+function loadLanguage(language) {
+        fetch(`/languages/${language}.json`)
+            .then(response => response.json())
+            .then(data => {
+             
+                document.getElementById('pageTitleUserReg').innerText = data.pageTitleUserReg;
+                document.getElementById('fullNameLabel').innerText = data.fullNameLabel;
+                document.getElementById('emailLabel').innerText = data.emailLabel;
+                document.getElementById('passwordLabel').innerText = data.passwordLabel;
+                document.getElementById('confirmPasswordLabel').innerText = data.confirmPasswordLabel;
+                document.getElementById('signupButton').innerText = data.signupButton;
+                document.getElementById('securityMessage').innerText = data.securityMessage;
+
+            });
+    }
         function initializeLanguageSelector() {
             document.getElementById('languageSelector').addEventListener('change', function() {
                 const selectedLanguage = this.value;
