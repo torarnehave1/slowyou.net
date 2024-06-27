@@ -34,29 +34,10 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        
+        import loadLanguage  from '/globalfunctions/language.js';
 
-    <script>
-        function loadLanguage(language) {
-            fetch(`/languages/${language}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('navHome').innerText = data.navHome;
-                    document.getElementById('navFeatures').innerText = data.navFeatures;
-                    document.getElementById('navPricing').innerText = data.navPricing;
-                    document.getElementById('navFAQs').innerText = data.navFAQs;
-                    document.getElementById('navAbout').innerText = data.navAbout;
-                    document.getElementById('loginButton').innerText = data.loginButton;
-                    document.getElementById('signupButton').innerText = data.signupButton;
-                    document.getElementById('titlelanguage').innerText = data.titlelanguage;
-                    document.getElementById('heroTitle').innerText = data.heroTitle;
-                    document.getElementById('heroSubtitle').innerText = data.heroSubtitle;
-                    document.getElementById('heroText1').innerText = data.heroText1;
-                    document.getElementById('heroText2').innerText = data.heroText2;
-                    document.getElementById('learnMoreButton').innerText = data.learnMoreButton;
-                    document.getElementById('maintitlefirstpage').innerText = data.maintitlefirstpage;
-                });
-        }
-    
         function initializeLanguageSelector() {
             console.log("Initializing language selector");
             document.getElementById('languageSelector').addEventListener('change', function() {
@@ -64,23 +45,23 @@
                 localStorage.setItem('preferredLanguage', selectedLanguage);
                 loadLanguage(selectedLanguage);
             });
-    
+
             const preferredLanguage = localStorage.getItem('preferredLanguage') || 'en';
             document.getElementById('languageSelector').value = preferredLanguage;
             loadLanguage(preferredLanguage);
         }
-    
+
         function getCookie(name) {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
-    
+
         function checkAuthStatus() {
             console.log("Checking auth status");
             const token = getCookie('jwtToken');
             console.log('Token found:', token);
-    
+
             if (token) {
                 document.getElementById('auth-buttons').classList.add('d-none');
                 document.getElementById('logout-buttons').classList.remove('d-none');
@@ -93,7 +74,7 @@
                 document.getElementById('logout-buttons').classList.add('d-none');
             }
         }
-    
+
         function loadMenu() {
             fetch('./menu.html')
                 .then(response => response.text())
@@ -104,7 +85,7 @@
                 })
                 .catch(error => console.error('Error loading menu:', error));
         }
-    
+
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM fully loaded and parsed");
             loadMenu();

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import Vegvisr from '../../models/vegvisr.js';
-import isAuthenticated from '../../globalfunctions/protected.js';
+import isAuthenticated from '../../public/globalfunctions/protected.js';
 import User from '../../models/User.js';
 
 const router = Router();
