@@ -1,4 +1,23 @@
 body.hero-background {
-    background: url('hero.png') no-repeat center center fixed;
+    background: url('./images/riverflow.png') no-repeat center center fixed;
     background-size: cover;
+}
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.message.error {
+    color: red;
+}
+.message.success {
+    color: green;
+}
+
+.container-fluid {
+    background-color: #e670099b;
+
 }
