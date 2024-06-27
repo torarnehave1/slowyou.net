@@ -18,8 +18,9 @@ router.post('/addnote', async (req, res) => {
     const { contactName, contactId, note, quality, date } = req.body;
     const conversation = new Conversation({
       Name: contactName,
-      note: [{userId: contactId, text: note, conversation_quality: quality, mentor: 'TAH' }],
-      date
+      note: [{userId: contactId, text: note, conversation_quality: quality, mentor: 'TAH' ,timestamp: date}],
+      
+
     });
     const savedConversation = await conversation.save();
     res.status(201).json(savedConversation);
