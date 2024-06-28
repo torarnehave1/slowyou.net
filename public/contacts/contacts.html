@@ -94,25 +94,7 @@
             display: none;
             margin-top: 20px;
         }
-
-        .flexcontainer {
-            display: flex;
-            flex-wrap: wrap;
-            border-radius: 2px;
-        }
-       
-        .flexcol1 {
-            flex: 1;
-            
-            background-color:rgba(185, 195, 198, 0.617);
-        }
-
-        .flexcol2 {
-            flex: 1;
-            
-            background-color: rgba(185, 195, 198, 0.617);
-            display: none;
-        }
+        
     </style>
      <link rel="stylesheet" href="../admin.css">
 </head>
@@ -121,84 +103,75 @@
     <div class="form-group">
         <button id="addNewContact" class="btn btn-primary">Add New Contact</button>
     </div>
-
-    <div class="flexcontainer">
-        <div class="flexcol1">
-            <div class="form-group">
-                <label for="search">Search for name or email address:</label>
-                <input type="text" class="form-control" id="search" name="search" placeholder="Enter name or email address">
-            </div>
+    <div class="form-group">
+        <label for="search">Search for name or email address:</label>
+        <input type="text" class="form-control" id="search" name="search" placeholder="Enter name or email address">
+    </div>
     
-            <div class="form-group">
-                <label for="status">Filter by status:</label>
-                <select class="form-control" id="status">
-                    <option value="">All</option>
-                    <option value="Active">Active</option>
-                    <option value="Ended">Ended</option>
-                    <option value="Pause">Pause</option>
-                </select>
-            </div>
+    <div class="form-group">
+        <label for="status">Filter by status:</label>
+        <select class="form-control" id="status">
+            <option value="">All</option>
+            <option value="Active">Active</option>
+            <option value="Ended">Ended</option>
+            <option value="Pause">Pause</option>
+        </select>
+    </div>
     
-            <div class="list-group-item select-all">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="selectAll" />
-                    <label class="form-check-label" for="selectAll">Select All</label>
-                </div>
-            </div>
-
-            <div id="searchResults" class="list-group"></div>
-
+    <div class="list-group-item select-all">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="selectAll" />
+            <label class="form-check-label" for="selectAll">Select All</label>
         </div>
-        <div class="flexcol2">
-            <div id="addContactSection" class="addContactSection add-contact-card">
+    </div>
 
-                <div class="form-container">
-                    <h1>Add Contact</h1>
-                    <form id="contact-form">
-                      <div class="form-group">
-                        <label for="FullName">Full Name</label>
-                        <input type="text" class="form-control" id="FullName" name="FullName" required>
-                      </div>
-                      <div class="form-group">
-                        <label for="FirstName">First Name</label>
-                        <input type="text" class="form-control" id="FirstName" name="FirstName">
-                      </div>
-                      <div class="form-group">
-                        <label for="LastName">Last Name</label>
-                        <input type="text" class="form-control" id="LastName" name="LastName">
-                      </div>
-                      <div class="form-group">
-                        <label for="Notes">Notes</label>
-                        <textarea class="form-control" id="Notes" name="Notes"></textarea>
-                      </div>
-                      <div class="form-group">
-                        <label for="Photo">Photo</label>
-                        <input type="text" class="form-control" id="Photo" name="Photo">
-                      </div>
-                      <div class="form-group">
-                        <label for="Label">Label</label>
-                        <input type="text" class="form-control" id="Label" name="Label">
-                      </div>
-                      <div class="form-group">
-                        <label for="Email">Email</label>
-                        <input type="email" class="form-control" id="Email" name="Email">
-                      </div>
-                      <div class="form-group">
-                        <label for="Phone">Phone</label>
-                        <input type="tel" class="form-control" id="Phone" name="Phone">
-                      </div>
-                      <button id="SaveNewContact" type="submit" class="btn btn-primary">Add Contact</button>
-                    </form>
-                  </div>
-                </div>
-                
-            
-        </div>
-    </div> 
-
-    
+    <div id="searchResults" class="list-group">
+        
+    </div>
     
 
+<div id="addContactSection" class="addContactSection add-contact-card">
+
+    <div class="form-container">
+        <h1>Add Contact</h1>
+        <form id="contact-form">
+          <div class="form-group">
+            <label for="FullName">Full Name</label>
+            <input type="text" class="form-control" id="FullName" name="FullName" required>
+          </div>
+          <div class="form-group">
+            <label for="FirstName">First Name</label>
+            <input type="text" class="form-control" id="FirstName" name="FirstName">
+          </div>
+          <div class="form-group">
+            <label for="LastName">Last Name</label>
+            <input type="text" class="form-control" id="LastName" name="LastName">
+          </div>
+          <div class="form-group">
+            <label for="Notes">Notes</label>
+            <textarea class="form-control" id="Notes" name="Notes"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="Photo">Photo</label>
+            <input type="text" class="form-control" id="Photo" name="Photo">
+          </div>
+          <div class="form-group">
+            <label for="Label">Label</label>
+            <input type="text" class="form-control" id="Label" name="Label">
+          </div>
+          <div class="form-group">
+            <label for="Email">Email</label>
+            <input type="email" class="form-control" id="Email" name="Email">
+          </div>
+          <div class="form-group">
+            <label for="Phone">Phone</label>
+            <input type="tel" class="form-control" id="Phone" name="Phone">
+          </div>
+          <button id="SaveNewContact" type="submit" class="btn btn-primary">Add Contact</button>
+        </form>
+      </div>
+    </div>
+    
     <div id="noteSection" class="note-section card">
         <div class="card-body">
             <div class="d-flex justify-content-between">
@@ -553,9 +526,8 @@ const getSelectedItems = () => {
 
     return selectedItems;
 };
-            document.getElementById('addNewContact').addEventListener('click', () => {
+        document.getElementById('addNewContact').addEventListener('click', () => {
             document.getElementById('addContactSection').style.display = 'block';
-            document.getElementById('flexcol2').style.display = 'block';
         });
 
 
