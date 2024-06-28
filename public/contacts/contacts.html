@@ -6,7 +6,8 @@
     <title>Contact Search</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+   
+   <style>
         .result-item {
             cursor: pointer;
             padding: 5px;
@@ -74,11 +75,30 @@
             font-weight: bold;
 
         }
+
+        .email{
+            flex-grow: 1;
+            margin-right: 10px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .phone{
+            flex-grow: 1;
+            margin-right: 10px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .addContactSection{
+            display: none;
+            margin-top: 20px;
+        }
         
     </style>
-     <link rel="stylesheet" href="../styles.css">
+     <link rel="stylesheet" href="../admin.css">
 </head>
-<body class="container mt-5">
+<body class="container mt-5 hero-background">
     <div id="menu-container"></div>
     <div class="form-group">
         <button id="addNewContact" class="btn btn-primary">Add New Contact</button>
@@ -108,12 +128,60 @@
     <div id="searchResults" class="list-group">
         
     </div>
+    <script>
+        document.getElementById('addNewContact').addEventListener('click', () => {
+            document.getElementById('addContactSection').style.display = 'block';
+        });
+    </script>
 
+<div id="addContactSection" class="addContactSection add-contact-card">
+
+    <div class="form-container">
+        <h1>Add Contact</h1>
+        <form id="contact-form">
+          <div class="form-group">
+            <label for="FullName">Full Name</label>
+            <input type="text" class="form-control" id="FullName" name="FullName" required>
+          </div>
+          <div class="form-group">
+            <label for="FirstName">First Name</label>
+            <input type="text" class="form-control" id="FirstName" name="FirstName">
+          </div>
+          <div class="form-group">
+            <label for="LastName">Last Name</label>
+            <input type="text" class="form-control" id="LastName" name="LastName">
+          </div>
+          <div class="form-group">
+            <label for="Notes">Notes</label>
+            <textarea class="form-control" id="Notes" name="Notes"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="Photo">Photo</label>
+            <input type="text" class="form-control" id="Photo" name="Photo">
+          </div>
+          <div class="form-group">
+            <label for="Label">Label</label>
+            <input type="text" class="form-control" id="Label" name="Label">
+          </div>
+          <div class="form-group">
+            <label for="Email">Email</label>
+            <input type="email" class="form-control" id="Email" name="Email">
+          </div>
+          <div class="form-group">
+            <label for="Phone">Phone</label>
+            <input type="tel" class="form-control" id="Phone" name="Phone">
+          </div>
+          <button id="SaveNewContact" type="submit" class="btn btn-primary">Add Contact</button>
+        </form>
+      </div>
+    </div>
+    
     <div id="noteSection" class="note-section card">
         <div class="card-body">
             <h5 class="card-title">Add Note for <span id="contactName"></span></h5>
             <button id="viewAllNotes" class="btn btn-primary">View All Notes</button>
             <button id="sendMail" class="btn btn-primary">Send Note as Mail</button>
+            <button id="sendMail" class="btn btn-primary">Send Note as SMS</button>
             <div class="form-group">
                 <label for="note">Note:</label>
                 <textarea class="form-control" id="note" rows="3"></textarea>
@@ -139,9 +207,9 @@
 
     <script>
 
-       document.getElementById('addNewContact').addEventListener('click', () => {
-        window.open('/w/addcontacts', '_blank'); // Open the new contact form in a new window
-    });
+     //  document.getElementById('addNewContact').addEventListener('click', () => {
+     //   window.open('/w/addcontacts', '_blank'); // Open the new contact form in a new window
+    //});
 
 
 
@@ -288,6 +356,33 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
         searchResults.appendChild(listItem);
     });
 };
+
+
+
+const SaveNewContact = async (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    const form = document.getElementById('contact-form');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    try {
+        const response = await fetch('/c/contacts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        console.log('Contact added:', result);
+        form.reset();
+        document.getElementById('addContactSection').style.display = 'none';
+    } catch (error) {
+        console.error('Failed to add contact:', error);
+    }
+};
+
+// Attach the event listener to the form submission
+document.getElementById('contact-form').addEventListener('submit', SaveNewContact);
 
 
 const deleteContact = async (contactId) => {
