@@ -178,7 +178,10 @@
     
     <div id="noteSection" class="note-section card">
         <div class="card-body">
-            <h5 class="card-title">Add Note for <span id="contactName"></span></h5>
+            <div class="d-flex justify-content-between">
+              <h5 class="card-title">Add Note for <span id="contactName"></span></h5>
+              <span id="messageBox" class="text-success"></span>
+            </div>
             <button id="viewAllNotes" class="btn btn-primary">View All Notes</button>
             <button id="sendMail" class="btn btn-primary">Send Note as Mail</button>
             <button id="sendMail" class="btn btn-primary">Send Note as SMS</button>
@@ -235,6 +238,8 @@
     }
     const data = await response.json();
     console.log(data);
+
+    document.getElementById("messageBox").innerHTML = data.message;
 };
 
     </script>

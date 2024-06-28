@@ -28,8 +28,14 @@ const contactSchema = new mongoose.Schema({
     type: String,
     enum: ["Active", "Ended", "Pause"],
     default: "Active"
+  },
+  StartDate:{
+    type: Date,
+  },
+
+  EndDate:{
+    type: Date,
   }
-  
 });
 
 const Contact = mongoose.model('Contact', contactSchema);
