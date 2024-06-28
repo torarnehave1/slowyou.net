@@ -81,6 +81,9 @@
 <body class="container mt-5">
     <div id="menu-container"></div>
     <div class="form-group">
+        <button id="addNewContact" class="btn btn-primary">Add New Contact</button>
+    </div>
+    <div class="form-group">
         <label for="search">Search for name or email address:</label>
         <input type="text" class="form-control" id="search" name="search" placeholder="Enter name or email address">
     </div>
@@ -110,6 +113,7 @@
         <div class="card-body">
             <h5 class="card-title">Add Note for <span id="contactName"></span></h5>
             <button id="viewAllNotes" class="btn btn-primary">View All Notes</button>
+            <button id="sendMail" class="btn btn-primary">Send Note as Mail</button>
             <div class="form-group">
                 <label for="note">Note:</label>
                 <textarea class="form-control" id="note" rows="3"></textarea>
@@ -133,6 +137,39 @@
     </div>
 
 
+    <script>
+
+       document.getElementById('addNewContact').addEventListener('click', () => {
+        window.open('/w/addcontacts', '_blank'); // Open the new contact form in a new window
+    });
+
+
+
+       const sendMail = async () => {
+    const mailSubject = prompt("Enter a subject for the email");
+    const note = document.getElementById("note").value;
+    const contactEmail = document.getElementById('sendMail').dataset.contactEmail; // Get email from data attribute
+    
+    const response = await fetch(`/e/send-email`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            to: contactEmail,
+            subject: mailSubject,
+            text: note,
+        }),
+    });
+    if (!response.ok) {
+        console.error(`Failed to send email. Status Code: ${response.status}`);
+        throw new Error(`Failed to send email. Status Code: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data);
+};
+
+    </script>
 
     <script>
         let selectedContactId = null;
@@ -218,41 +255,42 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
         };
 
         const displaySearchResults = (results) => {
-            const searchResults = document.getElementById('searchResults');
-            searchResults.innerHTML = ''; // Clear previous results
-            
-            const selectAllCheckbox = document.getElementById('selectAll');
-            selectAllCheckbox.checked = false;
+    const searchResults = document.getElementById('searchResults');
+    searchResults.innerHTML = ''; // Clear previous results
 
-            
-            results.forEach(result => {
-                const listItem = document.createElement('div');
-                listItem.className = "list-group-item result-item d-flex align-items-center";
-                listItem.innerHTML = `
-                <input type="checkbox" class="select-checkbox" data-contact-id="${result._id}" />
-                    <div class="fullname">${result.FullName}</div>
-                    <div class="email mr-3">${result.Email}</div>
-                    <div class="phone mr-3">${result.Phone}</div>
-                    <div class="label">${result.Label}</div>
-                    <label for="status-${result._id}" class="sr-only">Status</label>
-                        <select id="status-${result._id}" class="status-select" data-contact-id="${result._id}">
-                            <option value="Active" ${result.Status === 'Active' ? 'selected' : ''}>Active</option>
-                            <option value="Ended" ${result.Status === 'Ended' ? 'selected' : ''}>Ended</option>
-                            <option value="Pause" ${result.Status === 'Pause' ? 'selected' : ''}>Pause</option>
-                        </select>
-                    <button class="btn btn-danger delete-button" onclick="deleteContact('${result._id}')">Delete</button>
-                `;
-                listItem.id = `${result._id}`;
-                listItem.querySelector('.status-select').addEventListener('change', () => {
-                    const selectedStatus = listItem.querySelector('.status-select').value;
-                    const contactId = listItem.querySelector('.status-select').dataset.contactId;
-                    updateStatus(contactId, selectedStatus);
-                });
-                listItem.addEventListener('click', () => showNoteSection(result._id, result.FullName));
-                searchResults.appendChild(listItem);
-            });
-        };
-        const deleteContact = async (contactId) => {
+    const selectAllCheckbox = document.getElementById('selectAll');
+    selectAllCheckbox.checked = false;
+
+    results.forEach(result => {
+        const listItem = document.createElement('div');
+        listItem.className = "list-group-item result-item d-flex align-items-center";
+        listItem.innerHTML = `
+            <input type="checkbox" class="select-checkbox" data-contact-id="${result._id}" />
+            <div class="fullname">${result.FullName}</div>
+            <div class="email mr-3" id="email-${result._id}">${result.Email}</div>
+            <div class="phone mr-3">${result.Phone}</div>
+            <div class="label">${result.Label}</div>
+            <label for="status-${result._id}" class="sr-only">Status</label>
+            <select id="status-${result._id}" class="status-select" data-contact-id="${result._id}">
+                <option value="Active" ${result.Status === 'Active' ? 'selected' : ''}>Active</option>
+                <option value="Ended" ${result.Status === 'Ended' ? 'selected' : ''}>Ended</option>
+                <option value="Pause" ${result.Status === 'Pause' ? 'selected' : ''}>Pause</option>
+            </select>
+            <button class="btn btn-danger delete-button" onclick="deleteContact('${result._id}')">Delete</button>
+        `;
+        listItem.id = `${result._id}`;
+        listItem.querySelector('.status-select').addEventListener('change', () => {
+            const selectedStatus = listItem.querySelector('.status-select').value;
+            const contactId = listItem.querySelector('.status-select').dataset.contactId;
+            updateStatus(contactId, selectedStatus);
+        });
+        listItem.addEventListener('click', () => showNoteSection(result._id, result.FullName, result.Email));
+        searchResults.appendChild(listItem);
+    });
+};
+
+
+const deleteContact = async (contactId) => {
             try {
                 const response = await fetch(`/c/contacts/${contactId}`, {
                     method: 'DELETE',
@@ -287,11 +325,17 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
             }
         };
 
-        const showNoteSection = (contactId, contactName) => {
-            selectedContactId = contactId;
-            document.getElementById('contactName').innerText = contactName;
-            document.getElementById('noteSection').style.display = 'block';
-        };
+        
+
+        
+
+const showNoteSection = (contactId, contactName, contactEmail) => {
+    selectedContactId = contactId;
+    document.getElementById('contactName').innerText = contactName;
+    document.getElementById('noteSection').style.display = 'block';
+    document.getElementById('sendMail').dataset.contactEmail = contactEmail; // Store email for sending mail
+};
+
 
         const saveNote = async () => {
             const note = document.getElementById('note').value;
@@ -387,7 +431,8 @@ const getSelectedItems = () => {
     return selectedItems;
 };
         document.getElementById('saveNote').addEventListener('click', saveNote);
-
+      
+        document.getElementById('sendMail').addEventListener('click', sendMail);
         // Add an event listener to the search field to listen for keystrokes
         document.getElementById('search').addEventListener('input', searchContact);
         document.getElementById('status').addEventListener('change', searchContactStatus);

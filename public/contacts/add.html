@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+ 
+  <title>Add Contact</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      margin-top: 10%;
+    }
+
+    .form-container {
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .form-container .form-group {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h1>Add Contact</h1>
+    <form id="contact-form">
+      <div class="form-group">
+        <label for="FullName">Full Name</label>
+        <input type="text" class="form-control" id="FullName" name="FullName" required>
+      </div>
+      <div class="form-group">
+        <label for="FirstName">First Name</label>
+        <input type="text" class="form-control" id="FirstName" name="FirstName">
+      </div>
+      <div class="form-group">
+        <label for="LastName">Last Name</label>
+        <input type="text" class="form-control" id="LastName" name="LastName">
+      </div>
+      <div class="form-group">
+        <label for="Notes">Notes</label>
+        <textarea class="form-control" id="Notes" name="Notes"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="Photo">Photo</label>
+        <input type="text" class="form-control" id="Photo" name="Photo">
+      </div>
+      <div class="form-group">
+        <label for="Label">Label</label>
+        <input type="text" class="form-control" id="Label" name="Label">
+      </div>
+      <div class="form-group">
+        <label for="Email">Email</label>
+        <input type="email" class="form-control" id="Email" name="Email">
+      </div>
+      <div class="form-group">
+        <label for="Phone">Phone</label>
+        <input type="tel" class="form-control" id="Phone" name="Phone">
+      </div>
+      <button type="submit" class="btn btn-primary">Add Contact</button>
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#contact-form').submit(function(event) {
+        event.preventDefault();
+        $.ajax({
+          url: '/c/contacts',
+          method: 'POST',
+          data: $(this).serialize(),
+          success: function(response) {
+            console.log(response);
+            alert('Contact added successfully!');
+          },
+          error: function(xhr, status, error) {
+            console.error(error);
+            alert('Error adding contact');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

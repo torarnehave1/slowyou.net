@@ -16,6 +16,7 @@ const contactSchema = new mongoose.Schema({
   Label: String,
   Email: {
     type: String,
+    required: true,
     default: ""
   },
   Phone: {

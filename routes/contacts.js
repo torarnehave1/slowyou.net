@@ -2,7 +2,7 @@
 import { Router } from 'express';
 const router = Router();
 import Contact from '../models/contact.js';
-
+import mongoose from 'mongoose';
 //
 //app.use('/c/',contacts_route);
 
@@ -67,6 +67,31 @@ router.delete('/contacts/:id', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'An error occurred while deleting the Contact.' });
 }
+});
+
+
+// Define route to add new contact
+
+
+router.post('/contacts', async (req, res) => {
+  try {
+    const newContact = new Contact({
+      _id: new mongoose.Types.ObjectId(), // Manually generate an _id
+      FullName: req.body.FullName,
+      FirstName: req.body.FirstName,
+      LastName: req.body.LastName,
+      Notes: req.body.Notes,
+      Photo: req.body.Photo,
+      Label: req.body.Label,
+      Email: req.body.Email,
+      Phone: req.body.Phone
+    });
+    const savedContact = await newContact.save();
+    res.send(savedContact);
+  } catch (error) {
+    console.error('Failed to save contact:', error);
+    res.status(500).send({ error: 'Error saving contact' });
+  }
 });
 
 

@@ -11,21 +11,10 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-router.get("/send-email", async (req, res) => {
+router.post("/send-email", async (req, res) => {
     const { to, subject, text } = req.body;
 
-    try {
-        await transporter.sendMail({
-            from: 'slowyou.net@gmail.com',
-            to:'torarnehave@gmail.com',
-            subject:'Mail fra SlowYou.net',
-            text:'Dette er en test mail fra SlowYou.net'
-        });
-
-        res.send("Email sent successfully");
-    } catch (error) {
-        res.status(500).send("Error sending email: " + error.message);
-    }
+    console.log(req.body);
 });
 
 export default router;
