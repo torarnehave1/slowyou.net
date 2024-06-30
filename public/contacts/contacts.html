@@ -94,6 +94,23 @@
             display: none;
             margin-top: 20px;
         }
+
+        .btn-secondary.edit-button {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.btn-secondary.edit-button:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
         
     </style>
      <link rel="stylesheet" href="../admin.css">
@@ -345,6 +362,8 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
                 <option value="Ended" ${result.Status === 'Ended' ? 'selected' : ''}>Ended</option>
                 <option value="Pause" ${result.Status === 'Pause' ? 'selected' : ''}>Pause</option>
             </select>
+        
+            <button class="btn btn-secondary edit-button" onclick="editContactForm('${result._id}')">Edit</button>
             <button class="btn btn-danger delete-button" onclick="deleteContact('${result._id}')">Delete</button>
         `;
         listItem.id = `${result._id}`;
@@ -358,6 +377,76 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
     });
 };
 
+
+
+const editContactForm = async (contactId) => {
+    try {
+        const response = await fetch(`/contacts/${contactId}`);
+        if (!response.ok) {
+            throw new Error('Error fetching contact');
+        }
+        const contact = await response.json();
+        console.log('Contact details:', contact);
+
+        // Populate the form with contact details
+        document.getElementById('FullName').value = contact.FullName;
+        document.getElementById('FirstName').value = contact.FirstName;
+        document.getElementById('LastName').value = contact.LastName;
+        document.getElementById('Notes').value = contact.Notes;
+        document.getElementById('Photo').value = contact.Photo;
+        document.getElementById('Label').value = contact.Label;
+        document.getElementById('Email').value = contact.Email;
+        document.getElementById('Phone').value = contact.Phone;
+
+        // Set the contact ID to a hidden input or a global variable
+        selectedContactId = contactId;
+
+        // Show the form
+        document.getElementById('addContactSection').style.display = 'block';
+        document.getElementById('SaveNewContact').innerText = 'Update Contact';
+    } catch (error) {
+        console.error('Failed to fetch contact:', error);
+    }
+};
+
+const saveContact = async (event) => {
+    event.preventDefault(); // Prevent the default form submission behavior
+    const form = document.getElementById('contact-form');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    const method = selectedContactId ? 'PATCH' : 'POST';
+    const url = selectedContactId ? `/contacts/${selectedContactId}` : '/c/contacts';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        console.log('Contact saved:', result);
+        form.reset();
+        document.getElementById('addContactSection').style.display = 'none';
+        selectedContactId = null; // Reset the selectedContactId after saving
+        document.getElementById('SaveNewContact').innerText = 'Add Contact';
+    } catch (error) {
+        console.error('Failed to save contact:', error);
+    }
+};
+
+// Attach the event listener to the form submission
+document.getElementById('contact-form').addEventListener('submit', saveContact);
+
+document.getElementById('addNewContact').addEventListener('click', () => {
+    document.getElementById('contact-form').reset();
+    document.getElementById('addContactSection').style.display = 'block';
+    document.getElementById('SaveNewContact').innerText = 'Add Contact';
+    selectedContactId = null; // Clear selectedContactId for new contact
+});
 
 
 const SaveNewContact = async (event) => {

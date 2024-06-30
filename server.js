@@ -24,11 +24,13 @@ import products_route from './routes/products_route.js';
 import vegvisr_route from './modules/vegvisr/vegvisr_route.js';
 import rateLimit from 'express-rate-limit'; //Security to protect from brute force
 import morgan from 'morgan'; //Log funcionality
+import imgroutes from './routes/images.js';
+
 //import security from './modules/security/routes_security.js';
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 200 // limit each IP to 100 requests per windowMs
 });
 
 
@@ -101,7 +103,7 @@ app.use('/c/',contacts_route);
 app.use('/n',conversations_route);
 app.use('/products',products_route);
 app.use('/vegvisr', vegvisr_route);
-
+app.use('/img',imgroutes);
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
