@@ -32,7 +32,7 @@ function isAuthenticated(req, res, next) {
 router.get('/protected', isAuthenticated, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('username');
-        res.send(`You are authenticated as ${user.username}`);
+        res.json({ Username: user.username });
     } catch (ex) {
         console.error(ex);
         res.status(500).send('An error occurred while processing your request.');

@@ -79,6 +79,10 @@
       background-color: #ff7700;
     }
 
+    .label-yourname {
+      background-color: #8e2cb2;
+    }
+
 
   </style>
 </head>
@@ -92,9 +96,13 @@
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="form-container">
-          <h2 class="text-center">Create GitHub Issue</h2>
+          <h2 class="text-center">Create SlowYou™ Issue</h2>
           
           <div class="label-list">
+            <div id="yourname" class="label-item label-yourname" data-label="ddddd">
+                
+                <div class="label-description">Your Fulle Name</div>
+              </div>
             <div class="label-item label-feedback" data-label="feedback">
                 Feedback
                 <div class="label-description">Just some feedback.</div>
@@ -159,6 +167,30 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
   <script type="module">
+async function fetchUserName() {
+  try {
+    const response = await fetch('prot/protected');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    if (!response.headers.get('content-type')?.includes('application/json')) {
+      throw new Error('Expected JSON response but got', response.headers.get('content-type'));
+    }
+    const data = await response.json();
+    console.log(data);
+   
+    const yourName = document.querySelector('#yourname .label-description');
+    const dataLabel = document.querySelector('#yourname');
+    dataLabel.setAttribute('data-label', data.Username);
+   yourName.textContent = data.Username;
+
+
+  } catch (error) {
+    console.error('Failed to fetch user name:', error);
+  }
+}
+
+fetchUserName();
 
 import loadQuote from '../globalfunctions/quotes.js';
 
