@@ -371,4 +371,18 @@ router.get('/search/:name', async (req, res) => {
   });
 
 
+router.get('/me', async (req, res) => {
+    try {
+      const user = await User.findById(req.user._id).select('fullName');
+      if (!user) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+      res.json({fullName: user.fullName});
+    } catch (error) {
+      console.error('Failed to fetch user:', error);
+      res.status(500).send({ error: 'Error fetching user' });
+    }
+  });
+
+
 export default router;

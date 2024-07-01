@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="d-flex flex-column pt-5 hero-background">
-    
+    <div class="quote">
+        <div id="quote"></div>
+        <div id="author" class="quote-author"></div>
+        <div id="timeperiod" class="quote-timeperiod"></div>
+      </div>
     <div id="menu-container"></div> <!-- Placeholder for the menu -->
 
     <section id="hero" class="mt-4">
@@ -35,7 +39,12 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
     <script type="module">
-        
+        import loadQuote from '../globalfunctions/quotes.js';
+
+// Run the function on page load
+window.addEventListener('DOMContentLoaded', () => {
+    loadQuote();
+});
         import loadLanguage  from '/globalfunctions/language.js';
 
         function initializeLanguageSelector() {

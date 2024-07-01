@@ -31,17 +31,21 @@
       padding: 5px 10px;
       margin: 5px;
       border-radius: 15px;
-      background-color: #007bff;
-      color: white;
+      text-align: center;
       cursor: pointer;
+      border-color: black;
+      border-width: 1px;
     }
     .label-item:hover {
       background-color: #9ec2e9d8;
     }
     .label-description {
       font-size: 0.8rem;
-      color: #ffffff;
+      color: rgb(255, 255, 255);
+      
     }
+
+   
 
     .label-documentation {
       background-color: #002aff;
@@ -51,16 +55,52 @@
       background-color: #04cafb;
     }
 
+    .label-bug {
+      background-color: #ff0000;
+    }
+
+    .label-help-wanted {
+      background-color: #299012;
+    }
+
+    .label-question {
+      background-color: #ff00e6;
+    }
+
+    .label-feedback {
+      background-color: #809ab3;
+    }
+
+    .label-knowledge {  
+      background-color: #68c69a;
+    }
+
+    .label-inpiration {
+      background-color: #ff7700;
+    }
+
+
   </style>
 </head>
 <body class="hero-background">
+    <div class="quote">
+        <div id="quote"></div>
+        <div id="author" class="quote-author"></div>
+        <div id="timeperiod" class="quote-timeperiod"></div>
+      </div>
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="form-container">
           <h2 class="text-center">Create GitHub Issue</h2>
+          
           <div class="label-list">
-            <div class="label-item" data-label="bug">
+            <div class="label-item label-feedback" data-label="feedback">
+                Feedback
+                <div class="label-description">Just some feedback.</div>
+              </div>
+
+            <div class="label-item label-bug" data-label="bug">
               Bug
               <div class="label-description">An error or flaw in the software.</div>
             </div>
@@ -72,14 +112,25 @@
               Enhancement
               <div class="label-description">New feature or request.</div>
             </div>
-            <div class="label-item" data-label="help wanted">
+            <div class="label-item label-help-wanted" data-label="help wanted">
               Help Wanted
               <div class="label-description">Extra attention is needed.</div>
             </div>
-            <div class="label-item" data-label="question">
-              Question
-              <div class="label-description">Further information is requested.</div>
+           
+            <div class="label-item label-question" data-label="question">
+                Question
+              <div class="label-description">Question about anything.</div>
+
             </div>
+            <div class="label-item label-inpiration" data-label="inpiration">
+                Inspiration
+              <div class="label-description">Look! I found som inspirational stuff!.
+            </div>
+            </div>
+            <div class="label-item label-knowledge" data-label="knowledge">
+                Knowledge
+                <div class="label-description">I want to share som knowledge
+        </div>   
           </div>
           <form id="issueForm">
             <div class="form-group">
@@ -101,13 +152,21 @@
       </div>
     </div>
   </div>
-
+  
   <!-- Bootstrap JS and dependencies -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  <script>
+  <script type="module">
+
+import loadQuote from '../globalfunctions/quotes.js';
+
+// Run the function on page load
+window.addEventListener('DOMContentLoaded', () => {
+    loadQuote();
+});
+
     document.querySelectorAll('.label-item').forEach(item => {
       item.addEventListener('click', function() {
         const label = this.getAttribute('data-label');
@@ -151,3 +210,4 @@
   </script>
 </body>
 </html>
+
