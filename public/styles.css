@@ -29,6 +29,7 @@ body.hero-background {
     margin-bottom: 20px;
     margin-top: 20px;
     font-size: large;
+    max-width: 50vw;
   }
   .quote-author {
     font-size: 0.8rem;

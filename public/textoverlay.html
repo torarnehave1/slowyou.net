@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Text to Image</title>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <style>
+      #image-container {
+        position: relative;
+        display: inline-block;
+        border: var(--frame-width, 10px) solid var(--frame-color, black);
+        padding: 10px;
+      }
+      #image-text {
+        position: absolute;
+        color: black;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+      .quote {
+        text-align: center;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: var(--font-size);
+      }
+      .quote-author, .quote-timeperiod {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="topmenu">
+      <label for="font-size">Font Size:</label>
+      <input type="range" id="font-size" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--font-size', `${this.value}px`)" title="Font Size" />
+      <label for="frame-width">Frame Width:</label>
+      <input type="range" id="frame-width" min="0" max="50" value="10" step="1" oninput="document.documentElement.style.setProperty('--frame-width', `${this.value}px`)" title="Frame Width" />
+      <label for="frame-color">Frame Color:</label>
+      <input type="color" id="frame-color" value="#000000" oninput="document.documentElement.style.setProperty('--frame-color', this.value)" title="Frame Color" />
+      <button onclick="addTextToImage()">Add Text to Image</button>
+      <button onclick="loadQuote()">Load new quote</button>
+    </div>
+    <div id="image-container">
+      <img id="source-image" src="./images/6667e42bddb09a11a9f4046e/1719773672781.png" alt="Source Image">
+      <div id="image-text">
+        <div class="quote">
+          <div id="quote"></div>
+          <div id="author" class="quote-author"></div>
+          <div id="timeperiod" class="quote-timeperiod"></div>
+        </div>
+      </div>
+    </div>
+    
+    <canvas id="canvas" style="display:none;"></canvas>
+    <img id="result-image" alt="Result Image" style="display:none;">
+    <br>
+    <a id="download-link" style="display:none;">Download Image</a>
+
+    <script type="module">
+      import loadQuote from './globalfunctions/quotes.js';
+
+      // Run the function on page load
+      window.addEventListener('DOMContentLoaded', () => {
+          loadQuote();
+      });
+
+      // Define the function and add it to the global scope
+      window.addTextToImage = async function addTextToImage() {
+        try {
+          const imageContainer = document.getElementById('image-container');
+          const canvas = await html2canvas(imageContainer);
+          const dataURL = canvas.toDataURL('image/png');
+
+          // Display the result
+          const resultImage = document.getElementById('result-image');
+          resultImage.src = dataURL;
+          resultImage.style.display = 'block';
+
+          // Set up the download link
+          const downloadLink = document.getElementById('download-link');
+          downloadLink.href = dataURL;
+          downloadLink.download = 'image-with-text.png';
+          downloadLink.style.display = 'block';
+          downloadLink.textContent = 'Download Image';
+        } catch (error) {
+          console.error('Error adding text to image:', error);
+        }
+      };
+    </script>
+  </body>
+</html>
