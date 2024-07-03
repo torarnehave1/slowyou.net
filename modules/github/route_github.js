@@ -121,10 +121,10 @@ router.get("/issue-titles", async (req, res) => {
     const { title, body, labels } = req.body;
 
     // Log the received data
-    console.log(`Title: ${title}`);
-    console.log(`Body: ${body}`);
-    console.log(`Labels: ${labels}`);
-    console.log(`Labels Type: ${typeof labels}`);
+   // console.log(`Title: ${title}`);
+    //console.log(`Body: ${body}`);
+   // console.log(`Labels: ${labels}`);
+    //console.log(`Labels Type: ${typeof labels}`);
 
     // Create an Octokit instance
     const octokit = new Octokit({
