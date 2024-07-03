@@ -15,6 +15,7 @@
             display: inline-block;
             border: var(--frame-width, 10px) solid var(--frame-color, black);
             padding: 10px;
+            max-width: 1000px;
         }
         #image-text {
             position: absolute;
@@ -30,6 +31,7 @@
             font-weight: 400;
             font-style: normal;
             font-size: var(--font-size);
+            margin-top: var(--quote-margin-top);
         }
         .quote-author, .quote-timeperiod {
             margin-top: 10px;
@@ -108,11 +110,11 @@
             <input type="range" class="form-control-range" id="font-size" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--font-size', `${this.value}px`)" title="Font Size" />
         </div>
         <div class="item">
-            <label for="font-size">Font Size:</label>
-            <input type="range" class="form-control-range" id="font-size" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--font-size', `${this.value}px`)" title="Font Size" />
+            <label for="quote-margin-top">Quote-margin-top:</label>
+            <input type="range" class="form-control-range" id="quote-margin-top" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--quote-margin-top', `${this.value}px`)" title="Quote-margin-top" />
        
         </div>
- 
+     
     
         <div class="item">
             <label for="frame-width">Frame Width:</label>
@@ -260,7 +262,8 @@
 
 
         function loadImages() {
-      fetch('/img/images', {
+     
+            fetch('/img/images', {
         credentials: 'include' // Include cookies in the request
       })
       .then(response => response.json())
@@ -273,6 +276,9 @@
           img.src = imageUrl;
           img.alt = filename;
           img.className = 'image-item img-thumbnail';
+          img.addEventListener('click', () => {
+            document.getElementById('source-image').src = img.src;
+          });
           imagesList.appendChild(img);
         });
       })
