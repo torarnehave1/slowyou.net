@@ -87,12 +87,13 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 2px;
+      padding-left: 10%;
     }
     .item-imagelist {
             grid-column-start:1;
             grid-column-end: 8;
-            grid-row: 3;
-            background-color: rgb(186, 0, 254);
+            grid-row: 1;
+            background-color: rgba(255, 255, 255, 0.841);
 
         }
     </style>
@@ -126,9 +127,10 @@
         </select></div>
        
         <div class="item"><label for="watermark">Watermark:</label>
+
             <input type="text" class="form-control" id="watermark" placeholder="Enter your watermark" title="Watermark" /></div>
-        <div class="item"> <button class="btn btn-secondary action-button" data-action="loadQuote">Load new quote</button></div>
-        <div class="item"> <button class="btn btn-primary action-button" data-action="addTextToImage">Add Text to Image</button>
+            <div class="item"> <button class="btn btn-secondary action-button" data-action="loadQuote">Load new quote</button></div>
+            <div class="item"> <button class="btn btn-primary action-button" data-action="addTextToImage">Add Text to Image</button>
               
         </div>
     </div>
