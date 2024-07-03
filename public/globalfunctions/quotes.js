@@ -1,5 +1,5 @@
 function loadQuote() {
-    fetch('/quotes/quotes.js')
+    fetch('/quotes/quotes.json')
         .then(response => response.json())
         .then(data => {
             const randomQuote = data.quotes[Math.floor(Math.random() * data.quotes.length)];
