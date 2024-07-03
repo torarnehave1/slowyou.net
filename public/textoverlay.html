@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Text to Image</title>
@@ -8,137 +8,225 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <style>
-      #image-container {
-        position: relative;
-        display: inline-block;
-        border: var(--frame-width, 10px) solid var(--frame-color, black);
-        padding: 10px;
-      }
-      #image-text {
-        position: absolute;
-        color: black;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-      }
-      .quote {
-        text-align: center;
-        font-family: "Rajdhani", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        font-size: var(--font-size);
-      }
-      .quote-author, .quote-timeperiod {
-        margin-top: 10px;
-        font-size: large;
-      }
+        #image-container {
+            position: relative;
+            display: inline-block;
+            border: var(--frame-width, 10px) solid var(--frame-color, black);
+            padding: 10px;
+        }
+        #image-text {
+            position: absolute;
+            color: black;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .quote {
+            text-align: center;
+            font-family: "Rajdhani", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            font-size: var(--font-size);
+        }
+        .quote-author, .quote-timeperiod {
+            margin-top: 10px;
+            font-size: large;
+        }
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            right: 50px;
+            opacity: 0.2;
+            font-family: "Rajdhani", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            font-size: 32px;
+            color: rgb(255, 221, 0);
+        }
 
-      .watermark{
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        opacity: 0.2;
-        font-family: "Rajdhani", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        font-size: 32px;
-        color: rgb(255, 221, 0);
-      }
+        .gridcontainer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
 
+        .item {
+            border: 1px solid blueviolet;
+            border-radius: 2px;
+            background-color: rgba(201, 185, 207, 0.79);
+            padding: 10px;
+            min-height: 20px;
+        }
+
+        .item5 {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .item6 {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .item7 {
+            grid-column: 3;
+            grid-row: 2;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body class="hero-background">
     <div class="container mt-3">
-      <div class="row">
-        <div class="col">
-          <div id="topmenu" class="d-flex align-items-center justify-content-around">
-            <div class="form-group">
-              <label for="font-size">Font Size:</label>
-              <input type="range" class="form-control-range" id="font-size" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--font-size', `${this.value}px`)" title="Font Size" />
-            </div>
-            <div class="form-group">
-              <label for="frame-width">Frame Width:</label>
-              <input type="range" class="form-control-range" id="frame-width" min="0" max="50" value="10" step="1" oninput="document.documentElement.style.setProperty('--frame-width', `${this.value}px`)" title="Frame Width" />
-            </div>
-            <div class="form-group">
-              <label for="frame-color">Frame Color:</label>
-              <input type="color" class="form-control" id="frame-color" value="#000000" oninput="document.documentElement.style.setProperty('--frame-color', this.value)" title="Frame Color" />
-            </div>
-            <button class="btn btn-primary action-button" data-action="addTextToImage">Add Text to Image</button>
-            <button class="btn btn-secondary action-button" data-action="loadQuote">Load new quote</button>
-          </div>
+      <div class="gridcontainer">
+        <div class="item">
+            <label for="font-size">Font Size:</label>
+            <input type="range" class="form-control-range" id="font-size" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--font-size', `${this.value}px`)" title="Font Size" />
         </div>
-      </div>
-    </div>
-    <div class="container mt-3">
-      <div id="image-container">
-        <img id="source-image" src="./images/6667e42bddb09a11a9f4046e/1719773672781.png" alt="Source Image">
-        <div id="image-text">
-          <div class="quote">
-            <div id="quote"></div>
-            <div id="author" class="quote-author"></div>
-            <div id="timeperiod" class="quote-timeperiod"></div>
-          </div>
+        <div class="item">
+            <label for="font-size">Font Size:</label>
+            <input type="range" class="form-control-range" id="font-size" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--font-size', `${this.value}px`)" title="Font Size" />
+       
         </div>
-        <div class="watermark">@slowyou</div>
-      </div>
-    </div>
+ 
     
+        <div class="item">
+            <label for="frame-width">Frame Width:</label>
+            <input type="range" class="form-control-range" id="frame-width" min="0" max="50" value="10" step="1" oninput="document.documentElement.style.setProperty('--frame-width', `${this.value}px`)" title="Frame Width" />
+        
+        </div>
+
+        <div class="item">
+            <label for="frame-color">Frame Color:</label>
+                        <input type="color" class="form-control" id="frame-color" value="#000000" oninput="document.documentElement.style.setProperty('--frame-color', this.value)" title="Frame Color" />
+        </div>
+        <div class="item"><select id="author-select" class="form-control" title="Author Select">
+            <option value="">Select an author</option>
+        </select></div>
+       
+        <div class="item"><label for="watermark">Watermark:</label>
+            <input type="text" class="form-control" id="watermark" placeholder="Enter your watermark" title="Watermark" /></div>
+        <div class="item"> <button class="btn btn-secondary action-button" data-action="loadQuote">Load new quote</button></div>
+        <div class="item"> <button class="btn btn-primary action-button" data-action="addTextToImage">Add Text to Image</button>
+              
+        </div>
+    </div>
+
+   
+    </div>
+    <div class="container mt-3">
+        <div id="image-container">
+            <img id="source-image" src="./images/6667e42bddb09a11a9f4046e/1719773672781.png" alt="Source Image">
+            <div id="image-text">
+                <div class="quote">
+                    <div id="quote"></div>
+                    <div id="author" class="quote-author"></div>
+                    <div id="timeperiod" class="quote-timeperiod"></div>
+                </div>
+            </div>
+            <div class="watermark">@slowyou</div>
+        </div>
+    </div>
+
     <canvas id="canvas" style="display:none;"></canvas>
     <div class="container mt-3">
-      <img id="result-image" alt="Result Image" style="display:none;">
-      <br>
-      <a id="download-link" class="btn btn-success mt-2" style="display:none;">Download Image</a>
+        <img id="result-image" alt="Result Image" style="display:none;">
+        <br>
+        <a id="download-link" class="btn btn-success mt-2" style="display:none;">Download Image</a>
     </div>
 
     <script type="module">
-      import loadQuote from './globalfunctions/quotes.js';
+        let quotes = [];
+        let authors = [];
 
-      // Run the function on page load
-      window.addEventListener('DOMContentLoaded', () => {
-          loadQuote();
-
-          // Add event listeners to buttons with the class 'action-button'
-          document.querySelectorAll('.action-button').forEach(button => {
-            button.addEventListener('click', (event) => {
-              const action = event.target.getAttribute('data-action');
-              if (action === 'addTextToImage') {
-                addTextToImage();
-              } else if (action === 'loadQuote') {
-                loadQuote();
-              }
-            });
-          });
-      });
-
-      // Make loadQuote globally accessible
-      window.loadQuote = loadQuote;
-
-      // Define the function and add it to the global scope
-      window.addTextToImage = async function addTextToImage() {
-        try {
-          const imageContainer = document.getElementById('image-container');
-          const canvas = await html2canvas(imageContainer);
-          const dataURL = canvas.toDataURL('image/png');
-
-          // Display the result
-          const resultImage = document.getElementById('result-image');
-          resultImage.src = dataURL;
-          resultImage.style.display = 'block';
-
-          // Set up the download link
-          const downloadLink = document.getElementById('download-link');
-          downloadLink.href = dataURL;
-          downloadLink.download = 'image-with-text.png';
-          downloadLink.style.display = 'block';
-          downloadLink.textContent = 'Download Image';
-        } catch (error) {
-          console.error('Error adding text to image:', error);
+        async function fetchQuotes() {
+            try {
+                const response = await fetch('/quotes/quotes.json');  // Adjust this path to match your actual file path
+                const data = await response.json();
+                quotes = data.quotes;
+                authors = [...new Set(quotes.map(quote => quote.Author))];
+                populateAuthorDropdown();
+            } catch (error) {
+                console.error('Error fetching quotes:', error);
+            }
         }
-      };
+
+        function populateAuthorDropdown() {
+            const authorSelect = document.getElementById('author-select');
+            authors.forEach(author => {
+                const option = document.createElement('option');
+                option.value = author;
+                option.textContent = author;
+                authorSelect.appendChild(option);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchQuotes();
+
+            const authorSelect = document.getElementById('author-select');
+            authorSelect.addEventListener('change', () => {
+                const selectedAuthor = authorSelect.value;
+                if (selectedAuthor) {
+                    const filteredQuotes = quotes.filter(quote => quote.Author === selectedAuthor);
+                    const limitedQuotes = filteredQuotes.slice(0, 10);
+                    loadQuote(limitedQuotes[0]);
+                }
+            });
+
+            document.querySelectorAll('.action-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const action = event.target.getAttribute('data-action');
+                    if (action === 'addTextToImage') {
+                        addTextToImage();
+                    } else if (action === 'loadQuote') {
+                        const selectedAuthor = authorSelect.value;
+                        if (selectedAuthor) {
+                            const filteredQuotes = quotes.filter(quote => quote.Author === selectedAuthor);
+                            const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+                            loadQuote(filteredQuotes[randomIndex]);
+                        }
+                    }
+                });
+            });
+
+            const watermarkInput = document.getElementById('watermark');
+            watermarkInput.addEventListener('input', () => {
+                const watermark = watermarkInput.value;
+                const watermarkElement = document.querySelector('.watermark');
+                watermarkElement.textContent = watermark;
+            });
+        });
+
+        function loadQuote(quote) {
+            if (quote) {
+                const quoteElement = document.getElementById('quote');
+                const authorElement = document.getElementById('author');
+                const timeperiodElement = document.getElementById('timeperiod');
+                quoteElement.textContent = quote.Quote;
+                authorElement.textContent = `- ${quote.Author}`;
+                timeperiodElement.textContent = quote.TimePeriod ? `(${quote.TimePeriod})` : '';
+            }
+        }
+
+        async function addTextToImage() {
+            try {
+                const imageContainer = document.getElementById('image-container');
+                const canvas = await html2canvas(imageContainer);
+                const dataURL = canvas.toDataURL('image/png');
+
+                const resultImage = document.getElementById('result-image');
+                const downloadLink = document.getElementById('download-link');
+                resultImage.src = dataURL;
+                resultImage.style.display = 'block';
+                downloadLink.href = dataURL;
+                downloadLink.style.display = 'block';
+            } catch (error) {
+                console.error('Error generating image:', error);
+            }
+        }
     </script>
-  </body>
+</body>
 </html>
 
