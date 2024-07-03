@@ -118,23 +118,42 @@ router.get("/issue-titles", async (req, res) => {
 
 
   router.post('/create-issue', async (req, res) => {
-    const { title, body } = req.body;
+    const { title, body, labels } = req.body;
+
+    // Log the received data
+    console.log(`Title: ${title}`);
+    console.log(`Body: ${body}`);
+    console.log(`Labels: ${labels}`);
+    console.log(`Labels Type: ${typeof labels}`);
+
     // Create an Octokit instance
     const octokit = new Octokit({
-        auth: process.env.GITHUB_TOKEN_ISSUES  // Ensure your access token is correctly loaded from environment variables
+        auth: process.env.GITHUB_TOKEN_ISSUES // Ensure your access token is correctly loaded from environment variables
     });
 
     try {
+        // Ensure labels is an array
+        let labelsArray;
+        if (Array.isArray(labels)) {
+            labelsArray = labels;
+        } else if (typeof labels === 'string') {
+            labelsArray = labels.split(',').map(label => label.trim());
+        } else {
+            throw new Error('Labels should be an array or a comma-separated string');
+        }
+
+        // Log the processed labels array
+        console.log(`Processed Labels Array: ${JSON.stringify(labelsArray)}`);
+
         // Send a POST request to create an issue
         const response = await octokit.request('POST /repos/{owner}/{repo}/issues', {
             owner: 'torarnehave1',  // Replace 'torarnehave1' with your GitHub username or organization name
             repo: 'slowyouGPT',     // Replace 'slowyouGPT' with your repository name
             title: title,  // Your issue title
             body: body,  // Your issue body content
-            labels: ['tor','bug','documentation','help wanted','question'],
-       projects:''
-          });
-  
+            labels: labelsArray,
+        });
+
         // Send the issue URL back as a response
         res.json({ issueUrl: response.data.html_url });
     } catch (error) {
@@ -142,6 +161,8 @@ router.get("/issue-titles", async (req, res) => {
         res.status(500).json({ error: 'Error creating issue', details: error.message });
     }
 });
+
+
 
 
 
