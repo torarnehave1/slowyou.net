@@ -49,14 +49,14 @@
 
         .gridcontainer {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
         }
 
         .item {
-            border: 1px solid blueviolet;
+            border: 1px solid rgb(0, 0, 0);
             border-radius: 2px;
-            background-color: rgba(201, 185, 207, 0.79);
+            background-color: rgba(255, 255, 255, 0.856);
             padding: 10px;
             min-height: 20px;
         }
@@ -74,6 +74,26 @@
         .item7 {
             grid-column: 3;
             grid-row: 2;
+        }
+
+        .images-container {
+      margin-top: 30px;
+    }
+    .image-item {
+      width: 50%;
+      height: auto;
+    }
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2px;
+    }
+    .item-imagelist {
+            grid-column-start:1;
+            grid-column-end: 8;
+            grid-row: 3;
+            background-color: rgb(186, 0, 254);
+
         }
     </style>
 </head>
@@ -112,6 +132,13 @@
               
         </div>
     </div>
+    <div class="item-imagelist">
+        <div class="images-container">
+            <h3 class="text-center">SlowYou™ Image Gallery</h3>
+            <div id="imagesList" class="images-grid"></div>
+          </div>
+</div>
+    </div>
 
    
     </div>
@@ -128,7 +155,7 @@
             <div class="watermark">@slowyou</div>
         </div>
     </div>
-
+   
     <canvas id="canvas" style="display:none;"></canvas>
     <div class="container mt-3">
         <img id="result-image" alt="Result Image" style="display:none;">
@@ -226,6 +253,33 @@
                 console.error('Error generating image:', error);
             }
         }
+
+
+        function loadImages() {
+      fetch('/img/images', {
+        credentials: 'include' // Include cookies in the request
+      })
+      .then(response => response.json())
+      .then(data => {
+        var imagesList = document.getElementById('imagesList');
+        imagesList.innerHTML = '';
+        data.forEach(filename => {
+          var imageUrl = '/images/6667e42bddb09a11a9f4046e/' + filename;
+          var img = document.createElement('img');
+          img.src = imageUrl;
+          img.alt = filename;
+          img.className = 'image-item img-thumbnail';
+          imagesList.appendChild(img);
+        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+
+    // Load images on page load
+    document.addEventListener('DOMContentLoaded', loadImages);
+  
     </script>
 </body>
 </html>
