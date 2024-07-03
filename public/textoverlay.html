@@ -20,7 +20,7 @@
         #image-text {
             position: absolute;
             color: black;
-            top: 50%;
+        top: 10px;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
@@ -31,7 +31,7 @@
             font-weight: 400;
             font-style: normal;
             font-size: var(--font-size);
-            margin-top: var(--quote-margin-top);
+            margin-top: calc(50% - var(--quote-margin-top));
         }
         .quote-author, .quote-timeperiod {
             margin-top: 10px;
@@ -111,7 +111,7 @@
         </div>
         <div class="item">
             <label for="quote-margin-top">Quote-margin-top:</label>
-            <input type="range" class="form-control-range" id="quote-margin-top" min="20" max="100" value="50" step="1" oninput="document.documentElement.style.setProperty('--quote-margin-top', `${this.value}px`)" title="Quote-margin-top" />
+            <input type="range" class="form-control-range" id="quote-margin-top" min="0" max="1000" value="50" step="10" oninput="document.documentElement.style.setProperty('--quote-margin-top', `${this.value}px`)" title="Quote-margin-top" />
        
         </div>
      
