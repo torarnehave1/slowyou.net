@@ -174,7 +174,7 @@ router.get('/users', isAuthenticated, async (req, res) => {
   
 });
 
-router.get('/sound', isAuthenticated, async (req, res) => {
+router.get('/sound', async (req, res) => {
   try {
       const user = await User.findById(req.user.id).select('username');
       //res.send(`You are authenticated as ${user.username}`);
