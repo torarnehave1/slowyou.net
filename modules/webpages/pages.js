@@ -162,7 +162,7 @@ router.get('/faq', (req, res) => {
 
 router.get('/users', isAuthenticated, async (req, res) => {
   try {
-      
+      const user = await User.findById(req.user.id).select('username');
       //res.send(`You are authenticated as ${user.username}`);
       res.sendFile(path.join(filePath, 'public/users/users.html'));
 
@@ -176,7 +176,7 @@ router.get('/users', isAuthenticated, async (req, res) => {
 
 router.get('/sound', async (req, res) => {
   try {
-      const user = await User.findById(req.user.id).select('username');
+     // const user = await User.findById(req.user.id).select('username');
       //res.send(`You are authenticated as ${user.username}`);
       res.sendFile(path.join(filePath, 'modules/soundexperience/SoundExperience.html'));
 
