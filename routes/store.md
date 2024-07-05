@@ -1,20 +1,22 @@
- const octokit = new Octokit({
-        auth: process.env.GITHUB_TOKEN_ISSUES  // Ensure your access token is correctly loaded from environment variables
-    });
+fs.readFile(path.join(__dirname, 'public', 'quotes', 'quotes.json'), 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Failed to read quotes file');
+    } else {
+      // Parse the existing quotes
+      const quotes = JSON.parse(data);
 
-    try {
-        // Send a POST request to create an issue
-        const response = await octokit.request('POST /repos/{owner}/{repo}/issues', {
-            owner: 'torarnehave1',  // Replace 'torarnehave1' with your GitHub username or organization name
-            repo: 'slowyouGPT',     // Replace 'slowyouGPT' with your repository name
-            title: title,  // Your issue title
-            body: body,  // Your issue body content
-            labels: [],
-          });
-  
-        // Send the issue URL back as a response
-        res.json({ issueUrl: response.data.html_url });
-    } catch (error) {
-        console.error('Error creating issue:', error);
-        res.status(500).json({ error: 'Error creating issue', details: error.message });
+      // Add the new quote to the quotes array
+      quotes.quotes.push({ Quote: quote, Author: author, TimePeriod: timeperiode });
+
+      // Write the updated quotes back to the file
+      fs.writeFile(path.join(__dirname, 'public', 'quotes', 'quotes.json'), JSON.stringify(quotes, null, 2), 'utf8', (err) => {
+        if (err) {
+          console.error(err);
+          res.status(500).send('Failed to write quotes file');
+        } else {
+          res.send('Quote added successfully');
+        }
+      });
     }
+  });

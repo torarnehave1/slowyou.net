@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dbRoutes from './modules/mongodb/dbRoutes.js';
-//import jsonRoutes from './routes/jsonRoutes.js';
+import jsonRoutes from './routes/jsonRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connect } from 'mongoose';
@@ -30,7 +30,7 @@ import imgroutes from './routes/images.js';
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200 // limit each IP to 100 requests per windowMs
+  max: 2000 // limit each IP to 100 requests per windowMs
 });
 
 
@@ -88,7 +88,7 @@ app.get('/', (req, res) => {
 // Routes
 //app.use('/t', testRoutes);
 app.use('/db', dbRoutes);
-//app.use('/json', jsonRoutes);
+app.use('/json', jsonRoutes);
 app.use('/p', personRoutes);
 app.use("/api/github", githubRoutes);
 //app.use("/api/py", pyprocess);

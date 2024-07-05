@@ -1,4 +1,4 @@
-function loadQuote() {
+function loadRandomQuote() {
     fetch('/quotes/quotes.json')
         .then(response => response.json())
         .then(data => {
@@ -10,4 +10,4 @@ function loadQuote() {
         });
 }
 
-export default loadQuote;
+export default loadRandomQuote;
