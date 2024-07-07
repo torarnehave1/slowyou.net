@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<!-- Metadata -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="author" content="Your Name">
+	<meta name="description" content="A brief description of your page">
+	<meta name="keywords" content="keywords, separated, by, commas">
+
+	<!-- Title and Icon -->
+	<title>My HTML Page</title>
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+
+	<!-- Scripts -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+
+	<!-- Social Media Metadata -->
+	<meta property="og:title" content="My HTML Page">
+	<meta property="og:description" content="A brief description of your page">
+	<meta property="og:image" content="image.jpg">
+	<meta property="og:url" content="https://example.com">
+	<meta name="twitter:title" content="My HTML Page">
+	<meta name="twitter:description" content="A brief description of your page">
+	<meta name="twitter:image" content="image.jpg">
+	<meta name="twitter:card" content="summary_large_image">
+
+	<!-- Grid Container Styles -->
+	<style>
+		.grid-containercards {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			grid-template-rows: repeat(3, 1fr);
+			width: 800px;
+			height: 100vh;
+			gap: 0px;
+			padding: 0px;
+			align-self: center;
+		}
+		.grid-item {
+			border: 1px solid #ccc;
+			display: flex;
+			
+			justify-content: center;
+			background-color: #f0f0f0;
+			padding: 0px;
+			flex-direction: column;
+			cursor: pointer;
+		}
+		.grid-item img {
+			width: auto;
+			height: auto;
+			
+			margin-bottom: 0px;
+		}
+		.modal {
+			display: none; 
+			position: fixed; 
+			z-index: 1; 
+			padding-top: 60px; 
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto; 
+			background-color: rgb(0,0,0); 
+			background-color: rgba(0,0,0,0.4); 
+		}
+		.modal-content {
+			background-color: #fefefe;
+			margin: 5% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 80%;
+		}
+		.close {
+			color: #aaa;
+			float: right;
+			font-size: 28px;
+			font-weight: bold;
+		}
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+		.card-description {
+			margin: 0;
+			font-size: 14px;
+			color: #333;
+			display: none;
+		}
+	</style>
+</head>
+<body>
+    <!-- Header content goes here -->
+    <header>
+        <h1>Vegvisr Mystery Cards</h1>
+        <p>Intro...</p>
+    </header>
+	<!-- Page content goes here -->
+	<div class="grid-containercards">
+		<!-- Grid items -->
+		<div class="grid-item" onclick="showModal(1)">
+			<img src="/images/Card 1 Front.svg" alt="Image 1">
+			<p class="card-description">Card 1</p>
+		</div>
+		<div class="grid-item" onclick="showModal(2)">
+			<img src="/images/Card 2 Front.svg" alt="Image 2">
+			<p class="card-description">Card 2</p>
+		</div>
+		<div class="grid-item" onclick="showModal(3)">
+			<img src="/images/Card 3 Front.svg" alt="Image 3">
+			<p class="card-description">Card 3</p>
+		</div>
+		<div class="grid-item" onclick="showModal(4)">
+			<img src="/images/Card 4 Front.svg" alt="Image 4">
+			<p class="card-description">Card 4</p>
+		</div>
+		<div class="grid-item" onclick="showModal(5)">
+			<img src="/images/Card 5 Front.svg" alt="Image 5">
+			<p class="card-description">Card 5</p>
+		</div>
+		<div class="grid-item" onclick="showModal(6)">
+			<img src="/images/Card 6 Front.svg" alt="Image 6">
+			<p class="card-description">Card 6</p>
+		</div>
+		<div class="grid-item" onclick="showModal(7)">
+			<img src="/images/Card 7 Front.svg" alt="Image 7">
+			<p class="card-description">Card 7</p>
+		</div>
+		<div class="grid-item" onclick="showModal(8)">
+			<img src="/images/Card 8 Front.svg" alt="Image 8">
+			<p class="card-description">Card 8</p>
+		</div>
+		<div class="grid-item" onclick="showModal(9)">
+			<img src="/images/Card 9 Front.svg" alt="Image 9">
+			<p class="card-description">Card 9</p>
+		</div>
+	</div>
+	
+
+	
+    <!-- Modal HTML -->
+	<!-- The Modal -->
+	<div id="myModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+			<h2 id="modalTitle"></h2>
+			<img id="modalImage" src="" alt="" style="width:100%; height:auto;">
+			<p id="modalDescription"></p>
+		</div>
+	</div>
+
+	<script>
+		// Example card data
+		const cardData = [
+			{title: "Card 1", image: "/images/Card 1 Front.svg", description: "Full description 1"},
+			{title: "Card 2", image: "/images/Card 2 Front.svg", description: "Full description 2"},
+			{title: "Card 3", image: "/images/Card 3 Front.svg", description: "Full description 3"},
+			{title: "Card 4", image: "/images/Card 4 Front.svg", description: "Full description 4"},
+			{title: "Card 5", image: "/images/Card 5 Front.svg", description: "Full description 5"},
+			{title: "Card 6", image: "/images/Card 6 Front.svg", description: "Full description 6"},
+			{title: "Card 7", image: "/images/Card 7 Front.svg", description: "Full description 7"},
+			{title: "Card 8", image: "/images/Card 8 Front.svg", description: "Full description 8"},
+			{title: "Card 9", image: "/images/Card 9 Front.svg", description: "Full description 9"},
+		];
+
+		function showModal(index) {
+			const card = cardData[index - 1];
+			document.getElementById('modalTitle').innerText = card.title;
+			document.getElementById('modalImage').src = card.image;
+			document.getElementById('modalDescription').innerText = card.description;
+			document.getElementById('myModal').style.display = "block";
+		}
+
+		// Close the modal when clicking outside of it
+		window.onclick = function(event) {
+			const modal = document.getElementById('myModal');
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		}
+	</script>
+	
+	<footer>
+		<!-- Footer content goes here -->
+		<p>&copy; 2023 My HTML Page</p>
+	</footer>
+</body>
+</html>

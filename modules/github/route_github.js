@@ -1,7 +1,10 @@
 import express from "express";
 import { Octokit } from "@octokit/core";
 
-// api/github
+// api/github this is the route defined in the server.js
+// 07.07.2024
+//Tor Arne Håve
+
 
 const accessToken = process.env.ACCESS_TOKEN;
 const owner = process.env.OWNER;

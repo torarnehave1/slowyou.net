@@ -18,6 +18,7 @@
     width: 100%;
     height: 100vh; /* Ensure the container takes the full height of the viewport */
     box-sizing: border-box; /* Include the border in the element's total height and width */
+
     
 }
 
@@ -63,30 +64,28 @@
             color: rgba(166, 183, 33, 0.768);
         }
         .gridcontainer {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows:  repeat(8, 1fr);
-            gap: 2px;
-            background-color: aquamarine;
-            width:100%;
-           
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: minmax(0, 100px) repeat(7, 1fr);
+    gap: 2px;
+    background-color: aquamarine;
+    width: 100%;
+}
 
-
-        }
         .item {
             border: 1px solid rgb(0, 0, 0);
             border-radius: 2px;
             background-color: rgba(255, 255, 255, 0.856);
             padding: 10px;
             min-height: 20px;
-            grid-row: 1;
+           
             border: 1px solid rgb(0, 0, 0);
             border-radius: 2px;
         }
         .images-container {
+           overflow-y: scroll;
            
-           
-            overflow-y: scroll;
+        
         
             border: 1px solid rgb(0, 0, 0);
             border-radius: 2px;
@@ -126,48 +125,57 @@
             align-items: center;
         }
 
-.grid-menu-two{
+.grid-menu-left{
     display: grid;
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     grid-template-columns: 1fr;
     align-items: center;
     justify-items: center;
     grid-gap: 2px;
     grid-row-start: 1;
-    grid-column-start: 2;
-    grid-row-end: 1;
+    grid-column-start: 1;
+    grid-row-end: 3;
     grid-column-end: 3;
     border: 1px solid rgb(0, 0, 0);
     border-radius: 2px;
     background-color: rgba(255, 255, 255, 0.841);
-    padding: 10px;
 
+}
+
+.item-ai-gen-social-post{
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    background-color: rgba(255, 255, 255, 0.841);
 }
 
 .grid-menu-one{
     display: grid;
-    grid-template-rows: repeat(1, 1fr);
-    grid-template-columns: 1fr;
-    align-items: center;
-    justify-items: left;
+    grid-template-rows: repeat(8, 1fr);
+    grid-template-columns: repeat(1, 1fr);
+    align-items: Left;
+    justify-items: Left;
     grid-gap: 2px;
     grid-row-start: 1;
-    grid-column-start: 1;
-    grid-row-end: 1;
-    grid-column-end: 1;
+    grid-column-start: 7;
+    grid-row-end: 3;
+    grid-column-end: 10;
     border: 1px solid rgb(0, 0, 0);
     border-radius: 2px;
     background-color: rgba(255, 255, 255, 0.841);
-    padding: 10px;
+    padding-left: 10px;
+    padding-top: 20px;
+    padding-right: 5px;
+   
 }
-
         .modal img {
             max-width: 90%;
             max-height: 90%;
         }
         .test{
             grid-column-start: 3;
-            grid-column-end: 8;
+            grid-column-end: 7;
             grid-row-start: 1;
             grid-row-end: 3;
             background-color: rosybrown;
@@ -178,18 +186,27 @@
             grid-column-start: 1;
             grid-column-end: 3;
             grid-row-start: 2;
-            grid-row-end: 2;
+            grid-row-end: 3;
             background-color: rgba(255, 255, 255, 0.841);
         }
 
-        
+        .item-author-select{
+            max-width: 170px;
+        }
        
     </style>
 </head>
 <body class="hero-background">
     
         <div class="gridcontainer">
+           
+
             <div class="grid-menu-one">
+                <div class="item-author-select">
+                    <select id="author-select" class="form-control" title="Author Select">
+                        <option value="">Select an author</option>
+                    </select>
+                </div>
                 <div class="item-watermark">
                     <label for="watermark">Watermark:</label>
                     <input type="text" class="form-control" id="watermark" placeholder="Enter your watermark" title="Watermark" />
@@ -213,20 +230,57 @@
                 <label for="frame-color">Frame Color:</label>
                 <input type="color" class="form-control" id="frame-color" value="#000000" oninput="document.documentElement.style.setProperty('--frame-color', this.value)" title="Frame Color" />
             </div>
-            </div>
-            <div class="grid-menu-two">
-            <div class="item-author-select">
-                <select id="author-select" class="form-control" title="Author Select">
-                    <option value="">Select an author</option>
-                </select>
-            </div>
-            
             <div class="item-load-rand-quote">
                 <button class="btn btn-secondary action-button" data-action="loadRandomQuote">Load Random quote</button>
             </div>
+            
             <div class="item-add-text-to-image">
                 <button class="btn btn-primary action-button" data-action="addTextToImage">Add Text to Image</button>
             </div>
+            </div>
+            <div class="grid-menu-left">
+
+                <div class="item-quote-form bg-white rounded p-3 shadow">
+                    <h4 class="mb-3">Quote Information</h4>
+                    <form id="quote-form">
+                    <div class="form-group">
+                        <label for="customquote">Quote:</label>
+                        <textarea id="customquote" rows="3" cols="50" maxlength="400" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="customauthor">Author:</label>
+                        <input id="customauthor" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="customtimeperiod">Timeperiod:</label>
+                        <input id="customtimeperiod" type="text" class="form-control">
+                    </div>
+                </form>
+                <div class="text-right">
+                    <button class="btn btn-success" id="save-quote-button">Save this quote</button>
+                </div>
+                </div>
+        
+                <div class="item-ai-gen-form bg-white rounded p-3 shadow">
+                    <h4 class="mb-3">AI Generate Social Media Post</h4>
+                    <form id="ai-gen-form">
+                    <div class="form-group">
+                        <div class="item-ai-gen-social-post">
+                
+                            <textarea class="form-control" id="ai-gen-soscial-post" rows="3" title="AI-generated Social Post"></textarea>
+                        </div>
+                    </div>
+                    
+                </form>
+                <div class="text-right">
+                    <button class="btn btn-success" id="ai-gen-button">Generate AI text</button>
+                </div>
+                </div>
+                
+          
+
+            
+            
         </div>
         
         <div class="item-imagelist">
@@ -235,27 +289,7 @@
                 <div id="imagesList" class="images-grid"></div>
             </div>
         </div>
-        <div class="item-quote-form bg-white rounded p-3 shadow">
-            <h4 class="mb-3">Quote Information</h4>
-            <form id="quote-form">
-            <div class="form-group">
-                <label for="customquote">Quote:</label>
-                <textarea id="customquote" rows="3" cols="50" maxlength="400" class="form-control"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="customauthor">Author:</label>
-                <input id="customauthor" type="text" class="form-control">
-            </div>
-            <div class="form-group">
-                <label for="customtimeperiod">Timeperiod:</label>
-                <input id="customtimeperiod" type="text" class="form-control">
-            </div>
-        </form>
-        <div class="text-right">
-            <button class="btn btn-success" id="save-quote-button">Save this quote</button>
-        </div>
-        </div>
-
+        
 
 
         <div class="test">
@@ -299,6 +333,50 @@
     </div>
 
     <script type="module">
+
+const aiGenButton = document.getElementById('ai-gen-button');
+const aiGenTextarea = document.getElementById('ai-gen-soscial-post');
+
+aiGenButton.addEventListener('click', async () => {
+    // Get the current quote value inside the event listener
+    const quoteText = document.getElementById('quote');
+    const currentQuote = quoteText.textContent;
+    const authorText = document.getElementById('author');
+    const currentAuthor = authorText.textContent;
+    const timeperiodText = document.getElementById('timeperiod');
+    const currentTimeperiod = timeperiodText.textContent;
+
+    const inputText = `${currentQuote} ${currentAuthor} ${currentTimeperiod}`;
+    console.log(inputText);
+
+    const options = {
+        method: 'POST',
+        headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            authorization: 'Bearer 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'
+        },
+        body: JSON.stringify({
+            model: 'llama-3-sonar-small-32k-online',
+            messages: [
+                { role: 'system', content: 'Be precise and concise.' },
+                { role: 'user', content: `Use this text :'${inputText}' and create a FB post for me. Hastags #slowyou #alivenesslab #movemetime Add your own suggestions for hastags also relevant to the topic and author .` }
+            ],
+
+            temperature: 0
+        })
+    };
+
+    fetch('https://api.perplexity.ai/chat/completions', options)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data); // Log the entire response object
+            document.getElementById('ai-gen-soscial-post').value = data.choices[0].message.content;
+            console.log(data.choices[0].message.content); // Log the content to the console
+        })
+        .catch(err => console.error(err));
+});
+
 document.getElementById('customquote').addEventListener('input', updateQuote);
 document.getElementById('quote-form').addEventListener('input', function(event) {
     if (event.target.tagName === 'INPUT') {
@@ -515,6 +593,10 @@ document.getElementById('quote-form').addEventListener('input', function(event) 
                 document.removeEventListener('mouseup', drop);
             }
         });
+
+
+
+
     </script>
 </body>
 </html>

@@ -188,7 +188,12 @@ router.get('/sound', async (req, res) => {
   
 });
 
-  
+router.get('/vegvisr', (req, res) => {
+    
+  res.sendFile(path.join(filePath, 'modules/vegvisr/vegvisrcards.html'));
+});  
+
+
   router.get('/coma', (req, res) => {
     
     res.sendFile(path.join(filePath, 'public/challenges/coma10day.html'));
