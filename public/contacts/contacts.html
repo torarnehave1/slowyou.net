@@ -261,7 +261,7 @@
         let selectedContactId = null;
         const viewAllNotes = async () => {
     try {
-        const response = await fetch(`http://localhost:3000/n/findnotes/${selectedContactId}`);
+        const response = await fetch(`/n/findnotes/${selectedContactId}`);
         if (!response.ok) {
             console.error(`Failed to fetch notes. Status Code: ${response.status}`);
             throw new Error(`Failed to fetch notes. Status Code: ${response.status}`);

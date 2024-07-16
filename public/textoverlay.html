@@ -182,6 +182,15 @@
             
         }
 
+        .test2{
+            grid-column-start: 3;
+            grid-column-end: 7;
+            grid-row-start: 3;
+            grid-row-end: 7;
+            background-color: rgb(31, 193, 36);
+            
+        }
+
         .item-quote-form{
             grid-column-start: 1;
             grid-column-end: 3;
@@ -312,7 +321,15 @@
     
 
    
-           
+           <div class="test2">
+
+            <p>Test</p>
+            <img id="resultimg" alt="Result Image">
+        <br>
+        <a id="download-link" class="btn btn-success mt-2" style="display:none;">Download Image</a>
+    
+
+           </div>
         
         
        
@@ -321,13 +338,9 @@
        
        
     
-    <canvas id="canvas" style="display:none;"></canvas>
-    <div class="container mt-3">
-        <img id="result-image" alt="Result Image" style="display:none;">
-        <br>
-        <a id="download-link" class="btn btn-success mt-2" style="display:none;">Download Image</a>
-    </div>
-
+    
+    
+        
     <div class="modal" id="imageModal">
         <img id="modalImage" src="" alt="Full Size Image">
     </div>
@@ -520,7 +533,7 @@ document.getElementById('quote-form').addEventListener('input', function(event) 
                 const canvas = await html2canvas(imageContainer);
                 const dataURL = canvas.toDataURL('image/png');
 
-                const resultImage = document.getElementById('result-image');
+                const resultImage = document.getElementById('resultimg');
                 const downloadLink = document.getElementById('download-link');
                 resultImage.src = dataURL;
                 resultImage.style.display = 'block';
