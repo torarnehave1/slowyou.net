@@ -74,7 +74,7 @@
                 display: grid;
                 grid-template-columns: repeat(8, 1fr);
                 grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
-                gap: 40px;
+                gap: 1px;
                 background-color: aquamarine;
                 width: 100%;
             }
@@ -105,9 +105,9 @@
                 padding-left: 10%;
             }
             .item-imagelist {
-                grid-column-start: 8;
-                grid-column-end: 8;
-                grid-row-start: 1;
+                grid-column-start: 7;
+                grid-column-end: 9;
+                grid-row-start: 2;
                 grid-row-end: 4;
                 background-color: rgba(255, 255, 255, 0.841);
                 height: 100vh;
@@ -141,47 +141,46 @@
             }
             .grid-menu-left {
                 display: grid;
-                grid-template-rows: repeat(2, 1fr);
-                grid-template-columns: 1fr;
-                align-items: center;
-                justify-items: center;
-               
-                grid-row-start: 1;
-                grid-column-start: 1;
-                grid-row-end: 3;
-                grid-column-end: 3;
-                border: 1px solid rgb(0, 0, 0);
-               
-                background-color: rgba(255, 255, 255, 0.841);
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-items: center;
+    grid-row-start: 2;
+    grid-column-start: 1;
+    grid-row-end: 3;
+    grid-column-end: 3;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgba(255, 255, 255, 0.841);
+   
             }
             .item-ai-gen-social-post {
                 grid-column-start: 1;
                 grid-column-end: 3;
-                grid-row-start: 1;
-                grid-row-end: 1;
+                grid-row-start: 2;
+                grid-row-end: 3;
                 background-color: rgba(255, 255, 255, 0.841);
             }
             .grid-menu-one {
                 display: grid;
-                grid-template-rows: repeat(8, 1fr);
-                grid-template-columns: repeat(1, 1fr);
+                grid-template-rows: repeat(1, 1fr);
+                grid-template-columns: repeat(8, 1fr);
                 align-items: Left;
                 justify-items: Left;
                 grid-gap: 2px;
                 grid-row-start: 1;
-                grid-column-start: 7;
-                grid-row-end: 3;
-                grid-column-end: 10;
+                grid-column-start: 1;
+                grid-row-end: 2;
+                grid-column-end: 9;
                 border: 1px solid rgb(0, 0, 0);
                 background-color: rgba(255, 255, 255, 0.841);
               
-              
+                max-height: 100px;
                 
             }
             .test {
                 grid-column-start: 3;
                 grid-column-end: 7;
-                grid-row-start: 1;
+                grid-row-start: 2;
                 grid-row-end: 3;
                 background-color: rosybrown;
             }
@@ -197,8 +196,8 @@
             .item-quote-form {
                 grid-column-start: 1;
                 grid-column-end: 3;
-                grid-row-start: 2;
-                grid-row-end: 3;
+                grid-row-start: 1;
+                grid-row-end: 2;
                 background-color: rgba(255, 255, 255, 0.841);
             }
             .item-author-select {
@@ -243,7 +242,21 @@
             </div>
         </div>
         <div class="grid-menu-left">
+            <div class="item-ai-gen-form bg-white rounded p-3 shadow">
+                <h4 class="mb-3">AI Generate Social Media Post</h4>
+                <form id="ai-gen-form">
+                    <div class="form-group">
+                        <div class="item-ai-gen-social-post">
+                            <textarea class="form-control" id="ai-gen-soscial-post" rows="3" title="AI-generated Social Post"></textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="text-right">
+                    <button class="btn btn-success" id="ai-gen-button">Generate AI text</button>
+                </div>
+            </div>
             <div class="item-quote-form bg-white rounded p-3 shadow">
+                
                 <h4 class="mb-3">Quote Information</h4>
                 <form id="quote-form">
                     <div class="form-group">
@@ -263,19 +276,7 @@
                     <button class="btn btn-success" id="save-quote-button">Save this quote</button>
                 </div>
             </div>
-            <div class="item-ai-gen-form bg-white rounded p-3 shadow">
-                <h4 class="mb-3">AI Generate Social Media Post</h4>
-                <form id="ai-gen-form">
-                    <div class="form-group">
-                        <div class="item-ai-gen-social-post">
-                            <textarea class="form-control" id="ai-gen-soscial-post" rows="3" title="AI-generated Social Post"></textarea>
-                        </div>
-                    </div>
-                </form>
-                <div class="text-right">
-                    <button class="btn btn-success" id="ai-gen-button">Generate AI text</button>
-                </div>
-            </div>
+           
         </div>
         <div class="item-imagelist">
             <div class="images-container">
