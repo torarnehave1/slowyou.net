@@ -130,11 +130,9 @@
                 
                 display: block;
             }
+            
             #closeModal {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                background-color: white;
+                position: relative;
                 border: none;
                 padding: 10px;
                 cursor: pointer;
@@ -310,9 +308,19 @@
     <div class="modal" id="imageModal">
         <img id="modalImage" src="" alt="Full Size Image">
         <button id="closeModal" class="btn btn-danger">Close</button>
+        <button id="saveImage" class="btn btn-success">Save Image</button>
     </div>
    
     <script type="module">
+
+
+document.getElementById('saveImage').addEventListener('click', async () => {
+    const modalImage = document.getElementById('modalImage').src;
+    const socialPostContent = document.getElementById('ai-gen-soscial-post').value;
+    await saveImageToServer(modalImage, socialPostContent);
+   
+});
+
         const aiGenButton = document.getElementById('ai-gen-button');
         const aiGenTextarea = document.getElementById('ai-gen-soscial-post');
 
@@ -339,7 +347,7 @@
                     model: 'llama-3-sonar-small-32k-online',
                     messages: [
                         { role: 'system', content: 'Be precise and concise.' },
-                        { role: 'user', content: `Use this text :'${inputText}' and create a FB post for me. Hastags #slowyou #alivenesslab #movemetime Add your own suggestions for hastags also relevant to the topic and author .` }
+                        { role: 'user', content: `Use this text :'${inputText}' and create creative post for social media. Add the text '${inputText}' include Hashtags #slowyou #alivenesslab #movemetime Add your own suggestions for hastags also relevant to the topic and author . Add @alivenesslab @slowyou` }
                     ],
                     temperature: 0
                 })
@@ -511,6 +519,28 @@
                 console.error('Error generating image:', error);
             }
         }
+
+
+        async function saveImageToServer(dataURL, textContent) {
+    try {
+        const response = await fetch('/img/save-image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image: dataURL, text: textContent })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Image and text saved successfully:', data);
+        } else {
+            console.error('Failed to save image and text:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error saving image and text:', error);
+    }
+}
 
         // Close modal when clicking the close button
         document.getElementById('closeModal').addEventListener('click', () => {

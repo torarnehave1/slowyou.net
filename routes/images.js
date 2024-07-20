@@ -9,6 +9,9 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import User from '../models/User.js';
+import bodyParser from 'body-parser';
+
+
 
 dotenv.config();
 const router = Router();
@@ -68,6 +71,8 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 * 5 } // Limit file size to 5MB
 });
 
+
+
 // Define route to upload an image
 router.post('/upload', isAuthenticated, upload.single('image'), (req, res) => {
   if (req.file) {
@@ -108,5 +113,50 @@ router.delete('/images/:filename', isAuthenticated, (req, res) => {
     res.json({ status: 'success', message: 'File deleted successfully' });
   });
 });
+
+router.post('/save-image', (req, res) => {
+  const imageData = req.body.image;
+  const textContent = req.body.text;
+
+  if (!imageData) {
+      return res.status(400).send('Image data is required');
+  }
+
+  if (!textContent) {
+      return res.status(400).send('Text content is required');
+  }
+
+  const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
+  const timestamp = Date.now();
+  const imageFilePath = path.join(__dirname, '../images/imageswithquotes/', `image_${timestamp}.png`);
+  const textFilePath = path.join(__dirname, '../images/imageswithquotes/', `image_${timestamp}.md`);
+
+  // Ensure the directory exists
+  fs.mkdir(path.join(__dirname, '../images/imageswithquotes/'), { recursive: true }, (err) => {
+      if (err) {
+          console.error('Error creating directory:', err);
+          return res.status(500).send('Failed to create directory');
+      }
+
+      // Save the image file
+      fs.writeFile(imageFilePath, base64Data, 'base64', (err) => {
+          if (err) {
+              console.error('Error saving image:', err);
+              return res.status(500).send('Failed to save image');
+          }
+
+          // Save the text file
+          fs.writeFile(textFilePath, textContent, (err) => {
+              if (err) {
+                  console.error('Error saving text:', err);
+                  return res.status(500).send('Failed to save text');
+              }
+
+              res.status(200).send({ message: 'Image and text saved successfully', imageFilePath, textFilePath });
+          });
+      });
+  });
+});
+
 
 export default router;
