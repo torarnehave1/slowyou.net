@@ -86,7 +86,7 @@ router.get('/search', async (req, res) => {
       
         // Change this into python3 in production
 
-        const pythonProcess = spawn('python', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_pdf.py'), videoId]);
+        const pythonProcess = spawn('python3', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_pdf.py'), videoId]);
         let transcript = '';
 
         pythonProcess.stdout.on('data', (data) => {
