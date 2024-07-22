@@ -25,6 +25,9 @@ import vegvisr_route from './modules/vegvisr/vegvisr_route.js';
 import rateLimit from 'express-rate-limit'; //Security to protect from brute force
 import morgan from 'morgan'; //Log funcionality
 import imgroutes from './routes/images.js';
+import dropboxfilesroutes from './routes/dropbox.js';
+import mdroute from './routes/markdown_route.js';
+
 
 //import security from './modules/security/routes_security.js';
 
@@ -81,8 +84,9 @@ app.use('/static', express.static(path.join(__dirname, 'json')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/signin', express.static(path.join(__dirname, 'signin')));
 app.use('/logo', express.static(path.join(__dirname, 'logo')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+//app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/error', express.static(path.join(__dirname, 'error')));
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -108,7 +112,9 @@ app.use('/c/',contacts_route);
 app.use('/n',conversations_route);
 app.use('/products',products_route);
 app.use('/vegvisr', vegvisr_route);
-app.use('/img',imgroutes);
+app.use('/img', imgroutes);
+app.use('/dropbox', dropboxfilesroutes);
+app.use('/md', mdroute)
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));

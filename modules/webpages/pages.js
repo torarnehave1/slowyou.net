@@ -188,6 +188,13 @@ router.get('/sound', async (req, res) => {
   
 });
 
+
+router.get('/dropbox', (req, res) => {
+    
+  res.sendFile(path.join(filePath, 'modules/dropbox/dropbox.html'));
+});  
+
+
 router.get('/vegvisr', (req, res) => {
     
   res.sendFile(path.join(filePath, 'modules/vegvisr/vegvisrcards.html'));
