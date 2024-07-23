@@ -110,32 +110,51 @@ router.get('/auth/callback', async (req, res) => {
 
 // Endpoint to list files in a folder
 router.get('/list-files', ensureValidToken, async (req, res) => {
-  const folderPath = '/Slowyou.net/Images'; // Root directory
-  console.log(`Requesting path: ${folderPath}`); // Log the path being requested
-
-  const dbx = new Dropbox({
-    accessToken: accessToken,
-    fetch: fetch,
-  });
-
-  try {
-    const response = await dbx.filesListFolder({ path: folderPath });
-    const entries = response.result.entries.map(entry => ({
-      name: entry.name,
-      type: entry['.tag'],
-      size: entry.size,
-      modified: entry.server_modified,
-      path: entry.path_display
-    }));
-
-    res.json(entries);
-  } catch (error) {
-    console.error('Error fetching files from Dropbox:', error);
-    res.status(500).json({
-      message: 'Error fetching files from Dropbox',
-      error: error.error ? error.error.error_summary : error.message
+    const folderPath = '/Slowyou.net/Images'; // Root directory
+    console.log(`Requesting path: ${folderPath}`); // Log the path being requested
+  
+    const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
     });
-  }
-});
+  
+    try {
+      const response = await dbx.filesListFolder({ path: folderPath });
+      const entries = response.result.entries;
+  
+      // Generate temporary links for each file
+      const fileEntriesWithLinks = await Promise.all(entries.map(async (entry) => {
+        if (entry['.tag'] === 'file') {
+          try {
+            const linkResponse = await dbx.filesGetTemporaryLink({ path: entry.path_lower });
+            return {
+              name: entry.name,
+              type: entry['.tag'],
+              size: entry.size,
+              modified: entry.server_modified,
+              url: linkResponse.result.link
+            };
+          } catch (error) {
+            console.error('Error getting temporary link for file:', entry.name, error);
+            return null;
+          }
+        } else {
+          return null;
+        }
+      }));
+  
+      // Filter out any null entries (failed to get temporary link)
+      const validEntries = fileEntriesWithLinks.filter(entry => entry !== null);
+  
+      res.json(validEntries);
+    } catch (error) {
+      console.error('Error fetching files from Dropbox:', error);
+      res.status(500).json({
+        message: 'Error fetching files from Dropbox',
+        error: error.error ? error.error.error_summary : error.message
+      });
+    }
+  });
+  
 
 export default router;
