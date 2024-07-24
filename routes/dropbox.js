@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import os from 'os';
+import { marked } from 'marked';
 
 dotenv.config();
 
@@ -156,5 +157,87 @@ router.get('/list-files', ensureValidToken, async (req, res) => {
     }
   });
   
+
+  router.get('/list-markdown-files', ensureValidToken, async (req, res) => {
+    const folderPath = '/Slowyou.net/markdown'; // Folder path
+    console.log(`Requesting path: ${folderPath}`); // Log the path being requested
+  
+    const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
+    });
+  
+    try {
+      const response = await dbx.filesListFolder({ path: folderPath });
+      const entries = await Promise.all(response.result.entries.map(async entry => {
+        if (entry['.tag'] === 'file' && entry.name.endsWith('.md')) {
+          const linkResponse = await dbx.filesGetTemporaryLink({ path: entry.path_lower });
+          return {
+            name: entry.name,
+            type: entry['.tag'],
+            size: entry.size,
+            modified: entry.server_modified,
+            url: linkResponse.result.link
+          };
+        }
+        return null;
+      }));
+  
+      const validEntries = entries.filter(entry => entry !== null);
+      res.json(validEntries);
+    } catch (error) {
+      console.error('Error fetching files from Dropbox:', error);
+      res.status(500).json({
+        message: 'Error fetching files from Dropbox',
+        error: error.error ? error.error.error_summary : error.message
+      });
+    }
+  });
+  
+  // Endpoint to fetch and render a markdown file
+  router.get('/blog/:filename', ensureValidToken, async (req, res) => {
+    const filename = req.params.filename;
+    const filePath = `/Slowyou.net/markdown/${filename}`;
+  
+    const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
+    });
+  
+    try {
+      const response = await dbx.filesDownload({ path: filePath });
+      const fileContent = response.result.fileBinary.toString('utf-8');
+      const htmlContent = marked(fileContent);
+  
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Blog Post</title>
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 2em; }
+                pre { background: #f4f4f4; padding: 1em; }
+                code { background: #f4f4f4; padding: 0.2em; }
+                .header-image { width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 20px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                ${htmlContent}
+            </div>
+        </body>
+        </html>
+      `;
+  
+      res.send(html);
+    } catch (error) {
+      console.error('Error fetching file from Dropbox:', error);
+      res.status(500).json({
+        message: 'Error fetching file from Dropbox',
+        error: error.error ? error.error.error_summary : error.message
+      });
+    }
+  });
 
 export default router;
