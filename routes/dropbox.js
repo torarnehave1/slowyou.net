@@ -110,7 +110,7 @@ router.get('/auth/callback', async (req, res) => {
 });
 
 // Endpoint to list files in a folder
-router.get('/list-files', ensureValidToken, async (req, res) => {
+router.get('/list-image-files', ensureValidToken, async (req, res) => {
     const folderPath = '/Slowyou.net/Images'; // Root directory
     console.log(`Requesting path: ${folderPath}`); // Log the path being requested
   
