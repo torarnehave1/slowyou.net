@@ -382,4 +382,74 @@ router.get('/project/:filename', ensureValidToken, async (req, res) => {
   }
 });
 
+
+router.get('/imgcollection/:filename', ensureValidToken, async (req, res) => {
+  const filename = req.params.filename;
+  const filePath = `/Slowyou.net/projects/${filename}`;
+
+  const dbx = new Dropbox({
+    accessToken: accessToken,
+    fetch: fetch,
+  });
+
+  try {
+    const response = await dbx.filesDownload({ path: filePath });
+    const fileContent = response.result.fileBinary.toString('utf-8');
+
+    // Extract image URL from the markdown content
+    
+    const htmlContent = marked(fileContent);
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>Project Suggestion</title>
+          <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+              body { font-family: Arial, sans-serif; margin: 2em; }
+              pre { background: #f4f4f4; padding: 1em; }
+              code { background: #f4f4f4; padding: 0.2em; }
+              .header-image { width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 20px; }
+          </style>
+      </head>
+      <body>
+      
+      <div id="menu-container"></div> 
+  
+          <div class="container">
+              ${htmlContent}
+          </div>
+      </body>
+      <script>
+      function loadMenu() {
+              fetch('/menu.html')
+                  .then(response => response.text())
+                  .then(data => {
+                      document.getElementById('menu-container').innerHTML = data;
+                      initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                      checkAuthStatus(); // Check auth status after loading the menu
+                  })
+                  .catch(error => console.error('Error loading menu:', error));
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              console.log("DOM fully loaded and parsed");
+              loadMenu();
+          });
+      </script>
+      </html>
+    `;
+
+    res.send(html);
+  } catch (error) {
+    console.error('Error fetching file from Dropbox:', error);
+    res.status(500).json({
+      message: 'Error fetching file from Dropbox',
+      error: error.error ? error.error.error_summary : error.message
+    });
+  }
+});
+
+
 export default router;
