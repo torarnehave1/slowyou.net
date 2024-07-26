@@ -158,6 +158,42 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
   });
   
 
+  router.get('/list-image-collection-links', ensureValidToken, async (req, res) => {
+    const folderPath = '/Slowyou.net/markdown'; // Folder path
+    console.log(`Requesting path: ${folderPath}`); // Log the path being requested
+  
+    const dbx = new Dropbox({
+      accessToken: accessToken,
+      fetch: fetch,
+    });
+  
+    const filename = 'ImgCollection.md';
+    const filePath = `${folderPath}/${filename}`;
+  
+    try {
+      const response = await dbx.filesDownload({ path: filePath });
+      const fileContent = response.result.fileBinary.toString('utf-8');
+
+      // Extract image URL from the markdown content
+      const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
+      const imageMatches = fileContent.matchAll(imageRegex);
+      const imageLinksAndNames = Array.from(imageMatches).map(match => ({
+        name: match[1],
+        url: match[2]
+      }));
+  
+      res.json(imageLinksAndNames);
+    } catch (error) {
+      console.error('Error fetching markdown file from Dropbox:', error);
+      res.status(500).json({
+        message: 'Error fetching markdown file from Dropbox',
+        error: error.error ? error.error.error_summary : error.message
+      });
+    }
+  });
+
+  // Image Collection Grounding
+
   router.get('/list-markdown-files', ensureValidToken, async (req, res) => {
     const folderPath = '/Slowyou.net/markdown'; // Folder path
     console.log(`Requesting path: ${folderPath}`); // Log the path being requested
@@ -207,7 +243,15 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
     try {
       const response = await dbx.filesDownload({ path: filePath });
       const fileContent = response.result.fileBinary.toString('utf-8');
-      const htmlContent = marked(fileContent);
+
+      // Extract image URL from the markdown content
+      const imageRegex = /!\[.*?\]\((.*?)\)/;
+      const imageMatch = fileContent.match(imageRegex);
+      const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+      const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
+      const contentWithoutImage = fileContent.replace(imageRegex, '');
+
+      const htmlContent = marked(contentWithoutImage);
   
       const html = `
         <!DOCTYPE html>
@@ -223,10 +267,32 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             </style>
         </head>
         <body>
+        
+        <div id="menu-container"></div> 
+        <div style="text-align: center;">
+            ${imageTag}
+        </div>
             <div class="container">
                 ${htmlContent}
             </div>
         </body>
+        <script>
+        function loadMenu() {
+                fetch('/menu.html')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('menu-container').innerHTML = data;
+                        initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                        checkAuthStatus(); // Check auth status after loading the menu
+                    })
+                    .catch(error => console.error('Error loading menu:', error));
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log("DOM fully loaded and parsed");
+                loadMenu();
+            });
+        </script>
         </html>
       `;
   
@@ -238,6 +304,82 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         error: error.error ? error.error.error_summary : error.message
       });
     }
+});
+
+
+router.get('/project/:filename', ensureValidToken, async (req, res) => {
+  const filename = req.params.filename;
+  const filePath = `/Slowyou.net/project/${filename}`;
+
+  const dbx = new Dropbox({
+    accessToken: accessToken,
+    fetch: fetch,
   });
+
+  try {
+    const response = await dbx.filesDownload({ path: filePath });
+    const fileContent = response.result.fileBinary.toString('utf-8');
+
+    // Extract image URL from the markdown content
+    const imageRegex = /!\[.*?\]\((.*?)\)/;
+    const imageMatch = fileContent.match(imageRegex);
+    const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+    const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
+    const contentWithoutImage = fileContent.replace(imageRegex, '');
+
+    const htmlContent = marked(contentWithoutImage);
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>Project Suggestion</title>
+          <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+              body { font-family: Arial, sans-serif; margin: 2em; }
+              pre { background: #f4f4f4; padding: 1em; }
+              code { background: #f4f4f4; padding: 0.2em; }
+              .header-image { width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 20px; }
+          </style>
+      </head>
+      <body>
+      
+      <div id="menu-container"></div> 
+      <div style="text-align: center;">
+          ${imageTag}
+      </div>
+          <div class="container">
+              ${htmlContent}
+          </div>
+      </body>
+      <script>
+      function loadMenu() {
+              fetch('/menu.html')
+                  .then(response => response.text())
+                  .then(data => {
+                      document.getElementById('menu-container').innerHTML = data;
+                      initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                      checkAuthStatus(); // Check auth status after loading the menu
+                  })
+                  .catch(error => console.error('Error loading menu:', error));
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              console.log("DOM fully loaded and parsed");
+              loadMenu();
+          });
+      </script>
+      </html>
+    `;
+
+    res.send(html);
+  } catch (error) {
+    console.error('Error fetching file from Dropbox:', error);
+    res.status(500).json({
+      message: 'Error fetching file from Dropbox',
+      error: error.error ? error.error.error_summary : error.message
+    });
+  }
+});
 
 export default router;

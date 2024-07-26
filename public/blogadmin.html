@@ -19,11 +19,12 @@
             line-clamp: 3;
             -webkit-box-orient: horizontal;
         }
+
     </style>
 </head>
 <body>
     <div id="menu-container"></div>
-    <h1>Markdown File Viewer</h1>
+    <h1>Markdown Files in Dropbox</h1>
 
     <div class="file-list" id="fileList"></div>
 
@@ -57,16 +58,17 @@
 
             for (const file of files) {
                 if (file.type === 'file' && file.name.endsWith('.md')) {
-                    const previewText = await fetchFilePreview(file.url);
+                   // const previewText = await fetchFilePreview(file.url);
                     const fileItem = document.createElement('div');
                     fileItem.className = 'card';
                     fileItem.innerHTML = `
                         <div class="card-body">
                             <h5 class="card-title">${file.name}</h5>
                             <p class="card-content">
-                                ${previewText}
+                              ${file.size}
                             </p>
                             <a href="/dropbox/blog/${file.name}" target="_blank" class="btn btn-primary">Read more</a>
+                            <a href="/dropbox/add/${file.name}" target="_blank" class="btn btn-primary">Save to Blog DB</a>
                         </div>
                     `;
                     fileList.appendChild(fileItem);

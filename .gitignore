@@ -4,3 +4,4 @@ sendgrid.env
 folder_structur.md
 sendemail.py
 public/pdf_video_transcrips/*
+modules/midjourney/*
