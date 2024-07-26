@@ -309,7 +309,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 
 router.get('/project/:filename', ensureValidToken, async (req, res) => {
   const filename = req.params.filename;
-  const filePath = `/Slowyou.net/project/${filename}`;
+  const filePath = `/Slowyou.net/projects/${filename}`;
 
   const dbx = new Dropbox({
     accessToken: accessToken,
