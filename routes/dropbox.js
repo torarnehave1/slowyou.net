@@ -5,10 +5,26 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import os from 'os';
 import { marked } from 'marked';
+import crypto from 'crypto';
+
+// List of endpoint names in this code:
+// 1. GET /auth - Endpoint to start the OAuth flow
+// 2. GET /auth/callback - Callback endpoint to handle the authorization code
+// 3. GET /list-image-files - Endpoint to list image files in a folder
+// 4. GET /list-image-collection-links - Endpoint to list image collection links from a markdown file
+// 5. GET /list-markdown-files - Endpoint to list markdown files in a folder
+// 6. GET /blog/:filename - Endpoint to fetch and render a markdown file for a blog post
+// 7. GET /project/:filename - Endpoint to fetch and render a markdown file for a project
+// 8. GET /offer/:filename - Endpoint to fetch and render a markdown file for an offer
+// 9. GET /imgcollection/:filename - Endpoint to fetch and render a markdown file for an image collection
+// 10 POST /save-markdown - saving a hashed file to dropbox
+
 
 dotenv.config();
 
 const router = express.Router();
+
+
 
 // Get the hostname of the current machine
 const hostname = os.hostname();
@@ -231,7 +247,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
   });
   
   // Endpoint to fetch and render a markdown file
-  router.get('/blog/:filename', ensureValidToken, async (req, res) => {
+  router.get('/md/:filename', ensureValidToken, async (req, res) => {
     const filename = req.params.filename;
     const filePath = `/Slowyou.net/markdown/${filename}`;
   
@@ -527,6 +543,52 @@ router.get('/imgcollection/:filename', ensureValidToken, async (req, res) => {
     });
   }
 });
+
+
+
+
+// Endpoint to save content as a markdown file
+router.post('/save-markdown', ensureValidToken, async (req, res) => {
+  const { content } = req.body;
+
+  if (!content) {
+    return res.status(400).json({
+      message: 'Content is required to save the file'
+    });
+  }
+
+  // Hash the content to create a unique filename
+  const hash = crypto.createHash('sha256').update(content).digest('hex');
+  const filename = `${hash}.md`;
+  const folderPath = '/Slowyou.net/markdown'; // Predefined folder path
+  const filePath = `${folderPath}/${filename}`;
+
+  const dbx = new Dropbox({
+    accessToken: accessToken,
+    fetch: fetch,
+  });
+
+  try {
+    // Upload the file to Dropbox
+    await dbx.filesUpload({
+      path: filePath,
+      contents: content,
+      mode: 'overwrite'
+    });
+
+    res.status(200).json({
+      message: 'File saved successfully',
+      filename: filename
+    });
+  } catch (error) {
+    console.error('Error saving file to Dropbox:', error);
+    res.status(500).json({
+      message: 'Error saving file to Dropbox',
+      error: error.error ? error.error.error_summary : error.message
+    });
+  }
+});
+
 
 
 export default router;
