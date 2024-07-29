@@ -198,6 +198,7 @@
                 <label for="markdownTextarea">Markdown Content:</label>
                 <textarea class="form-control" id="markdownTextarea" rows="10"></textarea>
             </div>
+            <a class="ReturnfileURL" href="https://slowyou.net/dropbox/md/" target="_blank" rel="noopener">https://slowyou.net/dropbox/md/</a>
             <div class="ReturnfileURL" data-url="https://slowyou.net/dropbox/md/"></div>
             
             <label for="preview">Preview:</label>
@@ -427,8 +428,10 @@ async function saveMarkdownContent() {
             console.log('File saved successfully:', result.filename);
             alert('File saved successfully');
             const returnfileURL = document.querySelector('.ReturnfileURL');
-            returnfileURL.dataset.url += result.filename;
-
+            
+            returnfileURL.href = 'https://slowyou.net/dropbox/md/' + result.filename;
+            returnfileURL.text = 'https://slowyou.net/dropbox/md/' + result.filename;
+            returnfileURL.setAttribute('data-url', 'https://slowyou.net/dropbox/md/' + result.filename);
 
         } else {
             console.error('Error saving file:', result.message);
