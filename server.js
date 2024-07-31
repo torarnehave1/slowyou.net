@@ -28,6 +28,7 @@ import imgroutes from './routes/images.js';
 import dropboxfilesroutes from './routes/dropbox.js';
 import mdroute from './routes/markdown_route.js';
 import blogpost from './routes/blogpost_routes.js';
+import Mdfiles from './routes/Mdfiles_to_db_routes.js';
 
 
 //import security from './modules/security/routes_security.js';
@@ -117,6 +118,7 @@ app.use('/img', imgroutes);
 app.use('/dropbox', dropboxfilesroutes);
 app.use('/md', mdroute);
 app.use('/blog', blogpost);
+app.use('/mdfiles', Mdfiles);
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));
