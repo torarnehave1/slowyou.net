@@ -6,6 +6,10 @@ import dotenv from 'dotenv';
 import os from 'os';
 import { marked } from 'marked';
 import crypto from 'crypto';
+import MDfile from '../models/Mdfiles.js';
+import mongoose from 'mongoose';
+import sanitizeHtml from 'sanitize-html';
+
 
 // List of endpoint names in this code:
 // 1. GET /auth - Endpoint to start the OAuth flow
@@ -548,46 +552,112 @@ router.get('/imgcollection/:filename', ensureValidToken, async (req, res) => {
 
 
 // Endpoint to save content as a markdown file
+// Endpoint to save content as a markdown file
+// Endpoint to save content as a markdown file
 router.post('/save-markdown', ensureValidToken, async (req, res) => {
-  const { content } = req.body;
+  const { content, id } = req.body;
 
   if (!content) {
-    return res.status(400).json({
-      message: 'Content is required to save the file'
-    });
+      return res.status(400).json({
+          message: 'Content is required to save the file'
+      });
   }
 
-  // Hash the content to create a unique filename
-  const hash = crypto.createHash('sha256').update(content).digest('hex');
-  const filename = `${hash}.md`;
-  const folderPath = '/Slowyou.net/markdown'; // Predefined folder path
-  const filePath = `${folderPath}/${filename}`;
-
   const dbx = new Dropbox({
-    accessToken: accessToken,
-    fetch: fetch,
+      accessToken: accessToken,
+      fetch: fetch,
   });
 
   try {
-    // Upload the file to Dropbox
-    await dbx.filesUpload({
-      path: filePath,
-      contents: content,
-      mode: 'overwrite'
-    });
+      let fileDoc;
 
-    res.status(200).json({
-      message: 'File saved successfully',
-      filename: filename
-    });
+      if (id) {
+          // If an ID is provided, find the document and update it
+          fileDoc = await MDfile.findById(id);
+          if (!fileDoc) {
+              return res.status(404).json({
+                  message: 'Document not found'
+              });
+          }
+          fileDoc.content = content;
+      } else {
+          // If no ID is provided, create a new document
+          fileDoc = new MDfile({
+              _id: new mongoose.Types.ObjectId(),
+              content: content
+          
+          });
+      }
+
+      // Save to MongoDB
+      await fileDoc.save();
+
+      const filename = `${fileDoc._id}.md`;
+      const filePath = `/Slowyou.net/markdown/${filename}`;
+
+      // Upload the file to Dropbox
+      await dbx.filesUpload({
+          path: filePath,
+          contents: content,
+          mode: 'overwrite'
+      });
+
+      res.status(200).json({
+          message: 'File saved successfully',
+          id: fileDoc._id
+      });
   } catch (error) {
-    console.error('Error saving file to Dropbox:', error);
-    res.status(500).json({
-      message: 'Error saving file to Dropbox',
-      error: error.error ? error.error.error_summary : error.message
-    });
+      console.error('Error saving file to Dropbox or MongoDB:', error);
+      res.status(500).json({
+          message: 'Error saving file',
+          error: error.message
+      });
   }
 });
+
+
+
+router.get('/search', ensureValidToken, async (req, res) => {
+    const { query } = req.query;
+
+    if (!query) {
+        return res.status(400).json({
+            message: 'Search query is required'
+        });
+    }
+
+    try {
+        // Search the MDfile collection for documents containing the query in their content
+        const results = await MDfile.find({
+            content: { $regex: query, $options: 'i' }
+        });
+
+        // Generate an array of results with id and a plain text abstract
+        const resultsAbs = results.map(result => {
+            // Strip markdown syntax and limit to the first 100 characters for the abstract
+            const plainTextContent = sanitizeHtml(marked(result.content), {
+                allowedTags: [],
+                allowedAttributes: {}
+            });
+            const abstract = plainTextContent.substring(0, 100) + (plainTextContent.length > 100 ? '...' : '');
+
+            return {
+                id: result._id,
+                abs: abstract
+            };
+        });
+
+        // Send the search results as the response
+        res.status(200).json(resultsAbs);
+    } catch (error) {
+        console.error('Error searching for files:', error);
+        res.status(500).json({
+            message: 'Error searching for files',
+            error: error.message
+        });
+    }
+});
+
 
 
 

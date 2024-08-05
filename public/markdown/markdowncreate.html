@@ -61,23 +61,15 @@
 
         .previewgrid {
             display: grid;
-            
-           
             gap: 1px;
             grid-template-columns: 10px repeat(5, 1fr);
-
         }
-
-       
-    
-        
 
         .preview {
             background-color: #ffffff;
             max-width: 100%;
             margin-top: 20px;
             border: 1px solid #ddd;
-            
             overflow: auto;
         }
 
@@ -85,20 +77,18 @@
             grid-column: span 4;
             grid-column-start: 2;
             grid-column-end: 6;
-            
-
         }
 
         .griditem {
-    grid-column-start:2;
-    grid-column-end:6;
-   
-}
+            grid-column-start: 2;
+            grid-column-end: 6;
+        }
+
         .preview img {
             max-width: 100%;
             height: auto;
             border-radius: 5px;
-            grid-column: span 2; /* Default to span 2 columns */
+            grid-column: span 2;
         }
 
         .topmenu {
@@ -122,11 +112,7 @@
         }
 
         .material-symbols-outlined {
-            font-variation-settings:
-            'FILL' 0,
-            'wght' 400,
-            'GRAD' 0,
-            'opsz' 24;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
 
         .language-markdown {
@@ -168,9 +154,12 @@
     <div class="gridcontainer">
         <div class="container">
             <div class="topmenu">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search for files" aria-label="Search">
+<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
                 <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button>
               
-                <button class="btn btn-primary" id="saveButton"><span class="material-symbols-outlined">save</span></button>
+                <button class="btn btn-primary" id="saveButton" disabled><span class="material-symbols-outlined">save</span></button>
                 <button class="btn btn-primary" id="saveButtonProt"><span class="material-symbols-outlined">enhanced_encryption</span></button>
                 <button class="btn btn-primary" id="newButton"><span class="material-symbols-outlined">add</span></button>
                 <button class="btn btn-primary" id="uploadButton"><span class="material-symbols-outlined">upload_file</span></button>
@@ -183,7 +172,7 @@
                 <div class="menuleft">
                     <button id="insertHashTaglist" class="material-symbols-outlined">tag</button>
                     <button id="insertHeading1" class="material-symbols-outlined">format_h1</button>
-                    <button id="insertHeading2" class="material-symbols-outlined" >format_h2</button>
+                    <button id="insertHeading2" class="material-symbols-outlined">format_h2</button>
                     <button id="insertHeading3" class="material-symbols-outlined">format_h3</button>
                     <button id="insertHeading4" class="material-symbols-outlined">format_h4</button>
                     <button id="insertBold" class="material-symbols-outlined">format_bold</button>
@@ -213,6 +202,8 @@
 
         const markdownTextarea = document.getElementById('markdownTextarea');
         const previewGrid = document.getElementById('previewgrid');
+        const saveButton = document.getElementById('saveButton');
+        let isChanged = false;
 
         // Custom renderer to avoid wrapping images in paragraphs
         const renderer = new marked.Renderer();
@@ -389,22 +380,24 @@
 
         // Ensure event listeners are only added once
         function attachEventListeners() {
-    console.log('attachEventListeners called');
-    document.getElementById('insertHashTaglist').addEventListener('click', insertHashTaglist);
-    document.getElementById('insertHeading1').addEventListener('click', insertHeading1);
-    document.getElementById('insertHeading2').addEventListener('click', insertHeading2);
-    document.getElementById('insertHeading3').addEventListener('click', insertHeading3);
-    document.getElementById('insertHeading4').addEventListener('click', insertHeading4);
-    document.getElementById('insertBold').addEventListener('click', insertBold);
-    document.getElementById('insertItalic').addEventListener('click', insertItalic);
-    document.getElementById('insertLink').addEventListener('click', insertLink);
-    document.getElementById('insertImage').addEventListener('click', insertImage);
-    document.getElementById('insertOrderedList').addEventListener('click', insertOrderedList);
-    document.getElementById('insertUnorderedList').addEventListener('click', insertUnorderedList);
-    document.getElementById('insertCode').addEventListener('click', insertCode);
-    document.getElementById('insertHorizontalRule').addEventListener('click', insertHorizontalRule);
-    document.getElementById('saveButton').addEventListener('click', saveMarkdownContent);
-}
+            console.log('attachEventListeners called');
+            document.getElementById('insertHashTaglist').addEventListener('click', insertHashTaglist);
+            document.getElementById('insertHeading1').addEventListener('click', insertHeading1);
+            document.getElementById('insertHeading2').addEventListener('click', insertHeading2);
+            document.getElementById('insertHeading3').addEventListener('click', insertHeading3);
+            document.getElementById('insertHeading4').addEventListener('click', insertHeading4);
+            document.getElementById('insertBold').addEventListener('click', insertBold);
+            document.getElementById('insertItalic').addEventListener('click', insertItalic);
+            document.getElementById('insertLink').addEventListener('click', insertLink);
+            document.getElementById('insertImage').addEventListener('click', insertImage);
+            document.getElementById('insertOrderedList').addEventListener('click', insertOrderedList);
+            document.getElementById('insertUnorderedList').addEventListener('click', insertUnorderedList);
+            document.getElementById('insertCode').addEventListener('click', insertCode);
+            document.getElementById('insertHorizontalRule').addEventListener('click', insertHorizontalRule);
+            document.getElementById('saveButton').addEventListener('click', saveMarkdownContent);
+        }
+
+        let currentDocumentId = null; // Store the current document ID
 
 async function saveMarkdownContent() {
     const content = markdownTextarea.value;
@@ -414,25 +407,32 @@ async function saveMarkdownContent() {
         return;
     }
 
+    if (!isChanged) {
+        alert('No changes detected.');
+        return;
+    }
+
+    saveButton.disabled = true;
+
     try {
         const response = await fetch('/dropbox/save-markdown', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ content })
+            body: JSON.stringify({ content, id: currentDocumentId })
         });
 
         const result = await response.json();
         if (response.ok) {
-            console.log('File saved successfully:', result.filename);
+            console.log('File saved successfully:', result.id);
             alert('File saved successfully');
+            currentDocumentId = result.id; // Update the current document ID
             const returnfileURL = document.querySelector('.ReturnfileURL');
-            
-            returnfileURL.href = 'https://slowyou.net/dropbox/md/' + result.filename;
-            returnfileURL.text = 'https://slowyou.net/dropbox/md/' + result.filename;
-            returnfileURL.setAttribute('data-url', 'https://slowyou.net/dropbox/md/' + result.filename);
-
+            returnfileURL.href = 'https://slowyou.net/dropbox/md/' + result.id + '.md';
+            returnfileURL.text = 'https://slowyou.net/dropbox/md/' + result.id + '.md';
+            returnfileURL.setAttribute('data-url', 'https://slowyou.net/dropbox/md/' + result.id + '.md');
+            isChanged = false;
         } else {
             console.error('Error saving file:', result.message);
             alert('Error saving file');
@@ -440,18 +440,25 @@ async function saveMarkdownContent() {
     } catch (error) {
         console.error('Error:', error);
         alert('An error occurred while saving the file');
+    } finally {
+        saveButton.disabled = false;
     }
 }
 
-        // Update preview when user inputs text directly
-        markdownTextarea.addEventListener('input', updatePreviewFromInput);
+// Update preview when user inputs text directly
+markdownTextarea.addEventListener('input', () => {
+    updatePreviewFromInput();
+    isChanged = true;
+    saveButton.disabled = false;
+});
 
-        // Attach event listeners once
-        attachEventListeners();
+// Attach event listeners once
+attachEventListeners();
 
-        // Initial preview update
-        console.log('Initial preview update');
-        updatePreviewFromInput();
+// Initial preview update
+console.log('Initial preview update');
+updatePreviewFromInput();
+
 
     </script>
 </body>
