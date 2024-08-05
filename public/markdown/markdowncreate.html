@@ -157,22 +157,6 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
         }
 
-        .FileListfromSearch {
-            color: rgb(212, 143, 143);
-            font-size: 1em;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 20px;
-            grid-row-start: 2;
-            flex-direction: column;
-            grid-column: span 3;
-            grid-column-start: 1;
-            margin-top: 3px;
-            flex-wrap: wrap;
-        }
-
         .pagination {
             margin-top: 10px;
             display: flex;
@@ -183,18 +167,92 @@
         .pagination li {
             margin: 0 5px;
         }
+
+        .FileListfromSearch {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+            width: 90%;
+            grid-column: 1 / -1;
+            grid-row: 2 / 3;
+        }
+
+        .card {
+            flex: 1 1 18rem; /* Allow flexibility */
+        }
+
+
+        .list-group {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+
+        .list-group-item {
+            display: flex;
+            flex-wrap: wrap;
+            flex: 1 1 18rem;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-height: 55px;
+            overflow: hidden;
+        }
+
+        .list-group-item a.list-item {
+            display: block;
+            margin-bottom: 5px;
+            padding: 5px 5px 0 5px;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        
+
+        .list-group-item a.list-item:hover {
+            background-color: #d6d8db;
+        }
+
+        .card-body .stripe-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+
+
     </style>
 </head>
 <body>
-    <div class="FileListfromSearch" id="FileListfromSearch"></div>
+    
     <div class="logo"><h1>MystMkra.io</h1></div>
     
     <div class="header-container">
+        
         <div class="imgheader"><img src="https://cdn.midjourney.com/f7c1a775-d0ca-48f4-9e53-c80d9c6762c4/0_1.png" alt="Image Header"></div>
-       
+        <div class="FileListfromSearch" id="FileListfromSearch">
+           
+        </div>
+        <ul class="pagination" id="paginationControls"></ul>
+        
         <div class="topmenu">
             <input class="form-control mr-sm-2" type="search" placeholder="Search for files" aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+            
 
             <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button>
           
@@ -213,6 +271,18 @@
         <div class="container">
             <div class="form-group">
                 <div class="menuleft">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                          
+                            <a class="list-item" href="#" data-snippet="sampleSnippet1">Sample Snippet 1</a>
+                            <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
+                            <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
+                           
+                        </li>
+                    </ul>
+                    
+                    
+                    
                     <button id="insertHashTaglist" class="material-symbols-outlined">tag</button>
                     <button id="insertHeading1" class="material-symbols-outlined">format_h1</button>
                     <button id="insertHeading2" class="material-symbols-outlined">format_h2</button>
@@ -239,16 +309,123 @@
             </div>
         </div>
     </div>
-
-    <ul class="pagination" id="paginationControls"></ul>
+    
 
     <script type="module">
-        import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
+       
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
 
-        const markdownTextarea = document.getElementById('markdownTextarea');
-        const previewGrid = document.getElementById('previewgrid');
-        const saveButton = document.getElementById('saveButton');
-        let isChanged = false;
+    const snippets = {
+    priceTable: `
+<table>
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Description</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Item 1</td>
+            <td>Description for Item 1</td>
+            <td>$10.00</td>
+        </tr>
+        <tr>
+            <td>Item 2</td>
+            <td>Description for Item 2</td>
+            <td>$20.00</td>
+        </tr>
+    </tbody>
+</table>`,
+    sampleSnippet1: `
+<pre><code class="language-javascript">
+function greet() {
+    console.log("Hello, World!");
+}
+</code></pre>`,
+    sampleSnippet2: `
+<pre><code class="language-python">
+def greet():
+    print("Hello, World!")
+</code></pre>`,
+    flexboxThreeColumns: `
+<div style="display: flex;">
+    <div style="flex: 1; padding: 10px;">
+        Column 1 Content
+    </div>
+    <div style="flex: 1; padding: 10px;">
+        Column 2 Content
+    </div>
+    <div style="flex: 1; padding: 10px;">
+        Column 3 Content
+    </div>
+</div>`
+    
+};
+
+
+document.querySelectorAll('.list-item').forEach(item => {
+    item.addEventListener('click', event => {
+        event.preventDefault();
+        const snippetKey = event.target.getAttribute('data-snippet');
+        insertTextAtCursor(snippets[snippetKey]);
+    });
+});
+
+
+    // Ensure this function is at the top level
+    function insertContent(id) {
+        if (!id) {
+            console.error('No id provided');
+            alert('No document id provided');
+            return;
+        }
+
+        fetch(`/dropbox/file/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const textarea = document.getElementById('markdownTextarea');
+            if (textarea) {
+                textarea.value += data.content;
+                textarea.focus();
+              
+                // FileListfromSearch display hidden
+                document.getElementById('FileListfromSearch').style.display = 'none';
+
+                //paginationControls hide
+                document.getElementById('paginationControls').style.display = 'none';
+
+
+                
+            } else {
+                console.error('Textarea element not found');
+                alert('Textarea element not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching document:', error);
+            alert('Error fetching document');
+        });
+    }
+
+    // Remaining code...
+
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const previewGrid = document.getElementById('previewgrid');
+    const saveButton = document.getElementById('saveButton');
+    let isChanged = false;
+
+
 
         // Custom renderer to avoid wrapping images in paragraphs
         const renderer = new marked.Renderer();
@@ -285,14 +462,13 @@
         marked.use({ renderer });
 
         function updatePreviewFromButtonClick() {
-            console.log('updatePreviewFromButtonClick called');
-            const markdownContent = markdownTextarea.value;
-            console.log('Markdown content:', markdownContent);
-            const htmlContent = marked(markdownContent);
-            previewGrid.innerHTML = htmlContent;
-            console.log('HTML content:', htmlContent);
-            applyGridClasses();
-        }
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const previewGrid = document.getElementById('previewgrid');
+    const markdownContent = markdownTextarea.value;
+    const htmlContent = marked(markdownContent);
+    previewGrid.innerHTML = htmlContent;
+    applyGridClasses();
+}
 
         function updatePreviewFromInput() {
             console.log('updatePreviewFromInput called');
@@ -305,59 +481,41 @@
         }
 
         function applyGridClasses() {
-            console.log('applyGridClasses called');
-            const images = previewGrid.querySelectorAll('img');
-            const idCount = {}; // Object to keep track of ID occurrences
+    const previewGrid = document.getElementById('previewgrid');
+    const images = previewGrid.querySelectorAll('img');
+    const idCount = {};
 
-            images.forEach((img) => {
-                const url = img.src;
-                // Extract the part of the URL between the last two slashes
-                const idMatch = url.match(/\/([^\/]+)\/[^\/]+$/);
-                const baseId = idMatch ? idMatch[1].replace(/\s+/g, '-').toLowerCase() : '';
+    images.forEach((img) => {
+        const url = img.src;
+        const idMatch = url.match(/\/([^\/]+)\/[^\/]+$/);
+        const baseId = idMatch ? idMatch[1].replace(/\s+/g, '-').toLowerCase() : '';
 
-                // Initialize or increment the ID count
-                if (!idCount[baseId]) {
-                    idCount[baseId] = 0;
-                }
-                idCount[baseId] += 1;
-
-                // Construct the unique ID with the index
-                const uniqueId = `${baseId}-${idCount[baseId]}`;
-                img.id = uniqueId;
-
-                console.log('URL:', url);
-                console.log('Extracted ID:', baseId);
-                console.log('Assigned ID:', img.id);
-            });
+        if (!idCount[baseId]) {
+            idCount[baseId] = 0;
         }
+        idCount[baseId] += 1;
+
+        const uniqueId = `${baseId}-${idCount[baseId]}`;
+        img.id = uniqueId;
+    });
+}
 
         function insertTextAtCursor(text) {
-            console.log('insertTextAtCursor called');
-            const start = markdownTextarea.selectionStart;
-            const end = markdownTextarea.selectionEnd;
-            const currentText = markdownTextarea.value;
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const start = markdownTextarea.selectionStart;
+    const end = markdownTextarea.selectionEnd;
+    const currentText = markdownTextarea.value;
 
-            console.log('Current text:', currentText);
-            console.log('Selection start:', start);
-            console.log('Selection end:', end);
+    const before = currentText.substring(0, start);
+    const after = currentText.substring(end);
 
-            const before = currentText.substring(0, start);
-            const after = currentText.substring(end);
+    markdownTextarea.value = before + text + after;
 
-            console.log('Text before cursor:', before);
-            console.log('Text after cursor:', after);
+    markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + text.length;
+    markdownTextarea.focus();
+    updatePreviewFromButtonClick(); // Update the preview
+}
 
-            markdownTextarea.value = before + text + after;
-            console.log('New text:', markdownTextarea.value);
-
-            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + text.length;
-
-            console.log('New selection start:', markdownTextarea.selectionStart);
-            console.log('New selection end:', markdownTextarea.selectionEnd);
-
-            markdownTextarea.focus();
-            updatePreviewFromButtonClick(); // Call the new function
-        }
 
         function insertHashTaglist() {
             insertTextAtCursor('\n```markdown\n#SlowYou #SelfCare #AI #Nature #Aliveness #AlivenssLAB\n```\n');
@@ -510,7 +668,8 @@
             const fileListfromSearch = document.querySelector('#FileListfromSearch');
             const paginationControls = document.querySelector('#paginationControls');
             let currentPage = 1;
-            const itemsPerPage = 3;
+            const itemsPerPage = 4;
+            let searchResults = [];
 
             searchButton.addEventListener('click', async (event) => {
                 event.preventDefault();
@@ -526,8 +685,10 @@
                     const results = await response.json();
 
                     if (response.ok) {
-                        displaySearchResults(results);
-                        setupPagination(results.length);
+                        searchResults = results;
+                        currentPage = 1;  // Reset to first page on new search
+                        displaySearchResults(searchResults);
+                        setupPagination(searchResults.length);
                     } else {
                         console.error('Error searching files:', results.message);
                         alert('Error searching files');
@@ -539,27 +700,37 @@
             });
 
             function displaySearchResults(results) {
-                fileListfromSearch.innerHTML = ''; // Clear previous results
+    fileListfromSearch.innerHTML = ''; // Clear previous results
 
-                if (results.length === 0) {
-                    fileListfromSearch.innerHTML = '<p>No results found.</p>';
-                    paginationControls.innerHTML = '';
-                    return;
-                }
+    if (results.length === 0) {
+        fileListfromSearch.innerHTML = '<p>No results found.</p>';
+        paginationControls.innerHTML = '';
+        return;
+    }
 
-                const pageResults = paginateResults(results, currentPage, itemsPerPage);
-                pageResults.forEach(result => {
-                    const card = document.createElement('div');
-                    card.classList.add('card', 'mb-3');
-                    card.style.width = '18rem';
-                    card.innerHTML = `
-                        <div class="card-body">
-                            <p class="card-text"><a href="https://slowyou.net/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
-                        </div>
-                    `;
-                    fileListfromSearch.appendChild(card);
-                });
-            }
+    const pageResults = paginateResults(results, currentPage, itemsPerPage);
+    pageResults.forEach(result => {
+        const card = document.createElement('div');
+        card.classList.add('card', 'mb-3');
+        card.style.width = '18rem';
+        card.innerHTML = `
+            <div class="card-body">
+                <p class="card-text"><a href="https://slowyou.net/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
+                <button class="btn btn-primary insert-content-button" data-id="${result.id}">New Content</button>
+            </div>
+        `;
+        fileListfromSearch.appendChild(card);
+    });
+
+    // Add event listeners to the new buttons
+    document.querySelectorAll('.insert-content-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            insertContent(id);
+        });
+    });
+}
+
 
             function paginateResults(results, page, itemsPerPage) {
                 const start = (page - 1) * itemsPerPage;
@@ -586,7 +757,7 @@
                     pageLink.addEventListener('click', (event) => {
                         event.preventDefault();
                         currentPage = i;
-                        displaySearchResults(results);
+                        displaySearchResults(searchResults);
                         setupPagination(totalItems);
                     });
 
@@ -595,6 +766,13 @@
                 }
             }
         });
+
+
+
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlI6j5/7z2W7UprE56E/4zvC5K4O3sk4h5JhEd0ItnrrvlrF5Q4zQp50PRh" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4Ag3Wq6HhaM0s7syb7y3xJ6qxZ4u+lAnm6hQ5/j92EnUQtOaxFw5" crossorigin="anonymous"></script>
+    
 </body>
 </html>

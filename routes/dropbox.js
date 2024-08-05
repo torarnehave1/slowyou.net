@@ -11,23 +11,24 @@ import mongoose from 'mongoose';
 import sanitizeHtml from 'sanitize-html';
 
 
-// List of endpoint names in this code:
-// 1. GET /auth - Endpoint to start the OAuth flow
-// 2. GET /auth/callback - Callback endpoint to handle the authorization code
-// 3. GET /list-image-files - Endpoint to list image files in a folder
-// 4. GET /list-image-collection-links - Endpoint to list image collection links from a markdown file
-// 5. GET /list-markdown-files - Endpoint to list markdown files in a folder
-// 6. GET /blog/:filename - Endpoint to fetch and render a markdown file for a blog post
-// 7. GET /project/:filename - Endpoint to fetch and render a markdown file for a project
-// 8. GET /offer/:filename - Endpoint to fetch and render a markdown file for an offer
-// 9. GET /imgcollection/:filename - Endpoint to fetch and render a markdown file for an image collection
-// 10 POST /save-markdown - saving a hashed file to dropbox
+
 
 
 dotenv.config();
 
 const router = express.Router();
 
+// 1. GET /auth - Endpoint to start the OAuth flow
+// 2. GET /auth/callback - Callback endpoint to handle the authorization code
+// 3. GET /list-image-files - Endpoint to list image files in a folder
+// 4. GET /list-image-collection-links - Endpoint to list image collection links from a markdown file
+// 5. GET /list-markdown-files - Endpoint to list markdown files in a folder
+// 6. GET /md/:filename - Endpoint to fetch and render a markdown file
+// 7. GET /blog/:filename - Endpoint to fetch and render a markdown file for a blog post
+// 8. GET /project/:filename - Endpoint to fetch and render a markdown file for a project
+// 9. GET /offer/:filename - Endpoint to fetch and render a markdown file for an offer
+// 10. GET /imgcollection/:filename - Endpoint to fetch and render a markdown file for an image collection
+// 11. POST /save-markdown - Endpoint to save a hashed file to Dropbox
 
 
 // Get the hostname of the current machine
@@ -294,7 +295,8 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         </div>
             <div class="container">
                 ${htmlContent}
-            </div>
+                
+            
         </body>
         <script>
         function loadMenu() {
@@ -324,6 +326,87 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         error: error.error ? error.error.error_summary : error.message
       });
     }
+});
+
+
+router.get('/md/price/:filename', ensureValidToken, async (req, res) => {
+  const filename = req.params.filename;
+  const filePath = `/Slowyou.net/markdown/${filename}`;
+
+  const dbx = new Dropbox({
+    accessToken: accessToken,
+    fetch: fetch,
+  });
+
+  try {
+    const response = await dbx.filesDownload({ path: filePath });
+    const fileContent = response.result.fileBinary.toString('utf-8');
+
+    // Extract image URL from the markdown content
+    const imageRegex = /!\[.*?\]\((.*?)\)/;
+    const imageMatch = fileContent.match(imageRegex);
+    const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+    const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
+    const contentWithoutImage = fileContent.replace(imageRegex, '');
+
+    const htmlContent = marked(contentWithoutImage);
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>Blog Post</title>
+          <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+              body { font-family: Arial, sans-serif; margin: 2em; }
+              pre { background: #f4f4f4; padding: 1em; }
+              code { background: #f4f4f4; padding: 0.2em; }
+              .header-image { width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 20px; }
+          </style>
+      </head>
+      <body>
+      
+      <div id="menu-container"></div> 
+      <div style="text-align: center;">
+          ${imageTag}
+      </div>
+          <div class="container">
+              ${htmlContent}
+              <div><script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+<stripe-pricing-table pricing-table-id="prctbl_1PkUfcFf3ByP0X11Q3sMzQph"
+publishable-key="pk_live_51OnmWsFf3ByP0X11XDQuCtB7QdS2IMaHap97i9gWcZT9G4xEz0WAX5asIzCe1jEbVK3UU8OnZ1ZxLN0Ky2P2ktVo00IKtQqKDH">
+</stripe-pricing-table><div>
+          </div>
+          
+      </body>
+      <script>
+      function loadMenu() {
+              fetch('/menu.html')
+                  .then(response => response.text())
+                  .then(data => {
+                      document.getElementById('menu-container').innerHTML = data;
+                      initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                      checkAuthStatus(); // Check auth status after loading the menu
+                  })
+                  .catch(error => console.error('Error loading menu:', error));
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              console.log("DOM fully loaded and parsed");
+              loadMenu();
+          });
+      </script>
+      </html>
+    `;
+
+    res.send(html);
+  } catch (error) {
+    console.error('Error fetching file from Dropbox:', error);
+    res.status(500).json({
+      message: 'Error fetching file from Dropbox',
+      error: error.error ? error.error.error_summary : error.message
+    });
+  }
 });
 
 
@@ -660,5 +743,34 @@ router.get('/search', ensureValidToken, async (req, res) => {
 
 
 
+// Endpoint to get the content of the document by id
+router.get('/file/:id', ensureValidToken, async (req, res) => {
+    const id = req.params.id;
+
+    if (!id) {
+        return res.status(400).json({
+            message: 'Document id is required'
+        });
+    }
+
+    try {
+        const fileDoc = await MDfile.findById(id);
+        if (!fileDoc) {
+            return res.status(404).json({
+                message: 'Document not found'
+            });
+        }
+
+        res.status(200).json({
+            content: fileDoc.content
+        });
+    } catch (error) {
+        console.error('Error fetching document:', error);
+        res.status(500).json({
+            message: 'Error fetching document',
+            error: error.message
+        });
+    }
+});
 
 export default router;
