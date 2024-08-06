@@ -9,6 +9,16 @@ import crypto from 'crypto';
 import MDfile from '../models/Mdfiles.js';
 import mongoose from 'mongoose';
 import sanitizeHtml from 'sanitize-html';
+import { spawn } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { join } from 'path';
+import { mkdirSync, writeFileSync, readFileSync } from 'fs';
+import { appendFile } from 'fs';
+import fs from 'fs';
+
+
+
 
 
 
@@ -17,6 +27,10 @@ import sanitizeHtml from 'sanitize-html';
 dotenv.config();
 
 const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // 1. GET /auth - Endpoint to start the OAuth flow
 // 2. GET /auth/callback - Callback endpoint to handle the authorization code
@@ -410,6 +424,125 @@ publishable-key="pk_live_51OnmWsFf3ByP0X11XDQuCtB7QdS2IMaHap97i9gWcZT9G4xEz0WAX5
 });
 
 
+
+router.get('/md/topdf/:filename', ensureValidToken, async (req, res) => {
+  const filename = req.params.filename;
+  const filePath = `/Slowyou.net/markdown/${filename}`;
+
+  const dbx = new Dropbox({
+    accessToken: accessToken,
+    fetch: fetch,
+  });
+
+  try {
+    const response = await dbx.filesDownload({ path: filePath });
+    const fileContent = response.result.fileBinary.toString('utf-8');
+
+    // Extract image URL from the markdown content
+    const imageRegex = /!\[.*?\]\((.*?)\)/;
+    const imageMatch = fileContent.match(imageRegex);
+    const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
+    const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
+    const contentWithoutImage = fileContent.replace(imageRegex, '');
+
+    const htmlContent = marked(contentWithoutImage);
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>Blog Post</title>
+          <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+              body { font-family: Arial, sans-serif; margin: 2em; }
+              pre { background: #f4f4f4; padding: 1em; }
+              code { background: #f4f4f4; padding: 0.2em; }
+              .header-image { width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 20px; }
+          </style>
+      </head>
+      <body>
+      
+      <div id="menu-container"></div> 
+      <div style="text-align: center;">
+          ${imageTag}
+      </div>
+          <div class="container">
+              ${htmlContent}
+             
+          
+      </body>
+      <script>
+      function loadMenu() {
+              fetch('/menu.html')
+                  .then(response => response.text())
+                  .then(data => {
+                      document.getElementById('menu-container').innerHTML = data;
+                      initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                      checkAuthStatus(); // Check auth status after loading the menu
+                  })
+                  .catch(error => console.error('Error loading menu:', error));
+          }
+
+          document.addEventListener('DOMContentLoaded', () => {
+              console.log("DOM fully loaded and parsed");
+              loadMenu();
+          });
+      </script>
+      </html>
+    `;
+
+    const pythonProcess = spawn('python', [join(__dirname, '..', 'modules', 'micro', 'htmltopdf.py')]);
+
+    // Send the HTML content to the Python process via stdin
+    pythonProcess.stdin.write(html);
+    pythonProcess.stdin.end();
+
+    pythonProcess.stdout.on('data', (data) => {
+      console.log(`${data}`);
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(`${data}`);
+    });
+
+    pythonProcess.on('close', async (code) => {
+      console.log(`Python script exited with code ${code}`);
+
+      if (code === 0) {
+        // Read the generated PDF file
+        const pdfPath = join(tempDir, `${filename}.pdf`);
+        const pdfContent = readFileSync(pdfPath);
+
+        // Upload the PDF to Dropbox
+        const pdfDropboxPath = `/Slowyou.net/pdf/${filename}.pdf`;
+        await dbx.filesUpload({
+          path: pdfDropboxPath,
+          contents: pdfContent,
+          mode: 'overwrite',
+        });
+
+        // Send a success response
+        res.status(200).json({
+          message: 'PDF generated and uploaded successfully',
+          pdfPath: pdfDropboxPath,
+        });
+      } else {
+        res.status(500).json({
+          message: 'Error converting HTML to PDF',
+        });
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching file from Dropbox:', error);
+    res.status(500).json({
+      message: 'Error fetching file from Dropbox',
+      error: error.error ? error.error.error_summary : error.message,
+    });
+  }
+});
+
+
 router.get('/project/:filename', ensureValidToken, async (req, res) => {
   const filename = req.params.filename;
   const filePath = `/Slowyou.net/projects/${filename}`;
@@ -631,12 +764,6 @@ router.get('/imgcollection/:filename', ensureValidToken, async (req, res) => {
   }
 });
 
-
-
-
-// Endpoint to save content as a markdown file
-// Endpoint to save content as a markdown file
-// Endpoint to save content as a markdown file
 router.post('/save-markdown', ensureValidToken, async (req, res) => {
   const { content, id } = req.body;
 

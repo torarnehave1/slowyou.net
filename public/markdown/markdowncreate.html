@@ -98,7 +98,7 @@
             align-items: flex-start;
             gap: 2px;
             margin-top: 5px;
-            grid-column: span 3;
+            grid-column: span ;
             margin-left: 20px;
             width: 90%;
         }
@@ -129,8 +129,8 @@
         .header-container {
             display: grid;
             gap: 1px;
-            grid-template-columns: 100px repeat(2, 1fr);
-            grid-template-rows: 60px repeat(3, 1fr);
+            grid-template-columns: 100px repeat(3, 1fr);
+            grid-template-rows: 60px repeat(1, 1fr);
         }
 
         .imgheader img {
@@ -159,6 +159,10 @@
 
         .pagination {
             margin-top: 10px;
+            
+            grid-column: 1 / 3;
+           
+            justify-items: center;
             display: flex;
             justify-content: center;
             list-style: none;
@@ -188,36 +192,44 @@
 
         .list-group {
             display: flex;
-            flex-wrap: wrap;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 10px;
+            height:250px;
+            
+
         }
 
         .list-group-item {
-            display: flex;
-            flex-wrap: wrap;
-            flex: 1 1 18rem;
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            max-height: 55px;
-            overflow: hidden;
-        }
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0; /* Add margin to create space between rows of list-group-items */
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+.list-item {
+    color: #000000;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #d6e7cc;
+    border: 1px solid #dee2e6;
+    margin: 5px; /* Add margin to create space between items */
+    flex: 1 1 calc(50% - 10px); /* Ensure the items are responsive and have space between them */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
 
         .list-group-item a.list-item {
-            display: block;
+            
             margin-bottom: 5px;
-            padding: 5px 5px 0 5px;
+            padding: 5px 5px 5px 5px;
             padding: 5px;
             border-radius: 5px;
-            background-color: #e9ecef;
+            background-color: #d6e7cc;
             border: 1px solid #dee2e6;
-            color: #333;
+            color: #000000;
             text-decoration: none;
             transition: background-color 0.3s ease;
         }
@@ -248,38 +260,47 @@
         </div>
         <ul class="pagination" id="paginationControls"></ul>
         
-        <div class="topmenu">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search for files" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-
-            
-
-            <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button>
-          
-            <button class="btn btn-primary" id="saveButton" disabled><span class="material-symbols-outlined">save</span></button>
-            <button class="btn btn-primary" id="saveButtonProt"><span class="material-symbols-outlined">enhanced_encryption</span></button>
-            <button class="btn btn-primary" id="newButton"><span class="material-symbols-outlined">add</span></button>
-            <button class="btn btn-primary" id="uploadButton"><span class="material-symbols-outlined">upload_file</span></button>
-            <button class="btn btn-primary" id="downloadButton"><span class="material-symbols-outlined">download</span></button>
-            <button class="btn btn-primary" id="openButton"><span class="material-symbols-outlined">file_open</span></button>
-            <button class="btn btn-primary" id="deleteButton"><span class="material-symbols-outlined">delete</span></button>
-            <button class="btn btn-primary" id="helpButton"><span class="material-symbols-outlined">help</span></button>
-        </div>
+        
     </div>
 
     <div class="gridcontainer">
         <div class="container">
+            <ul class="list-group">
+                <li class="list-group-item">
+                  
+                    <a class="list-item" href="#" data-snippet="sampleSnippet1">Sample Snippet 1</a>
+                    <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
+                    <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
+                    
+                    <a class="list-item" href="#" data-snippet="sampleSnippet1">Sample Snippet 1</a>
+                    <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
+                    <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
+                    <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
+                    <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
+                   
+                </li>
+            </ul>
             <div class="form-group">
+                <div class="topmenu">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search for files" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        
+                    
+        
+                    <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button>
+                  
+                    <button class="btn btn-primary" id="saveButton" disabled><span class="material-symbols-outlined">save</span></button>
+                    <button class="btn btn-primary" id="saveButtonProt"><span class="material-symbols-outlined">enhanced_encryption</span></button>
+                    <button class="btn btn-primary" id="newButton"><span class="material-symbols-outlined">add</span></button>
+                    <button class="btn btn-primary" id="uploadButton"><span class="material-symbols-outlined">upload_file</span></button>
+                    <button class="btn btn-primary" id="downloadButton"><span class="material-symbols-outlined">download</span></button>
+                    <button class="btn btn-primary" id="openButton"><span class="material-symbols-outlined">file_open</span></button>
+                    <button class="btn btn-primary" id="deleteButton"><span class="material-symbols-outlined">delete</span></button>
+                    <button class="btn btn-primary" id="helpButton"><span class="material-symbols-outlined">help</span></button>
+                </div>
+
                 <div class="menuleft">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                          
-                            <a class="list-item" href="#" data-snippet="sampleSnippet1">Sample Snippet 1</a>
-                            <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
-                            <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
-                           
-                        </li>
-                    </ul>
+                    
                     
                     
                     
@@ -770,9 +791,9 @@ document.querySelectorAll('.list-item').forEach(item => {
 
 
     </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXlI6j5/7z2W7UprE56E/4zvC5K4O3sk4h5JhEd0ItnrrvlrF5Q4zQp50PRh" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4Ag3Wq6HhaM0s7syb7y3xJ6qxZ4u+lAnm6hQ5/j92EnUQtOaxFw5" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
 </body>
 </html>

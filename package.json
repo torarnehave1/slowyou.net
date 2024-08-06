@@ -38,6 +38,7 @@
     "nodemailer": "^6.9.13",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "puppeteer": "^22.15.0",
     "sanitize-html": "^2.13.0",
     "serve-index": "^1.9.1"
   },
