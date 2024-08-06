@@ -468,7 +468,7 @@ router.get('/md/topdf/:filename', ensureValidToken, async (req, res) => {
     `;
 
     const outputPdfPath = join(tempDir, `${filename.replace('.md', '')}.pdf`);
-    const pythonProcess = spawn('python', [join(__dirname, '..', 'modules', 'micro', 'htmltopdf.py'), outputPdfPath]);
+    const pythonProcess = spawn('python3', [join(__dirname, '..', 'modules', 'micro', 'htmltopdf.py'), outputPdfPath]);
 
     // Send the HTML content to the Python process via stdin
     pythonProcess.stdin.write(html);
