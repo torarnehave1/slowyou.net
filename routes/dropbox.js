@@ -475,7 +475,7 @@ router.get('/md/topdf/:filename', ensureValidToken, async (req, res) => {
     pythonProcess.stdin.end();
 
     pythonProcess.stdout.on('data', (data) => {
-      console.log(`${data}`);
+      //console.log(`${data}`);
     });
 
     pythonProcess.stderr.on('data', (data) => {
