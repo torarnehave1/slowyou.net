@@ -8,11 +8,14 @@ def printPdf(text, filename):
     print("Writing to PDF file DONE!")
 
 if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python htmltopdf.py <output_filename>")
+        sys.exit(1)
+
+    output_filename = sys.argv[1]
+
     # Read HTML content from stdin
     html_content = sys.stdin.read()
 
-    # Output PDF file name
-    output_filename = 'output.pdf'
-    
     # Call the function to create PDF
     printPdf(html_content, output_filename)

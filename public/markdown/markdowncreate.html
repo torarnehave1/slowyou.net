@@ -7,246 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-    <style>
-        @media (max-width: 768px) {
-            .gridcontainer {
-                display: grid;
-                grid-template-columns: repeat(8, 1fr);
-                grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
-                gap: 10px;
-                background-color: aquamarine;
-                width: 100%;
-            }
-            .container {
-                max-width: 700px;
-                padding: 10px;
-            }
-            .preview {
-                margin-top: 10px;
-            }
-            .preview img {
-                max-width: 100%;
-                height: auto;
-                border-color: #ddd;
-                border-style: solid;
-                border-width: 1px;
-                border-radius: 5px;
-                padding: 5px;
-            }
-        }
-
-        .gridcontainer {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: minmax(0, 100px) repeat(8, 1fr);
-            gap: 10px;
-            background-color: rgb(111, 116, 114);
-            width: 100%;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffffc7;
-            grid-column-start: 1;
-            grid-column-end: 9;
-            grid-row-start: 1;
-            grid-row-end: 9;
-            margin-top: 50px;
-            border-radius: 10px;
-            z-index: 1;
-            gap: 10px;
-        }
-
-        .previewgrid {
-            display: grid;
-            gap: 1px;
-            grid-template-columns: 10px repeat(5, 1fr);
-        }
-
-        .preview {
-            background-color: #ffffff;
-            max-width: 100%;
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            overflow: auto;
-        }
-
-        .griditemimg {
-            grid-column: span 4;
-            grid-column-start: 2;
-            grid-column-end: 6;
-        }
-
-        .griditem {
-            grid-column-start: 2;
-            grid-column-end: 6;
-        }
-
-        .preview img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            grid-column: span 2;
-        }
-
-        .topmenu {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            gap: 2px;
-            margin-top: 5px;
-            grid-column: span ;
-            margin-left: 20px;
-            width: 90%;
-        }
-
-        .menuleft {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 2px;
-            grid-row-start: 4;
-            grid-column-start: 1;
-            flex-direction: row;
-            margin-top: 10px;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        .language-markdown {
-            background-color: #ebe9e9;
-            font-size: medium;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: bold;
-            color: black;
-        }
-
-        .header-container {
-            display: grid;
-            gap: 1px;
-            grid-template-columns: 100px repeat(3, 1fr);
-            grid-template-rows: 60px repeat(1, 1fr);
-        }
-
-        .imgheader img {
-            width: 100%;
-            border-radius: 10px;
-            border-bottom: #ddd solid 2px;
-            grid-column: 1 / -1;
-            grid-row: 1 / 2;
-        }
-
-        .imgheader {
-            width: 100%;
-            border-radius: 10px;
-            border-bottom: #ddd solid 2px;
-            grid-column: 1 / -1;
-        }
-
-        .logo {
-            position: absolute;
-            top: 10px;
-            left: 50px;
-            color: white;
-            font-size: 2em;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .pagination {
-            margin-top: 10px;
-            
-            grid-column: 1 / 3;
-           
-            justify-items: center;
-            display: flex;
-            justify-content: center;
-            list-style: none;
-        }
-
-        .pagination li {
-            margin: 0 5px;
-        }
-
-        .FileListfromSearch {
-            display: flex;
-            flex-wrap: wrap; /* Allow wrapping */
-            gap: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            margin-left: 20px;
-            margin-right: 20px;
-            width: 90%;
-            grid-column: 1 / -1;
-            grid-row: 2 / 3;
-        }
-
-        .card {
-            flex: 1 1 18rem; /* Allow flexibility */
-        }
-
-
-        .list-group {
-            display: flex;
-            height:250px;
-            
-
-        }
-
-        .list-group-item {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 10px 0; /* Add margin to create space between rows of list-group-items */
-    padding: 10px;
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-}
-.list-item {
-    color: #000000;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #d6e7cc;
-    border: 1px solid #dee2e6;
-    margin: 5px; /* Add margin to create space between items */
-    flex: 1 1 calc(50% - 10px); /* Ensure the items are responsive and have space between them */
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
-}
-
-        .list-group-item a.list-item {
-            
-            margin-bottom: 5px;
-            padding: 5px 5px 5px 5px;
-            padding: 5px;
-            border-radius: 5px;
-            background-color: #d6e7cc;
-            border: 1px solid #dee2e6;
-            color: #000000;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-        
-
-        .list-group-item a.list-item:hover {
-            background-color: #d6d8db;
-        }
-
-        .card-body .stripe-button {
-        display: flex;
-        justify-content: center;
-        margin-top: 1rem;
-      }
-
-
-    </style>
+    <link rel="stylesheet" href="markdown.css">
 </head>
 <body>
     
@@ -288,7 +49,7 @@
                     
         
                     <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button>
-                  
+                    <button class="btn btn-primary" id="SaveasPDFButton" title="PDF"><i class="material-symbols-outlined">picture_as_pdf</i></button>
                     <button class="btn btn-primary" id="saveButton" disabled><span class="material-symbols-outlined">save</span></button>
                     <button class="btn btn-primary" id="saveButtonProt"><span class="material-symbols-outlined">enhanced_encryption</span></button>
                     <button class="btn btn-primary" id="newButton"><span class="material-symbols-outlined">add</span></button>
@@ -333,6 +94,11 @@
     
 
     <script type="module">
+
+       
+
+
+        
        
     import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
 

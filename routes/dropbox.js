@@ -425,9 +425,11 @@ publishable-key="pk_live_51OnmWsFf3ByP0X11XDQuCtB7QdS2IMaHap97i9gWcZT9G4xEz0WAX5
 
 
 
+
 router.get('/md/topdf/:filename', ensureValidToken, async (req, res) => {
   const filename = req.params.filename;
   const filePath = `/Slowyou.net/markdown/${filename}`;
+  const tempDir = './public/tempdir';
 
   const dbx = new Dropbox({
     accessToken: accessToken,
@@ -442,56 +444,31 @@ router.get('/md/topdf/:filename', ensureValidToken, async (req, res) => {
     const imageRegex = /!\[.*?\]\((.*?)\)/;
     const imageMatch = fileContent.match(imageRegex);
     const imageUrlFromMarkdown = imageMatch ? imageMatch[1] : '';
-    const imageTag = `<img src="${imageUrlFromMarkdown}" alt="${filename}" class="img-fluid header-image">`;
     const contentWithoutImage = fileContent.replace(imageRegex, '');
-
     const htmlContent = marked(contentWithoutImage);
 
     const html = `
       <!DOCTYPE html>
       <html>
       <head>
-          <title>Blog Post</title>
+          <title>${filename}</title>
           <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
           <style>
               body { font-family: Arial, sans-serif; margin: 2em; }
               pre { background: #f4f4f4; padding: 1em; }
               code { background: #f4f4f4; padding: 0.2em; }
-              .header-image { width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 20px; }
           </style>
       </head>
       <body>
-      
-      <div id="menu-container"></div> 
-      <div style="text-align: center;">
-          ${imageTag}
-      </div>
           <div class="container">
               ${htmlContent}
-             
-          
+          </div>
       </body>
-      <script>
-      function loadMenu() {
-              fetch('/menu.html')
-                  .then(response => response.text())
-                  .then(data => {
-                      document.getElementById('menu-container').innerHTML = data;
-                      initializeLanguageSelector(); // Initialize the language selector after loading the menu
-                      checkAuthStatus(); // Check auth status after loading the menu
-                  })
-                  .catch(error => console.error('Error loading menu:', error));
-          }
-
-          document.addEventListener('DOMContentLoaded', () => {
-              console.log("DOM fully loaded and parsed");
-              loadMenu();
-          });
-      </script>
       </html>
     `;
 
-    const pythonProcess = spawn('python', [join(__dirname, '..', 'modules', 'micro', 'htmltopdf.py')]);
+    const outputPdfPath = join(tempDir, `${filename.replace('.md', '')}.pdf`);
+    const pythonProcess = spawn('python', [join(__dirname, '..', 'modules', 'micro', 'htmltopdf.py'), outputPdfPath]);
 
     // Send the HTML content to the Python process via stdin
     pythonProcess.stdin.write(html);
@@ -510,11 +487,10 @@ router.get('/md/topdf/:filename', ensureValidToken, async (req, res) => {
 
       if (code === 0) {
         // Read the generated PDF file
-        const pdfPath = join(tempDir, `${filename}.pdf`);
-        const pdfContent = readFileSync(pdfPath);
+        const pdfContent = readFileSync(outputPdfPath);
 
         // Upload the PDF to Dropbox
-        const pdfDropboxPath = `/Slowyou.net/pdf/${filename}.pdf`;
+        const pdfDropboxPath = `/Slowyou.net/pdf/${filename.replace('.md', '')}.pdf`;
         await dbx.filesUpload({
           path: pdfDropboxPath,
           contents: pdfContent,
@@ -541,6 +517,7 @@ router.get('/md/topdf/:filename', ensureValidToken, async (req, res) => {
     });
   }
 });
+
 
 
 router.get('/project/:filename', ensureValidToken, async (req, res) => {
