@@ -239,6 +239,11 @@ document.querySelectorAll('.list-item').forEach(item => {
             return `<div class="griditem"><hr></div>`;
         };
 
+// add a render for bullet point list
+renderer.bulletList = (body) => {
+    return `<div class="griditem"><ul>${body}</ul></div>`;
+};
+
         marked.use({ renderer });
 
         function updatePreviewFromButtonClick() {
