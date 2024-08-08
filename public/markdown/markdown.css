@@ -69,6 +69,15 @@
     grid-column-end: 6;
 }
 
+.griditemcode{
+    grid-column-start: 2;
+    grid-column-end: 6;
+    margin-bottom: 10px;
+    background-color: #d6e7cc;
+    margin-left: 10px;
+    padding: 20 20 20 20;
+}
+
 .griditem {
     grid-column-start: 2;
     grid-column-end: 6;
@@ -109,7 +118,7 @@
 }
 
 .language-markdown {
-    background-color: #ebe9e9;
+    background-color: #b44343;
     font-size: medium;
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
@@ -158,6 +167,11 @@
     list-style: none;
 }
 
+.bulletpoint{
+    list-style-type: disc;
+    color: aqua;
+}
+
 .pagination li {
     margin: 0 5px;
 }
@@ -179,6 +193,13 @@
     flex: 1 1 18rem; /* Allow flexibility */
 }
 
+
+
+.card-body .stripe-button {
+display: flex;
+justify-content: center;
+margin-top: 1rem;
+}
 
 .list-group {
     display: flex;
@@ -227,10 +248,4 @@ box-sizing: border-box; /* Include padding and border in element's total width a
 
 .list-group-item a.list-item:hover {
     background-color: #d6d8db;
-}
-
-.card-body .stripe-button {
-display: flex;
-justify-content: center;
-margin-top: 1rem;
 }

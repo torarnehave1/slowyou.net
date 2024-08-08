@@ -208,43 +208,62 @@ document.querySelectorAll('.list-item').forEach(item => {
 
 
         // Custom renderer to avoid wrapping images in paragraphs
-        const renderer = new marked.Renderer();
        
-        renderer.paragraph = (text) => {
-            if (text.includes('<img')) {
-                return `<div class="griditemimg">${text}</div>`;
-            } else {
-                return `<div class="griditem">${text}</div>`;
-            }
-        };
+        const renderer = new marked.Renderer();
 
-        renderer.heading = (text, level) => {
-            return `<div class="griditem"><h${level}>${text}</h${level}></div>`;
-        };
+// Helper function to extract text from nested tokens
+function extractTextFromTokens(tokens) {
+    return tokens.map(token => {
+        if (token.type === 'text') {
+            return token.text;
+        } else if (token.tokens) {
+            return extractTextFromTokens(token.tokens);
+        }
+        return '';
+    }).join('');
+}
 
-        renderer.list = (body, ordered) => {
-            const type = ordered ? 'ol' : 'ul';
-            return `<div class="griditem"><${type}>${body}</${type}></div>`;
-        };
-
-        renderer.listitem = (text) => {
-            return `<li class="griditem">${text}</li>`;
-        };
-
-        renderer.code = (code, infostring, escaped) => {
-            return `<div class="griditem"><pre><code class="language-${infostring}">${code}</code></pre></div>`;
-        };
-
-        renderer.hr = () => {
-            return `<div class="griditem"><hr></div>`;
-        };
-
-// add a render for bullet point list
-renderer.bulletList = (body) => {
-    return `<div class="griditem"><ul>${body}</ul></div>`;
+renderer.paragraph = (text) => {
+    console.log('Rendering paragraph:', text);
+    if (text.includes('<img')) {
+        return `<div class="griditemimg">${text}</div>`;
+    } else {
+        return `<div class="griditem">${text}</div>`;
+    }
 };
 
-        marked.use({ renderer });
+renderer.heading = (text, level) => {
+    console.log(`Rendering heading level ${level}:`, text);
+    return `<div class="griditem"><h${level}>${text}</h${level}></div>`;
+};
+
+renderer.list = (body, ordered) => {
+    console.log('Rendering list:', body);
+    const type = ordered ? 'ol' : 'ul';
+    return `<div class="griditem"><${type}>${body}</${type}></div>`;
+};
+
+renderer.listitem = (tokens) => {
+    console.log('Rendering list item tokens:', tokens);
+    // Use the helper function to extract text from tokens
+    const text = extractTextFromTokens(tokens.tokens || []);
+    return `<li class="griditem">${text}</li>`;
+};
+
+renderer.code = (code, infostring, escaped) => {
+    console.log('Rendering code:', code);
+    return `<div class="griditemcode"><pre><div class="language-${infostring}">${code}</div></pre></div>`;
+};
+
+renderer.hr = () => {
+    console.log('Rendering horizontal rule');
+    return `<div class="griditem"><hr></div>`;
+};
+
+marked.use({ renderer });
+
+
+
 
         function updatePreviewFromButtonClick() {
     const markdownTextarea = document.getElementById('markdownTextarea');
@@ -255,17 +274,24 @@ renderer.bulletList = (body) => {
     applyGridClasses();
 }
 
-        function updatePreviewFromInput() {
-            console.log('updatePreviewFromInput called');
-            const markdownContent = markdownTextarea.value;
-            console.log('Markdown content:', markdownContent);
-            const htmlContent = marked(markdownContent);
-            previewGrid.innerHTML = htmlContent;
-            console.log('HTML content:', htmlContent);
-            applyGridClasses();
-        }
+function updatePreviewFromInput() {
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const previewGrid = document.getElementById('previewgrid');
+    const markdownContent = markdownTextarea.value;
+    
+    console.log('Markdown input:', markdownContent);
+    
+    const tokens = marked.lexer(markdownContent);
+    console.log('Parsed tokens:', tokens);
+    
+    const htmlContent = marked.parser(tokens);
+    console.log('Rendered HTML:', htmlContent);
+    
+    previewGrid.innerHTML = htmlContent;
+    applyGridClasses();
+}
 
-        function applyGridClasses() {
+function applyGridClasses() {
     const previewGrid = document.getElementById('previewgrid');
     const images = previewGrid.querySelectorAll('img');
     const idCount = {};

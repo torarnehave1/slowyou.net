@@ -1,0 +1,48 @@
+.list-group {
+    display: flex;
+    height:250px;
+    
+
+}
+
+.list-group-item {
+display: flex;
+flex-wrap: wrap;
+margin: 10px 0; /* Add margin to create space between rows of list-group-items */
+padding: 10px;
+background-color: #f8f9fa;
+border: 1px solid #dee2e6;
+border-radius: 5px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+transition: background-color 0.3s ease;
+}
+.list-item {
+color: #000000;
+text-decoration: none;
+transition: background-color 0.3s ease;
+padding: 10px;
+border-radius: 5px;
+background-color: #d6e7cc;
+border: 1px solid #dee2e6;
+margin: 5px; /* Add margin to create space between items */
+flex: 1 1 calc(50% - 10px); /* Ensure the items are responsive and have space between them */
+box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.list-group-item a.list-item {
+    
+    margin-bottom: 5px;
+    padding: 5px 5px 5px 5px;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #d6e7cc;
+    border: 1px solid #dee2e6;
+    color: #000000;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+
+.list-group-item a.list-item:hover {
+    background-color: #d6d8db;
+}
