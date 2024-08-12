@@ -3,12 +3,65 @@ import { Router } from 'express';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import Snippet from '../models/snippets.js';
+import mongoose from 'mongoose';
+
+
 
 
 const router = Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
+router.get('/snippets/', async (req, res) => {
+    try {
+        const snippets = await Snippet.find();
+        res.json(snippets);
+    } catch (err) {
+        res.json({ message: err });
+    }
+});
+
+router.post('/save/', async (req, res) => {
+    const { snippetname, content, author } = req.body;
+
+    // Log the incoming request data
+    console.log('Received request to save snippet:', {
+        snippetname,
+        content,
+        author
+    });
+
+    const snippet = new Snippet({
+        _id: new mongoose.Types.ObjectId(),
+        snippetname,
+        content,
+        author
+    });
+
+    try {
+        const savedSnippet = await snippet.save();
+
+        // Log the successful save operation
+        console.log('Snippet saved successfully:', savedSnippet);
+
+        res.json({ 
+            message: 'Snippet saved successfully',
+            id: savedSnippet._id,  // Return the _id
+            snippet: savedSnippet
+
+        });
+
+    } catch (err) {
+        // Log the error if saving the snippet fails
+        console.error('Error saving snippet:', err);
+
+        res.status(500).json({ message: err.message || 'An error occurred while saving the snippet.' });
+    }
+});
+
 
 router.get('/blog/:filename', (req, res) => {
     const filename = req.params.filename;
@@ -55,7 +108,5 @@ router.get('/blog/:filename', (req, res) => {
         }
     });
 });
-// Serve static files (e.g., images, styles)
-
 
 export default router;

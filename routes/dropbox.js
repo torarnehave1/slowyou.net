@@ -264,6 +264,22 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
       });
     }
   });
+
+
+  // Endpoint to get all documents from mongodb mdfile
+  
+  router.get('/mdfiles', async (req, res) => {
+    try {
+      const mdfiles = await MDfile.find({});
+      res.json(mdfiles);
+    } catch (error) {
+      console.error('Error fetching mdfiles from MongoDB:', error);
+      res.status(500).json({
+        message: 'Error fetching mdfiles from MongoDB',
+        error: error.message
+      });
+    }
+  });
   
   // Endpoint to fetch and render a markdown file
   router.get('/md/:filename', ensureValidToken, async (req, res) => {
@@ -803,6 +819,48 @@ router.post('/save-markdown', ensureValidToken, async (req, res) => {
 });
 
 
+router.delete('/filedelete/:id', ensureValidToken, async (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+      return res.status(400).json({
+          message: 'Document id is required'
+      });
+  }
+
+  try {
+      const fileDoc = await MDfile.findById(id);
+      if (!fileDoc) {
+          return res.status(404).json({
+              message: 'Document not found'
+          });
+      }
+
+      const dbx = new Dropbox({
+          accessToken: accessToken,
+          fetch: fetch,
+      });
+
+      const filename = `${fileDoc._id}.md`;
+      const filePath = `/Slowyou.net/markdown/${filename}`;
+
+      // Delete the file from Dropbox
+      await dbx.filesDeleteV2({ path: filePath });
+
+      // Delete the document from MongoDB
+      await MDfile.findByIdAndDelete(id);
+
+      res.status(200).json({
+          message: 'File deleted successfully',
+      });
+  } catch (error) {
+      console.error('Error deleting file from Dropbox or MongoDB:', error);
+      res.status(500).json({
+          message: 'Error deleting file',
+          error: error.message
+      });
+  }
+});
 
 router.get('/search', ensureValidToken, async (req, res) => {
     const { query } = req.query;

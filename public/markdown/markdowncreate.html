@@ -27,18 +27,9 @@
     <div class="gridcontainer">
         <div class="container">
             <ul class="list-group">
-                <li class="list-group-item">
-                  
-                    <a class="list-item" href="#" data-snippet="sampleSnippet1">Sample Snippet 1</a>
-                    <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
-                    <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
+                <li class="list-group-item" id="snippetlist">
+                 
                     
-                    <a class="list-item" href="#" data-snippet="sampleSnippet1">Sample Snippet 1</a>
-                    <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
-                    <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
-                    <a class="list-item" href="#" data-snippet="sampleSnippet2">Sample Snippet 2</a>
-                    <a class="list-item" href="#" data-snippet="flexboxThreeColumns">Flexbox 3 Columns</a>
-                   
                 </li>
             </ul>
             <div class="form-group">
@@ -52,6 +43,14 @@
                     <button class="btn btn-primary" id="SaveasPDFButton" title="PDF" data-filename="" disabled>
                         <i class="material-symbols-outlined">picture_as_pdf</i>
                     </button>
+                    
+                    <button class="btn btn-primary" id="saveSnippetButton" title="Save Snippet"><span class="material-symbols-outlined">
+                        code
+                        </span></button>    
+                    
+
+                    
+                      
                     
                     <button class="btn btn-primary" id="saveButton" disabled><span class="material-symbols-outlined">save</span></button>
                     <button class="btn btn-primary" id="saveButtonProt"><span class="material-symbols-outlined">enhanced_encryption</span></button>
@@ -104,6 +103,157 @@
         updateSaveToPdfButton();
     });
 
+    async function loadSnippets() {
+    const snippetListContainer = document.getElementById('snippetlist');
+    const textarea = document.getElementById('markdownTextarea'); // Assuming your textarea has this ID
+    
+    try {
+        // Fetch the snippets from the server
+        const response = await fetch('/md/snippets');
+        const snippets = await response.json();
+
+        // Clear the existing list items
+        snippetListContainer.innerHTML = '';
+
+        // Iterate over the snippets and create list items
+        snippets.forEach(snippet => {
+            const snippetElement = document.createElement('a');
+            snippetElement.className = 'list-item';
+            snippetElement.href = '#';
+            snippetElement.dataset.snippet = snippet._id; // Use the snippet ID for reference
+            snippetElement.textContent = snippet.snippetname;
+
+            // Create a delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.className = 'btn btn-danger btn-sm ml-2';
+            deleteButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                deleteSnippet(snippet._id);
+            });
+
+            // Create an insert button
+            const insertButton = document.createElement('button');
+            insertButton.textContent = 'Insert';
+            insertButton.className = 'btn btn-primary btn-sm ml-2';
+            insertButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                insertSnippetIntoTextarea(snippet.content, textarea);
+            });
+
+            // Append the snippet element, insert button, and delete button to the list item
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.appendChild(snippetElement);
+            listItem.appendChild(insertButton);
+            listItem.appendChild(deleteButton);
+
+            // Append the list item to the list container
+            snippetListContainer.appendChild(listItem);
+        });
+
+    } catch (error) {
+        console.error('Error loading snippets:', error);
+        alert('An error occurred while loading snippets.');
+    }
+}
+
+function insertSnippetIntoTextarea(snippetContent, textarea) {
+    textarea.value += snippetContent;  // Append the snippet content to the textarea
+}
+
+async function deleteSnippet(snippetId) {
+    try {
+        const response = await fetch(`/md/snippet/${snippetId}`, {
+            method: 'DELETE'
+        });
+
+        if (response.ok) {
+            alert('Snippet deleted successfully.');
+            loadSnippets(); // Reload the list after deletion
+        } else {
+            alert('Failed to delete snippet.');
+        }
+    } catch (error) {
+        console.error('Error deleting snippet:', error);
+        alert('An error occurred while deleting the snippet.');
+    }
+}
+
+// Call loadSnippets to initially load the snippets
+loadSnippets();
+
+
+
+
+    document.getElementById('saveSnippetButton').addEventListener('click', saveSnippet);
+    
+    function saveSnippet() {
+    // Get the textarea element where the markdown content is written
+    const textarea = document.getElementById('markdownTextarea');
+
+    // Retrieve the entire content from the textarea
+    const contentText = textarea.value;
+    console.log('Textarea Content:', contentText);
+
+    // Extract the snippet name using a regular expression
+    const snippetNameMatch = contentText.match(/^snippetname: (.*)$/m);
+    if (!snippetNameMatch) {
+        console.warn('Snippet name not found in the textarea content.');
+        alert('No snippet name found in the textarea content.');
+        return;
+    }
+    const snippetname = snippetNameMatch[1];
+    console.log('Snippet Name:', snippetname);
+
+    // Extract the author name using a regular expression
+    const authorMatch = contentText.match(/^Author: (.*)$/m);
+    if (!authorMatch) {
+        console.warn('Author not found in the textarea content.');
+        alert('No author found in the textarea content.');
+        return;
+    }
+    const author = authorMatch[1];
+    console.log('Author:', author);
+
+
+    // Remove the snippet name and author lines from the content
+    const content = contentText.replace(/^snippetname: .*$/m, '').replace(/^Author: .*$/m, '').trim();
+    console.log('Content to be saved:', content);
+
+    // Define the endpoint URL for saving the snippet
+    const url = '/md/save/';
+    console.log('Saving snippet to URL:', url);
+
+    // Send the data to the server using a POST request
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ snippetname, content, author })
+    })
+    .then(response => {
+        console.log('Server response status:', response.status);
+        if (response.ok) {
+            console.info('Snippet saved successfully.');
+            alert('Snippet saved successfully.');
+        } else {
+            console.error('Failed to save snippet. Server returned status:', response.status);
+            alert('Failed to save snippet.');
+        }
+    })
+    .catch(error => {
+        console.error('Error occurred while saving the snippet:', error);
+        alert('An error occurred while saving the snippet.');
+    });
+}
+
+
+
+
+
+
     function updateSaveToPdfButton() {
         const saveToPdfButton = document.getElementById('SaveasPDFButton');
         const filename = saveToPdfButton.getAttribute('data-filename');
@@ -152,6 +302,38 @@ document.querySelectorAll('.list-item').forEach(item => {
         insertTextAtCursor(snippets[snippetKey]);
     });
 });
+
+
+
+async function deleteContent(id) {
+    if (!id) {
+        console.error('No id provided');
+        alert('No document id provided');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/dropbox/filedelete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (response.ok) {
+            alert('File deleted successfully to Dropbox.');
+            location.href = '/markdown/markdowncreate.html';
+        } else {
+            const errorData = await response.json();
+            console.error('Error deleting file:', errorData.message);
+            alert('Error deleting file.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the file.');
+    }
+}
+
 
 
     // Ensure this function is at the top level
@@ -206,24 +388,44 @@ document.querySelectorAll('.list-item').forEach(item => {
     let isChanged = false;
 
 
-
-        // Custom renderer to avoid wrapping images in paragraphs
-       
-        const renderer = new marked.Renderer();
+// Custom renderer to avoid wrapping images in paragraphs
+const renderer = new marked.Renderer();
 
 // Helper function to extract text from nested tokens
-function extractTextFromTokens(tokens) {
-    return tokens.map(token => {
-        if (token.type === 'text') {
-            return token.text;
-        } else if (token.tokens) {
-            return extractTextFromTokens(token.tokens);
-        }
-        return '';
-    }).join('');
+function extractText(token) {
+    if (typeof token === 'string') {
+        return token;
+    }
+    if (token && typeof token === 'object' && token.text) {
+        return token.text;
+    }
+    return String(token);
 }
 
+// Custom renderer for headings
+renderer.heading = (token) => {
+    const text = extractText(token);
+    const level = token.depth || 1;
+    console.log(`Rendering heading level ${level}: ${text}`);
+    return `<div class="griditem"><h${level}>${text}</h${level}></div>`;
+};
+
+// Custom renderer for paragraphs
 renderer.paragraph = (text) => {
+    // Check if text is an array of tokens and handle accordingly
+    if (Array.isArray(text.tokens)) {
+        text = text.tokens.map(t => {
+            if (t.type === 'strong') {
+                return `<strong>${extractText(t)}</strong>`;
+            } else if (t.type === 'image') {
+                return `<img src="${t.href}" alt="${t.text}" title="${t.title || ''}">`;
+            }
+            return extractText(t);
+        }).join('');
+    } else {
+        text = extractText(text);
+    }
+
     console.log('Rendering paragraph:', text);
     if (text.includes('<img')) {
         return `<div class="griditemimg">${text}</div>`;
@@ -232,27 +434,30 @@ renderer.paragraph = (text) => {
     }
 };
 
-renderer.heading = (text, level) => {
-    console.log(`Rendering heading level ${level}:`, text);
-    return `<div class="griditem"><h${level}>${text}</h${level}></div>`;
-};
 
-renderer.list = (body, ordered) => {
+
+
+
+renderer.list = (token) => {
+    const type = token.ordered ? 'ol' : 'ul';
+    const body = token.items.map(item => renderer.listitem(item)).join('');
     console.log('Rendering list:', body);
-    const type = ordered ? 'ol' : 'ul';
     return `<div class="griditem"><${type}>${body}</${type}></div>`;
 };
 
-renderer.listitem = (tokens) => {
-    console.log('Rendering list item tokens:', tokens);
-    // Use the helper function to extract text from tokens
-    const text = extractTextFromTokens(tokens.tokens || []);
-    return `<li class="griditem">${text}</li>`;
+// Custom renderer for list items
+renderer.listitem = (token) => {
+    const text = token.tokens.map(t => extractText(t)).join('');
+    console.log('Rendering list item:', text);
+    return `<li>${text}</li>`;
 };
 
-renderer.code = (code, infostring, escaped) => {
-    console.log('Rendering code:', code);
-    return `<div class="griditemcode"><pre><div class="language-${infostring}">${code}</div></pre></div>`;
+
+renderer.code = (token) => {
+    const text = token.text || '';
+    const lang = token.lang || '';
+    console.log(`Rendering code block: ${text}`);
+    return `<div class="griditemcode"><pre><code class="language-${lang}">${text}</code></pre></div>`;
 };
 
 renderer.hr = () => {
@@ -260,7 +465,52 @@ renderer.hr = () => {
     return `<div class="griditem"><hr></div>`;
 };
 
+
+renderer.image = (token) => {
+    const href = token.href || '';
+    const alt = token.text || '';
+    const title = token.title || '';
+    console.log(`Rendering image: alt='${alt}', src='${href}', title='${title}'`);
+    return `
+        <img src="${href}" alt="${alt}" title="${title}">
+    `;
+};
+
 marked.use({ renderer });
+
+// Function to update the preview
+function updatePreviewFromInput() {
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    const previewGrid = document.getElementById('previewgrid');
+    const markdownContent = markdownTextarea.value;
+
+    console.log('Markdown input:', markdownContent);
+
+    const tokens = marked.lexer(markdownContent);
+    console.log('Parsed tokens:', tokens);
+
+    const htmlContent = marked.parser(tokens);
+    console.log('Rendered HTML:', htmlContent);
+
+    previewGrid.innerHTML = htmlContent;
+    applyGridClasses();
+}
+
+// Attach event listeners and initialize the preview
+document.addEventListener('DOMContentLoaded', () => {
+    const markdownTextarea = document.getElementById('markdownTextarea');
+    markdownTextarea.addEventListener('input', updatePreviewFromInput);
+    updatePreviewFromInput();
+});
+
+
+// Function to update the preview
+
+
+
+
+
+
 
 
 
@@ -270,23 +520,6 @@ marked.use({ renderer });
     const previewGrid = document.getElementById('previewgrid');
     const markdownContent = markdownTextarea.value;
     const htmlContent = marked(markdownContent);
-    previewGrid.innerHTML = htmlContent;
-    applyGridClasses();
-}
-
-function updatePreviewFromInput() {
-    const markdownTextarea = document.getElementById('markdownTextarea');
-    const previewGrid = document.getElementById('previewgrid');
-    const markdownContent = markdownTextarea.value;
-    
-    console.log('Markdown input:', markdownContent);
-    
-    const tokens = marked.lexer(markdownContent);
-    console.log('Parsed tokens:', tokens);
-    
-    const htmlContent = marked.parser(tokens);
-    console.log('Rendered HTML:', htmlContent);
-    
     previewGrid.innerHTML = htmlContent;
     applyGridClasses();
 }
@@ -334,24 +567,24 @@ function applyGridClasses() {
 
         function insertHeading1() {
             console.log('insertHeading1 called');
-            insertTextAtCursor('\n\n## This is heading one\n');
+            insertTextAtCursor('\n\n# This is heading one\n');
         }
 
         function insertHeading2() {
             console.log('insertHeading2 called');
-            insertTextAtCursor('\n\n### This is heading two\n');
+            insertTextAtCursor('\n\n## This is heading two\n');
         }
 
         function insertHeading3() {
             console.log('insertHeading3 called');
-            insertTextAtCursor('\n\n#### This is heading three\n');
+            insertTextAtCursor('\n\n### This is heading three\n');
         }
 
         function insertHeading4() {
             console.log('insertHeading4 called');
-            insertTextAtCursor('\n\n##### This is heading four\n');
+            insertTextAtCursor('\n\n#### This is heading four\n');
         }
-
+ 
         function insertBold() {
             console.log('insertBold called');
             insertTextAtCursor('**bold text**');
@@ -531,7 +764,8 @@ function applyGridClasses() {
         card.innerHTML = `
             <div class="card-body">
                 <p class="card-text"><a href="https://slowyou.net/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
-                <button class="btn btn-primary insert-content-button" data-id="${result.id}">New Content</button>
+                <button class="btn btn-primary insert-content-button" data-id="${result.id}">Insert Content</button>
+                <button class="btn btn-primary delete-content-button" data-id="${result.id}">Delete Content</button>
             </div>
         `;
         fileListfromSearch.appendChild(card);
@@ -542,6 +776,13 @@ function applyGridClasses() {
         button.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
             insertContent(id);
+        });
+    });
+
+    document.querySelectorAll('.delete-content-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            deleteContent(id);
         });
     });
 }

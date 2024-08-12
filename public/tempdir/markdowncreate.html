@@ -532,7 +532,6 @@ function applyGridClasses() {
             <div class="card-body">
                 <p class="card-text"><a href="https://slowyou.net/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
                 <button class="btn btn-primary insert-content-button" data-id="${result.id}">New Content</button>
-                <button class="btn btn-primary delete-content-button" data-id="${result.id}">New Content</button>
             </div>
         `;
         fileListfromSearch.appendChild(card);
@@ -543,13 +542,6 @@ function applyGridClasses() {
         button.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
             insertContent(id);
-        });
-    });
-
-    document.querySelectorAll('.delete-content-button').forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
-            deleteContent(id);
         });
     });
 }
