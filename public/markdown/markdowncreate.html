@@ -26,17 +26,19 @@
 
     <div class="gridcontainer">
         <div class="container">
+            <div class="searchbar"> <input class="form-control mr-sm-2" type="search" placeholder="Search for files" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button></div> 
             <ul class="list-group">
                 <li class="list-group-item" id="snippetlist">
                  
                     
                 </li>
             </ul>
+           
             <div class="form-group">
+              
                 <div class="topmenu">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search for files" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        
+                  
                     
         
                     <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button>
@@ -62,7 +64,7 @@
                     <button class="btn btn-primary" id="helpButton"><span class="material-symbols-outlined">help</span></button>
                 </div>
 
-                <div class="menuleft">
+                <div class="mdmenu">
                     
                     
                     
@@ -134,7 +136,7 @@
 
             // Create an insert button
             const insertButton = document.createElement('button');
-            insertButton.textContent = 'Insert';
+            insertButton.textContent = 'Insert ' + snippet.snippetname;
             insertButton.className = 'btn btn-primary btn-sm ml-2';
             insertButton.addEventListener('click', function(event) {
                 event.preventDefault();
@@ -144,7 +146,7 @@
             // Append the snippet element, insert button, and delete button to the list item
             const listItem = document.createElement('li');
             listItem.className = 'list-group-item';
-            listItem.appendChild(snippetElement);
+            //listItem.appendChild(snippetElement);
             listItem.appendChild(insertButton);
             listItem.appendChild(deleteButton);
 
@@ -504,17 +506,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Function to update the preview
-
-
-
-
-
-
-
-
-
-
         function updatePreviewFromButtonClick() {
     const markdownTextarea = document.getElementById('markdownTextarea');
     const previewGrid = document.getElementById('previewgrid');
@@ -667,7 +658,7 @@ function applyGridClasses() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ content, id: currentDocumentId })
+            body: JSON.stringify({ content, id: currentDocumentId }) // Use currentDocumentId here
         });
 
         const result = await response.json();
@@ -695,6 +686,7 @@ function applyGridClasses() {
         saveButton.disabled = false;
     }
 }
+
 
         // Update preview when user inputs text directly
         markdownTextarea.addEventListener('input', () => {
@@ -764,6 +756,7 @@ function applyGridClasses() {
         card.innerHTML = `
             <div class="card-body">
                 <p class="card-text"><a href="https://slowyou.net/dropbox/md/${result.id}.md" target="_blank">${result.abs}</a></p>
+                <button class="btn btn-primary open-content-button" data-id="${result.id}">Open</button>
                 <button class="btn btn-primary insert-content-button" data-id="${result.id}">Insert Content</button>
                 <button class="btn btn-primary delete-content-button" data-id="${result.id}">Delete Content</button>
             </div>
@@ -772,6 +765,13 @@ function applyGridClasses() {
     });
 
     // Add event listeners to the new buttons
+    document.querySelectorAll('.open-content-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            openContent(id);
+        });
+    });
+
     document.querySelectorAll('.insert-content-button').forEach(button => {
         button.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
@@ -786,6 +786,55 @@ function applyGridClasses() {
         });
     });
 }
+
+
+async function openContent(id) {
+    if (!id) {
+        console.error('No id provided');
+        alert('No document id provided');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/dropbox/file/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        const textarea = document.getElementById('markdownTextarea');
+        if (textarea) {
+            textarea.value = data.content; // Load content into the textarea
+            textarea.focus();
+
+            // Hide the search results display
+            document.getElementById('FileListfromSearch').style.display = 'none';
+            document.getElementById('paginationControls').style.display = 'none';
+
+            // Update the current document ID
+            currentDocumentId = id;
+            const returnfileURL = document.querySelector('.ReturnfileURL');
+            returnfileURL.href = 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md';
+            returnfileURL.text = 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md';
+            returnfileURL.setAttribute('data-url', 'https://slowyou.net/dropbox/md/' + currentDocumentId + '.md');
+            isChanged = true;
+
+            alert('Document loaded successfully.');
+        } else {
+            console.error('Textarea element not found');
+            alert('Textarea element not found');
+        }
+    } catch (error) {
+        console.error('Error fetching document:', error);
+        alert('Error fetching document');
+    }
+}
+
 
 
             function paginateResults(results, page, itemsPerPage) {
