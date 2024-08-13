@@ -178,16 +178,16 @@
 }
 
 .topmenu {
-    margin-bottom: 20px;
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 2px;
-    margin-top: 5px;
-    grid-column: span ;
-    margin-left: 20px;
+    flex-wrap: wrap; /* Enable wrapping */
+    justify-content: space-between; /* Adjust spacing */
+    gap: 5px; /* Increase gap for mobile readability */
 }
 
+.topmenu .btn {
+    flex: 1 1 calc(50% - 10px); /* Two buttons per row */
+    max-width: calc(50% - 10px); /* Prevent buttons from exceeding half the width */
+}
 .mdmenu {
     display: flex;
     justify-content: flex-start;
