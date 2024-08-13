@@ -50,8 +50,6 @@
         justify-content: flex-start;
         align-items: center;
         gap: 2px;
-        grid-row-start: 4;
-        grid-column-start: 1;
         justify-content: flex-start;
         align-items: center;
         flex-direction: row;
