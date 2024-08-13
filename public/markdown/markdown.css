@@ -42,13 +42,15 @@
     }
 
     .topmenu {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: repeat(2, 1fr);
-        grid-gap: 2px;
-        justify-content: flex-start;
-        align-items: center;
-        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap; /* Enable wrapping */
+        justify-content: space-between; /* Adjust spacing */
+        gap: 5px; /* Increase gap for mobile readability */
+    }
+
+    .topmenu .btn {
+        flex: 1 1 calc(50% - 10px); /* Two buttons per row */
+        max-width: calc(50% - 10px); /* Prevent buttons from exceeding half the width */
     }
 }
 
