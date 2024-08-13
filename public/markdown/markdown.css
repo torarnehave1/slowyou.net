@@ -46,13 +46,8 @@
         grid-template-columns: 1fr 1fr;
         grid-template-rows: repeat(2, 1fr);
         grid-gap: 2px;
-        display: flex;
         justify-content: flex-start;
         align-items: center;
-        gap: 2px;
-        justify-content: flex-start;
-        align-items: center;
-        flex-direction: row;
         margin-top: 10px;
     }
 }
