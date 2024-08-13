@@ -270,7 +270,8 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
   
   router.get('/mdfiles', async (req, res) => {
     try {
-      const mdfiles = await MDfile.find({});
+  const mdfiles = await MDfile.find({ $or: [ { locked: { $exists: false } }, { locked: false } ] });
+ 
       res.json(mdfiles);
     } catch (error) {
       console.error('Error fetching mdfiles from MongoDB:', error);

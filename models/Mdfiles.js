@@ -11,6 +11,10 @@ const MdFilesSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  locked: {
+    type: Boolean,
+    default: false
+  },
   author: {
     type: String,
     required: false
