@@ -28,7 +28,7 @@ router.delete('/users/:id', async (req, res) => {
         await User.deleteOne({ _id: userId });
         res.status(200).json({ message: 'User deleted successfully.' });
     } catch (error) {
-        console.error(error);
+        //console.error(error);
         res.status(500).json({ message: 'An error occurred while deleting the user.' });
     }
 });
@@ -38,9 +38,9 @@ async function createUser(userData) {
     const user = new User(userData);
     try {
         await user.save();
-        console.log('User saved successfully');
+        //console.log('User saved successfully');
     } catch (err) {
-        console.error('Error saving user: ', err);
+        //console.error('Error saving user: ', err);
     }
 }
 
@@ -64,7 +64,7 @@ router.get('/register2', async (req, res) => {
 
         res.send('User registration completed');
     } catch (error) {
-        console.error('Error during user registration:', error);
+        //console.error('Error during user registration:', error);
         res.status(500).send('An error occurred during user registration');
     }
 });
@@ -92,14 +92,14 @@ router.post('/registerbak', async (req, res) => {
 
         res.status(201).json({ message: 'User registered successfully.' });
     } catch (error) {
-        console.error(error); // Log the error
+        //console.error(error); // Log the error
         res.status(500).json({ message: 'An error occurred while registering the user.' });
     }
 });
 
 router.post('/register', async (req, res) => {
   const { fromPage,fullName, username, password } = req.body;
-  console.log(req.body);
+  //console.log(req.body);
 
   const emailVerificationToken = crypto.randomBytes(20).toString('hex');
   const emailVerificationTokenExpires = Date.now() + 3600000;
@@ -112,15 +112,15 @@ router.post('/register', async (req, res) => {
 
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      console.log('New Hashed Password:', hashedPassword);
+      //console.log('New Hashed Password:', hashedPassword);
 
       // Compare the plain text password with the hashed password to ensure correctness
       const isMatch = await bcrypt.compare(password, hashedPassword);
       if (!isMatch) {
-          console.error('Error comparing passwords: Passwords do not match');
+          //console.error('Error comparing passwords: Passwords do not match');
           return res.status(500).json({ message: 'Error hashing password' });
       } else {
-          console.log('Password match:', isMatch); // Should print: true
+          //console.log('Password match:', isMatch); // Should print: true
       }
 
       const user = new User({
@@ -133,7 +133,7 @@ router.post('/register', async (req, res) => {
       });
 
       await user.save();
-      console.log('User saved successfully');
+      //console.log('User saved successfully');
 
       const transporter = nodemailer.createTransport({
           service: 'Gmail',
@@ -152,14 +152,14 @@ router.post('/register', async (req, res) => {
 
       try {
           const info = await transporter.sendMail(mailOptions);
-          console.log('Email sent: ' + info.response);
+          //console.log('Email sent: ' + info.response);
       } catch (mailError) {
-          console.error('Error sending email:', mailError);
+          //console.error('Error sending email:', mailError);
       }
 
       res.status(201).send({ message: `User registered successfully. Verification email sent to:${username}`});
   } catch (error) {
-      console.error(error);
+      //console.error(error);
       res.status(500).send({ message: 'An error occurred while registering the user.' });
   }
 
@@ -193,7 +193,7 @@ router.get("/verify-email", async (req, res) => {
         res.redirect('../login.html',);  
 
     } catch (err) {
-        console.error(err);
+        //console.error(err);
         res.status(500).send('Server error.');
     }
 });
@@ -206,28 +206,24 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ username });
 
         if (!user) {
-            console.log('User not found');
+            //console.log('User not found');
             return res.status(400).send('Invalid username or password.');
         }
 
-        console.log('User found:', user);
+        //console.log('User found:', user);
 
         // Check if the user's email has been verified
         if (!user.isVerified) {
-            console.log('User email not verified');
+            //console.log('User email not verified');
             return res.status(400).send('Please verify your email before logging in.');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
-        console.log('Comparing passwords:', {
-            plainText: password,
-            hashed: user.password,
-            isMatch
-        });
+        
 
         if (!isMatch) {
-            console.log('Password does not match');
+            //console.log('Password does not match');
             return res.status(400).send('Invalid username or password.');
         }
 
@@ -243,7 +239,7 @@ router.post('/login', async (req, res) => {
         // Send a redirect response
         res.status(200).json({ message: 'Login successful', redirectUrl: '/index.html' });
     } catch (err) {
-        console.error(err);
+        //console.error(err);
         res.status(500).send('Server error.');
     }
 });
@@ -289,15 +285,15 @@ router.get('/forgot', async (req, res) => {
 
         transporter.sendMail(mailOptions, (err, response) => {
             if (err) {
-                console.error('There was an error sending the recovery email:', err);
+                //console.error('There was an error sending the recovery email:', err);
                 res.status(500).send('An error occurred while sending the recovery email.');
             } else {
-                console.log('Recovery email sent successfully');
+                //console.log('Recovery email sent successfully');
                 res.status(200).send('Recovery email sent to you email, please check your inbox or spam folder. The recovery email is sent from slowyou.net@gmail.com');
             }
         });
     } catch (error) {
-        console.error('An error occurred while processing the request:', error);
+        //console.error('An error occurred while processing the request:', error);
         res.status(500).send('An error occurred while processing your request.');
     }
 
@@ -306,7 +302,7 @@ router.get('/forgot', async (req, res) => {
 
 router.get('/reset-password/:token', async (req, res) => {
     try {
-        console.log(req.params.token);
+        //console.log(req.params.token);
         const user = await User.findOne({ emailVerificationToken: req.params.token });
       
         
@@ -317,7 +313,7 @@ router.get('/reset-password/:token', async (req, res) => {
         // Render reset password view
         res.render('reset', { token: req.params.token });
     } catch (error) {
-        console.error(error);
+        //console.error(error);
         res.status(500).send('Server error');
     }
 });
@@ -346,7 +342,7 @@ router.post('/save-new-password', async (req, res) => {
         res.send('Your password has been updated.');
         //res.redirect('../login.html',);  
     } catch (error) {
-        console.error(error);
+        //console.error(error);
         res.status(500).send('Server error');
     }
 });
@@ -365,7 +361,7 @@ router.get('/search/:name', async (req, res) => {
       }
       res.json(users);
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      //console.error('Failed to fetch user:', error);
       res.status(500).send({ error: 'Error fetching user' });
     }
   });
@@ -379,7 +375,7 @@ router.get('/me', async (req, res) => {
       }
       res.json({fullName: user.fullName});
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      //console.error('Failed to fetch user:', error);
       res.status(500).send({ error: 'Error fetching user' });
     }
   });

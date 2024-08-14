@@ -20,6 +20,11 @@ const SnippetSchema = new mongoose.Schema({
     default: Date.now
   },
 
+  User_id:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  }
 
 });
 

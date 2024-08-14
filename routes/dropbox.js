@@ -17,12 +17,22 @@ import { mkdirSync, writeFileSync, readFileSync } from 'fs';
 import { appendFile } from 'fs';
 import fs from 'fs';
 
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import User from '../models/User.js';
 
 
 
 
+const app = express();
+app.use(cookieParser());
+
+dotenv.config();
 
 
+//Root for this endpoint are /w/endpointname app.use('/w', webpagesroutes);
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 dotenv.config();
 
@@ -30,6 +40,7 @@ const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const filePath = path.resolve(__dirname, '..', '..');
 
 
 // 1. GET /auth - Endpoint to start the OAuth flow
@@ -64,6 +75,43 @@ const REDIRECT_URI = NODE_ENV === 'production'
 let accessToken = process.env.DROPBOX_ACCESS_TOKEN;
 let refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
 let expiryTime = 0;
+
+
+
+function isAuthenticated(req, res, next) {
+  try {
+    const token = req.cookies.jwtToken;
+    if (!token) {
+      console.log('No token provided. Redirecting to login.');
+      return res.redirect('/login.html'); // Redirect to login if no token
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (ex) {
+    console.log('Token verification failed:', ex.message);
+    return res.redirect('/login.html'); // Redirect to login if token verification fails
+  }
+}
+// Protected route app.use('/prot', protectedRoutes);
+router.get('/protected', isAuthenticated, async (req, res) => {
+  try {
+      const user = await User.findById(req.user.id).select('username');
+      res.send(`You are authenticated as ${user.username} ${user.id}`);
+  } catch (ex) {
+      console.error(ex);
+      res.status(500).send('An error occurred while processing your request.');
+  }
+});
+
+
+
+
+
+
+
+
 
 // Function to refresh the access token
 async function refreshAccessToken() {
