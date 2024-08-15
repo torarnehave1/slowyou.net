@@ -126,7 +126,7 @@ app.get('/support', (req, res) => {
 
 const s = process.env.MONGO_DB_URL
 
-console.log(s)
+
 
 connect(process.env.MONGO_DB_URL)
 
