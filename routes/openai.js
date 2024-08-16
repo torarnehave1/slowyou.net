@@ -23,6 +23,33 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+//write a test end point to see if I can connect to openai
+
+
+router.get('/test', async (req, res) => {
+
+    try {
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo",
+            messages: [
+                { role: "system", content: "You are a helpful assistant." },
+                { role: "user", content: "Who won the world series in 2020?" },
+            ],
+        });
+
+        res.json({ response: completion.choices[0].message.content });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to get response from OpenAI' });
+    }
+
+});
+
+
+
+
 // Define the route for handling OpenAI requests
 router.post('/ask', async (req, res) => {
     const { question } = req.body;
