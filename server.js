@@ -29,6 +29,7 @@ import dropboxfilesroutes from './routes/dropbox.js';
 import mdroute from './routes/markdown_route.js';
 import blogpost from './routes/blogpost_routes.js';
 import Mdfiles from './routes/Mdfiles_to_db_routes.js';
+import ChatGPT from './routes/openai.js';
 
 
 //import security from './modules/security/routes_security.js';
@@ -119,6 +120,7 @@ app.use('/dropbox', dropboxfilesroutes);
 app.use('/md', mdroute);
 app.use('/blog', blogpost);
 app.use('/mdfiles', Mdfiles);
+app.use('/openai', ChatGPT);
 
 app.get('/support', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'support.html'));

@@ -24,6 +24,19 @@ router.get('/snippets/', async (req, res) => {
     }
 });
 
+//write a endpoit to delete a snippet from id
+router.delete('/snippet/:id', async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const snippet = await Snippet.findByIdAndDelete(id);
+        res.json({ message: 'Snippet deleted successfully' });
+    } catch (err) {
+        res.json({ message: err });
+    }
+
+});
+
 router.post('/save/', async (req, res) => {
     const { snippetname, content, author } = req.body;
 

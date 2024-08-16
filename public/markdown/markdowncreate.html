@@ -40,7 +40,9 @@
                 </li>
             </ul>
            
-            
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
 
                 <div class="mdmenu">
                     <!-- <button class="btn btn-primary" id="DroboxButton" title="Dropbox"><i class="bi bi-dropbox"></i></button> -->
@@ -470,6 +472,14 @@ renderer.image = (token) => {
     `;
 };
 
+renderer.blockquote = (token) => {
+    // If the token has tokens (children), render their text
+    const text = token.tokens.map(t => extractText(t)).join('');
+    console.log(`Rendering blockquote: ${text}`);
+    return `<div class="griditem"><blockquote>${text}</blockquote></div>`;
+};
+
+
 marked.use({ renderer });
 
 // Function to update the preview
@@ -493,9 +503,53 @@ function updatePreviewFromInput() {
 // Attach event listeners and initialize the preview
 document.addEventListener('DOMContentLoaded', () => {
     const markdownTextarea = document.getElementById('markdownTextarea');
-    markdownTextarea.addEventListener('input', updatePreviewFromInput);
+    const progressBarContainer = document.querySelector('.progress-bar-container');
+
+    markdownTextarea.addEventListener('input', async function(event) {
+        const value = markdownTextarea.value;
+        // Refined regex to match "// Question text?"
+        const match = value.match(/\/\/\s*(.+?)\s*\?/);
+
+        if (match && match[1].trim()) {
+            const question = match[1].trim();
+            if (question) {
+                try {
+                    // Show progress bar
+                    progressBarContainer.style.display = 'block';
+
+                    const response = await fetch('/openai/ask', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ question })
+                    });
+                    const data = await response.json();
+
+                    // Hide progress bar
+                    progressBarContainer.style.display = 'none';
+
+                    const beforeQuestion = value.substring(0, match.index);
+                    const afterQuestion = value.substring(match.index + match[0].length);
+                    const newText = `${beforeQuestion}${data.response}\n${afterQuestion}`;
+                    markdownTextarea.value = newText;
+                    markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforeQuestion.length + data.response.length + 1;
+                    markdownTextarea.focus();
+                } catch (error) {
+                    console.error('Error fetching AI response:', error);
+                    alert('Failed to fetch AI response.');
+                    // Hide progress bar in case of error
+                    progressBarContainer.style.display = 'none';
+                }
+            }
+        }
+        updatePreviewFromInput();
+    });
+
     updatePreviewFromInput();
 });
+
+
 
 
         function updatePreviewFromButtonClick() {
