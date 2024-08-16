@@ -357,14 +357,10 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Blog Post</title>
+            <title>Blog Post AAAAAA</title>
             <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-            <style>
-                body { font-family: Arial, sans-serif; margin: 2em; }
-                pre { background: #f4f4f4; padding: 1em; }
-                code { background: #f4f4f4; padding: 0.2em; }
-                .header-image { width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 20px; }
-            </style>
+            <link rel="stylesheet" href="../../markdown/markdown.css">
+            
         </head>
         <body>
         
@@ -983,5 +979,7 @@ router.get('/file/:id', ensureValidToken, async (req, res) => {
         });
     }
 });
+
+
 
 export default router;

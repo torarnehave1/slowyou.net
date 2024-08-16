@@ -52,6 +52,20 @@
         flex: 1 1 calc(50% - 10px); /* Two buttons per row */
         max-width: calc(50% - 10px); /* Prevent buttons from exceeding half the width */
     }
+
+    .griditem table {
+        width: 100%;
+        display: block;
+        overflow-x: auto;
+    }
+    .griditem th, .griditem td {
+        display: block;
+        text-align: right;
+    }
+    .griditem th {
+        text-align: left;
+    }
+
 }
 
 .gridcontainer {
@@ -376,3 +390,76 @@ box-sizing: border-box; /* Include padding and border in element's total width a
     50% { width: 50%; }
     100% { width: 100%; }
 }
+
+/* General table styling */
+.griditem {
+    margin: 20px 0;
+    overflow-x: auto; /* Ensures the table is scrollable on small screens */
+}
+
+.griditem table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+/* Table Header Styling */
+.griditem th {
+    background-color: #7dafd0; /* Green header background */
+    color: white;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+th {
+    background-color: #7dafd0; /* Green header background */
+    color: white;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+
+}
+/* Table Body Styling */
+.griditem td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+
+td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+/* Zebra striping for rows */
+.griditem tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Hover effect for rows */
+.griditem tr:hover {
+    background-color: #f1f1f1;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive Design: Make sure the table is not too wide on small screens */

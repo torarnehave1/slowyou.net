@@ -100,6 +100,7 @@ router.get('/blog/:filename', (req, res) => {
                 <head>
                     <title>Blog Post</title>
                     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+                    <link rel="stylesheet" href="/markdown/markdown.css">
                     <style>
                         body { font-family: Arial, sans-serif; margin: 2em; }
                         pre { background: #f4f4f4; padding: 1em; }
