@@ -119,7 +119,9 @@ router.get('/createimage', async (req, res) => {
             .toBuffer();
 
         const timestamp = Date.now();
-        const imageFilePath = path.join(__dirname, '../images/', `image_${timestamp}.png`);
+        const imageFilePath = path.join(__dirname,'..', '/public/images', `image_${timestamp}.png`);
+        console.log(imageFilePath);
+
         fs.writeFileSync(imageFilePath, croppedImageBuffer);
 
         res.json({ message: 'Image saved successfully', imageFilePath, imageUrl });
