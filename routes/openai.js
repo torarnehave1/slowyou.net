@@ -58,7 +58,7 @@ router.post('/ask', async (req, res) => {
         const completion = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
-                { role: "system", content: "You will answer back in a professionla way with markdown format and titles wher it is appropriate" },
+                { role: "system", content: "You will answer back in a professinal way with markdown format and titles where it is appropriate" },
                 { role: "user", content: question },
             ],
         });
