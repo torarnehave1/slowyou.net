@@ -30,7 +30,7 @@ import mdroute from './routes/markdown_route.js';
 import blogpost from './routes/blogpost_routes.js';
 import Mdfiles from './routes/Mdfiles_to_db_routes.js';
 import ChatGPT from './routes/openai.js';
-
+import ENVconfig from './config/config.js';
 
 //import security from './modules/security/routes_security.js';
 
@@ -50,6 +50,9 @@ app.use(limiter);
 
 
 
+
+console.log(`The application is running in ${ENVconfig.NODE_ENV} mode.`);
+console.log(`The base URL is ${ENVconfig.BASE_URL}`);
 
 const port = process.env.PORT || 3000;
 
