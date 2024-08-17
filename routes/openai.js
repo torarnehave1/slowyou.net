@@ -11,6 +11,10 @@ import axios from 'axios';
 
 import sharp from 'sharp';
 
+import config from '../config/config.js';
+
+console.log(`The application is running in ${config.NODE_ENV} mode.`);
+console.log(`The base URL is ${config.BASE_URL}`);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,7 +62,7 @@ router.post('/ask', async (req, res) => {
         const completion = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
-                { role: "system", content: "You will answer back in a professinal way with markdown format and titles where it is appropriate" },
+                { role: "system", content: "You will answer back in a professional way with markdown format and titles where it is appropriate" },
                 { role: "user", content: question },
             ],
         });
@@ -72,23 +76,50 @@ router.post('/ask', async (req, res) => {
 
 
 router.post('/create-image', async (req, res) => {
-    const { prompt } = req.body;  // Get the prompt from the request body
+    const { prompt } = req.body;
 
     try {
-        const response = await openai.images.create({
-            model: "dall-e-2",
-            prompt: prompt,  // Use the prompt provided in the request
+        const response = await openai.images.generate({  // Ensure 'generate' is correct for your SDK
+            model: "dall-e-3",
+            prompt: prompt,
             n: 1,
-            size: "1024x341"
+            size: "1792x1024"
         });
 
+        if (!response || !response.data || !response.data[0] || !response.data[0].url) {
+            throw new Error('Invalid response from OpenAI API');
+        }
+
         const imageUrl = response.data[0].url;
-        res.json({ imageUrl });
+
+
+        const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+        const imageBuffer = Buffer.from(imageResponse.data, 'binary');
+
+        // Process the image to crop to 1024x341
+        const croppedImageBuffer = await sharp(imageBuffer)
+            .resize(1024, 341)  // Resize to 1024x341
+            .toBuffer();
+
+        const timestamp = Date.now();
+        const imageFilePath = path.join(__dirname,'..', '/public/images', `image_${timestamp}.png`);
+        console.log(imageFilePath);
+
+        const imageUrlRelative = `/images/image_${timestamp}.png`;
+        const ReturnimageUrl = `${config.BASE_URL}${imageUrlRelative}`;
+
+        fs.writeFileSync(imageFilePath, croppedImageBuffer);
+
+        res.json({ message: 'Image saved successfully', imageFilePath, ReturnimageUrl });
+
+
+        //res.json({ imageUrl });
     } catch (error) {
-        console.error('Error creating image:', error);
+        console.error('Error creating image:', error.message || error);
         res.status(500).json({ error: 'Failed to create image' });
     }
 });
+
 
 
 

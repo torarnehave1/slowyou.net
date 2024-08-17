@@ -21,8 +21,13 @@ import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import User from '../models/User.js';
 
+import config from '../config/config.js';
 
+console.log(`The application is running in ${config.NODE_ENV} mode.`);
 
+let accessToken = process.env.DROPBOX_ACCESS_TOKEN;
+let refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
+let expiryTime = 0;
 
 const app = express();
 app.use(cookieParser());
@@ -57,24 +62,10 @@ const filePath = path.resolve(__dirname, '..', '..');
 
 
 // Get the hostname of the current machine
-const hostname = os.hostname();
-console.log(`Hostname: ${hostname}`);
 
-// Set the environment based on the hostname
-const isProduction = hostname === 'srv515168'; // Replace with your actual production hostname
+dotenv.config(); // Load environment variables from .env file
 
-// Set NODE_ENV based on the detected environment
-const NODE_ENV = isProduction ? 'production' : 'development';
-console.log(`Environment: ${NODE_ENV}`);
 
-// Determine the redirect URI based on the environment
-const REDIRECT_URI = NODE_ENV === 'production'
-  ? process.env.DROPBOX_REDIRECT_URI_PROD
-  : process.env.DROPBOX_REDIRECT_URI_DEV;
-
-let accessToken = process.env.DROPBOX_ACCESS_TOKEN;
-let refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
-let expiryTime = 0;
 
 
 
@@ -104,13 +95,6 @@ router.get('/protected', isAuthenticated, async (req, res) => {
       res.status(500).send('An error occurred while processing your request.');
   }
 });
-
-
-
-
-
-
-
 
 
 // Function to refresh the access token

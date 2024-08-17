@@ -540,13 +540,12 @@ function updatePreviewFromInput() {
 // Attach event listeners and initialize the preview
 document.addEventListener('DOMContentLoaded', () => {
     const markdownTextarea = document.getElementById('markdownTextarea');
-    const progressBarContainer = document.querySelector('.progress-bar-container');
+    const progressBarContainer = document.querySelector('.progress-bar-container'); // Ensure this line correctly selects the element
 
     markdownTextarea.addEventListener('input', async function(event) {
         const value = markdownTextarea.value;
 
-        // Regex to match "// Create Image prompt?" and "// Question text?"
-        const matchCreateImage = value.match(/\/\/\s*create image\s*(.+?)\s*\?/i);
+        const matchCreateImage = value.match(/\/\/\s*CIMG\s*(.+?)\s*\?/i);
         const matchQuestion = value.match(/\/\/\s*(.+?)\s*\?/);
 
         try {
@@ -554,7 +553,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const prompt = matchCreateImage[1].trim();
                 if (prompt) {
                     // Show progress bar
-                    progressBarContainer.style.display = 'block';
+                    if (progressBarContainer) {
+                        progressBarContainer.style.display = 'block';
+                    }
 
                     const response = await fetch('/openai/create-image', {
                         method: 'POST',
@@ -563,23 +564,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         body: JSON.stringify({ prompt })
                     });
+                    
                     const data = await response.json();
 
                     // Hide progress bar
-                    progressBarContainer.style.display = 'none';
+                    if (progressBarContainer) {
+                        progressBarContainer.style.display = 'none';
+                    }
 
-                    const beforePrompt = value.substring(0, matchCreateImage.index);
-                    const afterPrompt = value.substring(matchCreateImage.index + matchCreateImage[0].length);
-                    const newText = `${beforePrompt}![Generated Image](${data.imageUrl})\n${afterPrompt}`;
-                    markdownTextarea.value = newText;
-                    markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforePrompt.length + data.imageUrl.length + 20; // 20 accounts for markdown syntax length
-                    markdownTextarea.focus();
+                    if (data.imageFilePath) {
+                        const beforePrompt = value.substring(0, matchCreateImage.index);
+                        const afterPrompt = value.substring(matchCreateImage.index + matchCreateImage[0].length);
+                        const newText = `${beforePrompt}![Generated Image](${data.ReturnimageUrl})\n${afterPrompt}`;
+                        markdownTextarea.value = newText;
+                        markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforePrompt.length + data.ReturnimageUrl.length + 20;
+                        markdownTextarea.focus();
+                    } else {
+                        console.error('No imageUrl returned from API');
+                        alert('No image was generated. Please try again.');
+                    }
                 }
             } else if (matchQuestion && matchQuestion[1].trim()) {
                 const question = matchQuestion[1].trim();
                 if (question) {
                     // Show progress bar
-                    progressBarContainer.style.display = 'block';
+                    if (progressBarContainer) {
+                        progressBarContainer.style.display = 'block';
+                    }
 
                     const response = await fetch('/openai/ask', {
                         method: 'POST',
@@ -588,10 +599,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         body: JSON.stringify({ question })
                     });
+                    
                     const data = await response.json();
 
                     // Hide progress bar
-                    progressBarContainer.style.display = 'none';
+                    if (progressBarContainer) {
+                        progressBarContainer.style.display = 'none';
+                    }
 
                     const beforeQuestion = value.substring(0, matchQuestion.index);
                     const afterQuestion = value.substring(matchQuestion.index + matchQuestion[0].length);
@@ -604,8 +618,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to process request.');
-            // Hide progress bar in case of error
-            progressBarContainer.style.display = 'none';
+            if (progressBarContainer) {
+                progressBarContainer.style.display = 'none';
+            }
         }
 
         updatePreviewFromInput();
@@ -613,6 +628,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updatePreviewFromInput();
 });
+
+
 
 
 
