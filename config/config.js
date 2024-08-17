@@ -7,6 +7,12 @@ dotenv.config(); // Load environment variables from .env file
 const hostname = os.hostname();
 console.log(`Hostname: ${hostname}`);
 
+const readfromenv = process.env.PRODUCTION_HOSTNAME;
+
+if (readfromenv) {
+  console.log(`Read from .env: ${readfromenv}`);
+}
+
 // Set the environment based on the hostname
 const isProduction = hostname === process.env.PRODUCTION_HOSTNAME; // Define your production hostname in .env
 
