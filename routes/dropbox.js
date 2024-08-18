@@ -336,6 +336,9 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
       const contentWithoutImage = fileContent.replace(imageRegex, '');
 
       const htmlContent = marked(contentWithoutImage);
+
+      // Construct the URL to be shared on Facebook
+      const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
   
       const html = `
         <!DOCTYPE html>
@@ -344,7 +347,6 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
             <title>Blog Post AAAAAA</title>
             <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
             <link rel="stylesheet" href="../../markdown/markdown.css">
-            
         </head>
         <body>
         
@@ -352,27 +354,34 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
         <div style="text-align: center;">
             ${imageTag}
         </div>
-            <div class="container">
-                ${htmlContent}
-                
+        <div class="container">
+            ${htmlContent}
+
+            <!-- Facebook Share Button -->
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}" target="_blank" class="btn btn-primary">
+                    Share on Facebook
+                </a>
+            </div>
+        </div>
             
         </body>
         <script>
         function loadMenu() {
-                fetch('/menu.html')
-                    .then(response => response.text())
-                    .then(data => {
-                        document.getElementById('menu-container').innerHTML = data;
-                        initializeLanguageSelector(); // Initialize the language selector after loading the menu
-                        checkAuthStatus(); // Check auth status after loading the menu
-                    })
-                    .catch(error => console.error('Error loading menu:', error));
-            }
+            fetch('/menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('menu-container').innerHTML = data;
+                    initializeLanguageSelector(); // Initialize the language selector after loading the menu
+                    checkAuthStatus(); // Check auth status after loading the menu
+                })
+                .catch(error => console.error('Error loading menu:', error));
+        }
 
-            document.addEventListener('DOMContentLoaded', () => {
-                console.log("DOM fully loaded and parsed");
-                loadMenu();
-            });
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM fully loaded and parsed");
+            loadMenu();
+        });
         </script>
         </html>
       `;
@@ -386,6 +395,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
       });
     }
 });
+
 
 
 router.get('/md/price/:filename', ensureValidToken, async (req, res) => {
