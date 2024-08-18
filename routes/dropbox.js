@@ -337,8 +337,10 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 
       const htmlContent = marked(contentWithoutImage);
 
-      // Construct the URL to be shared on Facebook
-      const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+      // Ensure the URL is HTTPS
+      const protocol = req.protocol === 'https' ? 'https' : 'http';
+      const host = req.get('host');
+      const fullUrl = `https://${host}${req.originalUrl}`;
   
       const html = `
         <!DOCTYPE html>
@@ -395,6 +397,9 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
       });
     }
 });
+
+
+
 
 
 
