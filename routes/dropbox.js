@@ -22,6 +22,8 @@ import cookieParser from 'cookie-parser';
 import User from '../models/User.js';
 
 import config from '../config/config.js';
+import {isAuthenticated} from '../auth/auth.js';
+
 
 console.log(`The application is running in ${config.NODE_ENV} mode.`);
 
@@ -69,22 +71,7 @@ dotenv.config(); // Load environment variables from .env file
 
 
 
-function isAuthenticated(req, res, next) {
-  try {
-    const token = req.cookies.jwtToken;
-    if (!token) {
-      console.log('No token provided. Redirecting to login.');
-      return res.redirect('/login.html'); // Redirect to login if no token
-    }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (ex) {
-    console.log('Token verification failed:', ex.message);
-    return res.redirect('/login.html'); // Redirect to login if token verification fails
-  }
-}
 // Protected route app.use('/prot', protectedRoutes);
 router.get('/protected', isAuthenticated, async (req, res) => {
   try {

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from './User.js';
 
 const SnippetSchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
@@ -24,7 +25,14 @@ const SnippetSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+
+  UserEmail:{
+    type: String,
+    required: true
+
   }
+  
 
 });
 

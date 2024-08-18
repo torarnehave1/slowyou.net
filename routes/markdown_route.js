@@ -5,6 +5,8 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import Snippet from '../models/snippets.js';
 import mongoose from 'mongoose';
+import User from '../models/User.js';
+import { isAuthenticated } from '../auth/auth.js';
 
 
 
@@ -14,6 +16,15 @@ const router = Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+router.get('/protected', isAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('username');
+        res.send(`You are authenticated as ${user.username} ${user.id}`);
+    } catch (ex) {
+        console.error(ex);
+        res.status(500).send('An error occurred while processing your request.');
+    }
+  });
 
 router.get('/snippets/', async (req, res) => {
     try {
@@ -37,34 +48,38 @@ router.delete('/snippet/:id', async (req, res) => {
 
 });
 
-router.post('/save/', async (req, res) => {
+router.post('/save/', isAuthenticated, async (req, res) => {
     const { snippetname, content, author } = req.body;
 
-    // Log the incoming request data
-    console.log('Received request to save snippet:', {
-        snippetname,
-        content,
-        author
-    });
-
-    const snippet = new Snippet({
-        _id: new mongoose.Types.ObjectId(),
-        snippetname,
-        content,
-        author
-    });
-
     try {
+        // Fetch the authenticated user's ID and email
+        const user = await User.findById(req.user.id).select('username');
+
+        if (!user) {
+            return res.status(404).send('User not found.');
+        }
+
+        // Create a new snippet with both the provided author and the authenticated user's info
+        const snippet = new Snippet({
+            _id: new mongoose.Types.ObjectId(),
+            snippetname,
+            content,
+            author,                     // The author provided in the request body
+            User_id: user._id,           // The authenticated user's ID
+            UserEmail: user.username        // The authenticated user's email (username)
+        });
+
+        // Save the snippet to the database
         const savedSnippet = await snippet.save();
 
         // Log the successful save operation
         console.log('Snippet saved successfully:', savedSnippet);
 
-        res.json({ 
+        // Respond with a success message and the saved snippet
+        res.json({
             message: 'Snippet saved successfully',
-            id: savedSnippet._id,  // Return the _id
+            id: savedSnippet._id,  // Return the _id of the saved snippet
             snippet: savedSnippet
-
         });
 
     } catch (err) {
@@ -74,6 +89,7 @@ router.post('/save/', async (req, res) => {
         res.status(500).json({ message: err.message || 'An error occurred while saving the snippet.' });
     }
 });
+
 
 
 router.get('/blog/:filename', (req, res) => {
