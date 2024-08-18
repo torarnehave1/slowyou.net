@@ -75,6 +75,47 @@ router.post('/ask', async (req, res) => {
 });
 
 
+router.post('/process-text', async (req, res) => {
+    const { operation, prompt } = req.body;
+
+    try {
+        let systemMessage = "";
+        let userMessage = prompt;
+
+        // Determine the type of operation
+        if (operation === 'answer-question') {
+            systemMessage = "You will answer back in a professional way with markdown format and titles where it is appropriate";
+        } else if (operation === 'spellcheck-rewrite') {
+            systemMessage = "You will spellcheck and rewrite the following text, keeping it as close to the original as possible while fixing any grammatical or typographical errors.";
+        } else {
+            return res.status(400).json({ error: 'Invalid operation type' });
+        }
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                { role: "system", content: systemMessage },
+                { role: "user", content: userMessage },
+            ],
+        });
+
+        const responseText = completion.choices[0].message.content;
+
+        if (operation === 'answer-question') {
+            res.json({ response: responseText });
+        } else if (operation === 'spellcheck-rewrite') {
+            res.json({ rewrittenText: responseText });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Failed to get response from OpenAI' });
+    }
+});
+
+
+
+
+
 router.post('/create-image', async (req, res) => {
     const { prompt } = req.body;
 
