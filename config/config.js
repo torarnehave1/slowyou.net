@@ -30,7 +30,14 @@ const REDIRECT_URI = NODE_ENV === 'production'
   ? process.env.DROPBOX_REDIRECT_URI_PROD
   : process.env.DROPBOX_REDIRECT_URI_DEV;
 
+  //Determin the python version based on the enviroment
+  const PYTHON_VERSION = NODE_ENV === 'production'
+  ? process.env.PYTHON_VERSION_PROD
+  : process.env.PYTHON_VERSION_DEV;
+
+
 export default {
+  PYTHON_VERSION,
   NODE_ENV,
   BASE_URL,
   REDIRECT_URI,
