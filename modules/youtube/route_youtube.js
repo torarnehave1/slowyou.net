@@ -8,6 +8,12 @@ import axios from 'axios';
 import { connect, Schema, model } from 'mongoose';
 import { spawn } from 'child_process';
 import dotenv from 'dotenv';
+import config from '../../config/config.js';
+
+
+
+console.log(`The application is running PYTHON VERSION ${config.PYTHON_VERSION}.`);
+
 dotenv.config();
 
 
@@ -85,8 +91,9 @@ router.get('/search', async (req, res) => {
         const videoInfo = response.data.items[0]; // Get the first item from the response
       
         // Change this into python3 in production
+const py_ver = config.PYTHON_VERSION
 
-        const pythonProcess = spawn('python3', [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_pdf.py'), videoId]);
+        const pythonProcess = spawn(py_ver, [join(__dirname, '..', '..', 'modules', 'micro', 'transcript_pdf.py'), videoId]);
         let transcript = '';
 
         pythonProcess.stdout.on('data', (data) => {
