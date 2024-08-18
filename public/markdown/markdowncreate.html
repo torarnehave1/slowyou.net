@@ -542,92 +542,98 @@ document.addEventListener('DOMContentLoaded', () => {
     const markdownTextarea = document.getElementById('markdownTextarea');
     const progressBarContainer = document.querySelector('.progress-bar-container'); // Ensure this line correctly selects the element
 
-    markdownTextarea.addEventListener('input', async function(event) {
-        const value = markdownTextarea.value;
+    let debounceTimer;
 
-        const matchCreateImage = value.match(/\/\/\s*CIMG\s*(.+?)\s*\?/i);
-        const matchQuestion = value.match(/\/\/\s*(.+?)\s*\?/);
+    markdownTextarea.addEventListener('input', function(event) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(async function() {
+            const value = markdownTextarea.value;
 
-        try {
-            if (matchCreateImage && matchCreateImage[1].trim()) {
-                const prompt = matchCreateImage[1].trim();
-                if (prompt) {
-                    // Show progress bar
-                    if (progressBarContainer) {
-                        progressBarContainer.style.display = 'block';
+            const matchCreateImage = value.match(/^\s*\/\/\s*CIMG\s*(.+?)\s*\?$/im);
+            const matchQuestion = value.match(/^\s*\/\/\s*QTEXT\s*(.+?)\s*\?$/im);
+
+            try {
+                if (matchCreateImage && matchCreateImage[1].trim() && !value.includes('<iframe')) {
+                    const prompt = matchCreateImage[1].trim();
+                    if (prompt) {
+                        // Show progress bar
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
+                        }
+
+                        const response = await fetch('/openai/create-image', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ prompt })
+                        });
+                        
+                        const data = await response.json();
+
+                        // Hide progress bar
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'none';
+                        }
+
+                        if (data.imageFilePath) {
+                            const beforePrompt = value.substring(0, matchCreateImage.index);
+                            const afterPrompt = value.substring(matchCreateImage.index + matchCreateImage[0].length);
+                            const newText = `${beforePrompt}![Generated Image](${data.ReturnimageUrl})\n${afterPrompt}`;
+                            markdownTextarea.value = newText;
+                            markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforePrompt.length + data.ReturnimageUrl.length + 20;
+                            markdownTextarea.focus();
+                        } else {
+                            console.error('No imageUrl returned from API');
+                            alert('No image was generated. Please try again.');
+                        }
                     }
+                } else if (matchQuestion && matchQuestion[1].trim() && !value.includes('<iframe')) {
+                    const question = matchQuestion[1].trim();
+                    if (question) {
+                        // Show progress bar
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'block';
+                        }
 
-                    const response = await fetch('/openai/create-image', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ prompt })
-                    });
-                    
-                    const data = await response.json();
+                        const response = await fetch('/openai/ask', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ question })
+                        });
+                        
+                        const data = await response.json();
 
-                    // Hide progress bar
-                    if (progressBarContainer) {
-                        progressBarContainer.style.display = 'none';
-                    }
+                        // Hide progress bar
+                        if (progressBarContainer) {
+                            progressBarContainer.style.display = 'none';
+                        }
 
-                    if (data.imageFilePath) {
-                        const beforePrompt = value.substring(0, matchCreateImage.index);
-                        const afterPrompt = value.substring(matchCreateImage.index + matchCreateImage[0].length);
-                        const newText = `${beforePrompt}![Generated Image](${data.ReturnimageUrl})\n${afterPrompt}`;
+                        const beforeQuestion = value.substring(0, matchQuestion.index);
+                        const afterQuestion = value.substring(matchQuestion.index + matchQuestion[0].length);
+                        const newText = `${beforeQuestion}${data.response}\n${afterQuestion}`;
                         markdownTextarea.value = newText;
-                        markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforePrompt.length + data.ReturnimageUrl.length + 20;
+                        markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforeQuestion.length + data.response.length + 1;
                         markdownTextarea.focus();
-                    } else {
-                        console.error('No imageUrl returned from API');
-                        alert('No image was generated. Please try again.');
                     }
                 }
-            } else if (matchQuestion && matchQuestion[1].trim()) {
-                const question = matchQuestion[1].trim();
-                if (question) {
-                    // Show progress bar
-                    if (progressBarContainer) {
-                        progressBarContainer.style.display = 'block';
-                    }
-
-                    const response = await fetch('/openai/ask', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ question })
-                    });
-                    
-                    const data = await response.json();
-
-                    // Hide progress bar
-                    if (progressBarContainer) {
-                        progressBarContainer.style.display = 'none';
-                    }
-
-                    const beforeQuestion = value.substring(0, matchQuestion.index);
-                    const afterQuestion = value.substring(matchQuestion.index + matchQuestion[0].length);
-                    const newText = `${beforeQuestion}${data.response}\n${afterQuestion}`;
-                    markdownTextarea.value = newText;
-                    markdownTextarea.selectionStart = markdownTextarea.selectionEnd = beforeQuestion.length + data.response.length + 1;
-                    markdownTextarea.focus();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to process request.');
+                if (progressBarContainer) {
+                    progressBarContainer.style.display = 'none';
                 }
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to process request.');
-            if (progressBarContainer) {
-                progressBarContainer.style.display = 'none';
-            }
-        }
 
-        updatePreviewFromInput();
+            updatePreviewFromInput();
+        }, 300); // Adjust the debounce time as needed
     });
 
     updatePreviewFromInput();
 });
+
 
 
 
