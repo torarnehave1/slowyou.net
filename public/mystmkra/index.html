@@ -107,7 +107,7 @@
     
     try {
         // Fetch the snippets from the server
-        const response = await fetch('/md/snippets');
+        const response = await fetch('https://slowyou.net/md/snippets');
         const snippets = await response.json();
 
         // Clear the existing list items
