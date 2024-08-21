@@ -204,7 +204,7 @@ router.get("/verify-email", async (req, res) => {
 });
 
 //user route prefix = 
-router.post('/login', async (req, res) => {
+router.post('/login-bak', async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -248,6 +248,48 @@ router.post('/login', async (req, res) => {
         res.status(500).send('Server error.');
     }
 });
+
+
+router.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const host = req.headers.host; // Get the Host header to determine the source
+
+    try {
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(400).send('Invalid username or password.');
+        }
+
+        if (!user.isVerified) {
+            return res.status(400).send('Please verify your email before logging in.');
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).send('Invalid username or password.');
+        }
+
+        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+
+        // Set the token as a cookie with SameSite attribute
+        res.cookie('jwtToken', token, {
+            httpOnly: true,  // or false, depending on your requirements
+            sameSite: 'Strict', // or 'Lax' or 'None', based on your needs
+            secure: host === 'mystmkra.io', // Use HTTPS (secure) only if on mystmkra.io
+        });
+
+        let redirectUrl = '/index.html';
+        if (host === 'mystmkra.io') {
+            redirectUrl = '/custom-index.html'; // Custom redirect for mystmkra.io
+        }
+
+        res.status(200).json({ message: 'Login successful', redirectUrl });
+    } catch (err) {
+        res.status(500).send('Server error.');
+    }
+});
+
   
 
 router.get('/forgot', async (req, res) => {
