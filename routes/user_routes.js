@@ -17,6 +17,11 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Replace with your secret key
 
 
+//create a test endpoint
+router.get('/test', (req, res) => {
+    res.send('Test endpoint is working!');
+});
+
 router.delete('/users/:id', async (req, res) => {
     try {
         const userId = req.params.id;
