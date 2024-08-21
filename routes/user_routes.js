@@ -281,7 +281,7 @@ router.post('/login', async (req, res) => {
 
         let redirectUrl = '/index.html';
         if (host === 'mystmkra.io') {
-            redirectUrl = '/custom-index.html'; // Custom redirect for mystmkra.io
+            redirectUrl = 'https://mystmkra.io/index.html'; // Custom redirect for mystmkra.io
         }
 
         res.status(200).json({ message: 'Login successful', redirectUrl });
