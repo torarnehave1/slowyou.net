@@ -26,34 +26,41 @@
         </div>
     </form>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
+        document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
-            var data = {
-                username: username,
-                password: password
-            };
-            fetch('/a/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                if (data.success) {
-                    window.location.href = 'https://mystmkra.io/index.html';
-                } else {
-                    alert(data.message);
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/a/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Invalid username or password');
                 }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+
+                const data = await response.json(); // Parse JSON response
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl; // Redirect to the provided URL
+                } else {
+                    throw new Error('No redirect URL provided');
+                }
+            } catch (error) {
+                alert(error.message); // Display error message to the user
+            }
         });
+    }
+});
+
     </script>    
 </body>
 </html>
