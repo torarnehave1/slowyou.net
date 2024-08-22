@@ -31,6 +31,7 @@ import blogpost from './routes/blogpost_routes.js';
 import Mdfiles from './routes/Mdfiles_to_db_routes.js';
 import ChatGPT from './routes/openai.js';
 import ENVconfig from './config/config.js';
+import {isAuthenticated} from './auth/auth.js';
 
 //import security from './modules/security/routes_security.js';
 
@@ -85,6 +86,18 @@ app.set('view engine', 'ejs'); // or 'pug', 'hbs', etc.
 app.set('views', path.join(__dirname, 'views'));
 
 // Static files
+//app.get('/mystmkra/mystmkra.html', (req, res) => {
+  //console.log('The mystmkra.html file was accessed');
+  //res.sendFile(path.join(__dirname, 'public', 'mystmkra', 'mystmkra.html'));
+//});
+
+app.get('/mystmkra/mystmkra.html', isAuthenticated, (req, res) => {
+  console.log('The mystmkra.html file was accessed');
+res.sendFile(path.join(__dirname, 'public', 'mystmkra', 'mystmkra.html'));
+
+  
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/static', express.static(path.join(__dirname, 'json')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
@@ -97,6 +110,9 @@ app.use('/images', express.static(path.join(__dirname, '../public/images')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+
+
 
 
 

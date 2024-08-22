@@ -54,6 +54,8 @@ dotenv.config()
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; // Replace with your secret key
 
+// In your Node.js routes file
+
 
 //create a test endpoint
 router.get('/test', (req, res) => {
