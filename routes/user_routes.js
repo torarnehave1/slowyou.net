@@ -9,6 +9,44 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
+// /test
+// A simple test endpoint to verify that the route is working.
+
+// /users/:id
+// Deletes a user by their ID.
+
+// /register2
+// Registers a new user with predefined details for testing purposes.
+
+// /registerbak
+// Registers a new user using the provided username and password (backup version).
+
+// /register
+// Registers a new user with full details, including full name, username, and password, and sends a verification email.
+
+// /verify-email
+// Verifies a user's email address using a token sent to their email.
+
+// /login-bak
+// Logs in a user using their username and password (backup version).
+
+// /login
+// Logs in a user, sets a JWT token in a cookie, and redirects based on the domain.
+
+// /forgot
+// Sends a password reset email to a user if they have forgotten their password.
+
+// /reset-password/:token
+// Renders a page for the user to reset their password using a token from the email.
+
+// /save-new-password
+// Saves a new password for the user after they have reset it using the token.
+
+// /search/:name
+// Searches for users by full name or username and returns matching results.
+
+// /me
+// Returns the full name of the currently authenticated user.
 
 dotenv.config()
 
