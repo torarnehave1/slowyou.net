@@ -937,7 +937,7 @@ router.get('/search', ensureValidToken, async (req, res) => {
 
 
 // Endpoint to get the content of the document by id
-router.get('/file/:id', ensureValidToken, async (req, res) => {
+router.get('/file/:id', async (req, res) => {
     const id = req.params.id;
 
     if (!id) {
