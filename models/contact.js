@@ -31,10 +31,13 @@ const contactSchema = new mongoose.Schema({
   },
   StartDate:{
     type: Date,
+    default: null
   },
 
   EndDate:{
     type: Date,
+    default: null
+    
   }
 });
 

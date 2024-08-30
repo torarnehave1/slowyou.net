@@ -967,5 +967,36 @@ router.get('/file/:id', async (req, res) => {
 });
 
 
+router.get('/createfolder', isAuthenticated, ensureValidToken, async (req, res) => {
+  try {
+      // Find the user and select their username and ID
+      const user = await User.findById(req.user.id).select('username');
 
+      // Use the user's ID as the folder name
+      const foldername = user.id;
+
+      // Initialize Dropbox with the access token
+      const dbx = new Dropbox({
+          accessToken: process.env.DROPBOX_ACCESS_TOKEN, // Ensure this is set in your environment variables
+          fetch: fetch,
+      });
+
+
+      
+      // Define the folder path in Dropbox
+      const folderPath = `/Slowyou.net/markdown/${foldername}`;
+
+      // Create the folder in Dropbox
+      await dbx.filesCreateFolderV2({ path: folderPath });
+
+      // Respond with success
+      res.status(200).json({
+          message: `Folder created successfully for user ID: ${foldername}`
+      });
+  } catch (ex) {
+      // Log the error and respond with a 500 status code
+      console.error('Error creating folder in Dropbox:', ex);
+      res.status(500).send('An error occurred while processing your request.');
+  }
+});
 export default router;

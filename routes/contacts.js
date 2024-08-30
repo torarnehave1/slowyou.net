@@ -9,13 +9,17 @@ import mongoose from 'mongoose';
 // Definer ruten for å søke etter kontakter
 router.get('/api/contacts/search/:name', async (req, res) => {
   try {
+    
+
+
     const contacts = await Contact.find({
       $or: [
         { FullName: { $regex: `^${req.params.name}`, $options: 'i' } },
         { Email: { $regex: `^${req.params.name}`, $options: 'i' } },
         { Status: { $regex: `^${req.params.name}`, $options: 'i' } }
       ]
-    });
+    }).select('FullName FirstName LastName Email Phone Label Status StartDate EndDate');
+
     if (!contacts) {
       return res.status(404).send({ message: 'Contact not found' });
     }

@@ -347,15 +347,19 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
     const selectAllCheckbox = document.getElementById('selectAll');
     selectAllCheckbox.checked = false;
 
+    console.log(results);
+
     results.forEach(result => {
         const listItem = document.createElement('div');
         listItem.className = "list-group-item result-item d-flex align-items-center";
         listItem.innerHTML = `
             <input type="checkbox" class="select-checkbox" data-contact-id="${result._id}" />
             <div class="fullname">${result.FullName}</div>
+            <div class="startdate">${result.StartDate}</div>
             <div class="email mr-3" id="email-${result._id}">${result.Email}</div>
             <div class="phone mr-3">${result.Phone}</div>
             <div class="label">${result.Label}</div>
+
             <label for="status-${result._id}" class="sr-only">Status</label>
             <select id="status-${result._id}" class="status-select" data-contact-id="${result._id}">
                 <option value="Active" ${result.Status === 'Active' ? 'selected' : ''}>Active</option>
