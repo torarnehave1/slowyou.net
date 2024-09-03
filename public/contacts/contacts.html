@@ -365,6 +365,7 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
                 <option value="Active" ${result.Status === 'Active' ? 'selected' : ''}>Active</option>
                 <option value="Ended" ${result.Status === 'Ended' ? 'selected' : ''}>Ended</option>
                 <option value="Pause" ${result.Status === 'Pause' ? 'selected' : ''}>Pause</option>
+                <option value="Pause" ${result.Status === 'Follow up' ? 'selected' : ''}>Follow up</option>
             </select>
         
             <button class="btn btn-secondary edit-button" onclick="editContactForm('${result._id}')">Edit</button>
