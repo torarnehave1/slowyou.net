@@ -26,7 +26,7 @@ const contactSchema = new mongoose.Schema({
   ,
   Status: {
     type: String,
-    enum: ["Active", "Ended", "Pause"],
+    enum: ["Active", "Ended", "Pause","Follow Up"],
     default: "Active"
   },
   StartDate:{
