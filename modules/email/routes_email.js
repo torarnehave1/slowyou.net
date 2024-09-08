@@ -1,13 +1,20 @@
 import express from "express";
 import nodemailer from "nodemailer";
+import dotenv from 'dotenv';
+dotenv.config();
+
+
+const username = process.env.EMAIL_USERNAME;
+const password = process.env.EMAIL_PASSWORD;
+
 
 const router = express.Router();
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'slowyou.net@gmail.com',
-    pass: 'thuo hsxf fpco xgxt',
+    user: username,
+    pass: password,
   },
 });
 
@@ -17,7 +24,7 @@ router.post("/send-email", async (req, res) => {
   
     try {
       await transporter.sendMail({
-          from: 'slowyou.net@gmail.com',
+          from: username,
           to: to,
           subject:subject,
           text:text

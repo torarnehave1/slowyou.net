@@ -23,6 +23,7 @@ router.get('/api/contacts/search/:name', async (req, res) => {
     if (!contacts) {
       return res.status(404).send({ message: 'Contact not found' });
     }
+    console.log(contacts); // Add this line
     res.json(contacts);
   } catch (error) {
     console.error('Failed to fetch contact:', error);

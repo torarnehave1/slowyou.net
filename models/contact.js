@@ -30,12 +30,12 @@ const contactSchema = new mongoose.Schema({
     default: "Active"
   },
   StartDate:{
-    type: Date,
+    type: String, 
     default: null
   },
 
   EndDate:{
-    type: Date,
+    type: String,
     default: null
     
   }

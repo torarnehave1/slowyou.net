@@ -8,94 +8,118 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
    
    <style>
-        .result-item {
-            cursor: pointer;
-            padding: 5px;
-            border-bottom: 1px solid #ccc;
-        }
+/* New suggested styles */
+.result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.3s ease-in-out;
+    cursor: pointer;
+    max-width: 1400px; /* Set wider max-width */
+    width: 90%; /* Ensure it takes full available width */
+}
 
-        .result-item:hover {
-            background-color: #f0f0f0;
-        }
+.result-item:hover {
+    background-color: #f8f9fa;
+}
 
-        .fullname {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+.contact-number {
+    color: #007bff; /* New suggested color */
+    font-weight: bold;
+    margin-right: 10px;
+    padding-left: 10px;
+    cursor: pointer; /* Retained from old style */
+}
 
-        .email {
-            max-width: 250px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+.fullname, .email, .phone, .label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 400px; /* Increased max-width for better visibility */
+}
 
-        .phone {
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
+.fullname, .email, .phone, .startdate, .enddate {
+    font-weight: 500;
+    color: #343a40;
+    font-weight: bold; /* Retained from old style */
+    flex: 2; /* Increased flex value for more space */
+}
 
-        .label {
-            flex-grow: 1;
-            background-color: rgb(229, 202, 143);
-            border-radius: 10px;
-            color: white;
-            text-align: center;
-            margin-right: 10px;
-        }
+.startdate, .enddate {
+    color: #6c757d;
+}
 
-        .note-section {
-            display: none;
-            margin-top: 20px;
-        }
+.label {
+    background-color: #ffc107; /* Updated color */
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    padding: 5px 10px;
+    font-weight: 500;
+    margin-right: 10px;
+    flex-grow: 1; /* Retained from old style */
+}
 
-        .status-select{
-            flex-grow: 1;
-            background-color: rgb(178, 173, 163);
-            border-radius: 10px;
-            color: white;
-            text-align: center;
-            margin-left: 10px;
-            margin-right: 10px;
+.status-select {
+    margin-left: 10px;
+    margin-right: 10px;
+    flex-basis: 150px;
+    padding: 5px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: white;
+    color: #495057;
+    flex-grow: 1; /* Retained from old style */
+}
 
-        }
+.edit-button, .delete-button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    font-size: 0.875rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
 
-        .select-all {
-            margin-right: 10px;
-        }
+.edit-button {
+    background-color: #17a2b8;
+    color: white;
+}
 
-        .fullname{
-            flex-grow: 1;
-            margin-right: 10px;
-            margin-left: 10px;
-            font-weight: bold;
+.edit-button:hover {
+    background-color: #138496;
+    color: white;
+}
 
-        }
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+}
 
-        .email{
-            flex-grow: 1;
-            margin-right: 10px;
-            margin-left: 10px;
-            font-weight: bold;
-        }
+.delete-button:hover {
+    background-color: #c82333;
+    color: white;
+}
 
-        .phone{
-            flex-grow: 1;
-            margin-right: 10px;
-            margin-left: 10px;
-            font-weight: bold;
-        }
+/* Retain and merge existing styles */
+.note-section {
+    display: none;
+    margin-top: 20px;
+}
 
-        .addContactSection{
-            display: none;
-            margin-top: 20px;
-        }
+.select-all {
+    margin-right: 10px;
+}
 
-        .btn-secondary.edit-button {
+.addContactSection {
+    display: none;
+    margin-top: 20px;
+}
+
+.btn-secondary.edit-button {
     background-color: #6c757d;
     border-color: #6c757d;
     color: white;
@@ -111,11 +135,18 @@
     border-color: #545b62;
 }
 
+.bodycontainer{
+    max-width: 1600px;
+    
+    justify-content: center;
+    margin: auto;
+
+}
         
     </style>
      <link rel="stylesheet" href="../admin.css">
 </head>
-<body class="container mt-5 hero-background">
+<body class="bodycontainer">
     <div id="menu-container"></div>
     <div class="form-group">
         <button id="addNewContact" class="btn btn-primary">Add New Contact</button>
@@ -132,6 +163,7 @@
             <option value="Active">Active</option>
             <option value="Ended">Ended</option>
             <option value="Pause">Pause</option>
+            <option value="Follow Up">Follow Up</option>
         </select>
     </div>
     
@@ -349,13 +381,15 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
 
     console.log(results);
 
-    results.forEach(result => {
+    results.forEach((result, index) => { // `index` will be the current iteration index
         const listItem = document.createElement('div');
         listItem.className = "list-group-item result-item d-flex align-items-center";
         listItem.innerHTML = `
+            <span class="contact-number">${index + 1}. </span> <!-- Display the number -->
             <input type="checkbox" class="select-checkbox" data-contact-id="${result._id}" />
             <div class="fullname">${result.FullName}</div>
             <div class="startdate">${result.StartDate}</div>
+            <div class="enddate">${result.EndDate}</div>
             <div class="email mr-3" id="email-${result._id}">${result.Email}</div>
             <div class="phone mr-3">${result.Phone}</div>
             <div class="label">${result.Label}</div>
@@ -365,7 +399,7 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
                 <option value="Active" ${result.Status === 'Active' ? 'selected' : ''}>Active</option>
                 <option value="Ended" ${result.Status === 'Ended' ? 'selected' : ''}>Ended</option>
                 <option value="Pause" ${result.Status === 'Pause' ? 'selected' : ''}>Pause</option>
-                <option value="Pause" ${result.Status === 'Follow up' ? 'selected' : ''}>Follow up</option>
+                <option value="Follow Up" ${result.Status === 'Follow Up' ? 'selected' : ''}>Follow Up</option>
             </select>
         
             <button class="btn btn-secondary edit-button" onclick="editContactForm('${result._id}')">Edit</button>
@@ -381,6 +415,7 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
         searchResults.appendChild(listItem);
     });
 };
+
 
 
 
