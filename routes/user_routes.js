@@ -310,12 +310,7 @@ router.post('/login', async (req, res) => {
             return res.status(400).send('Invalid username or password.');
         }
 
-        // Add the user role to the token
-        const token = jwt.sign(
-            { id: user._id, role: user.role }, // Include user role in the token payload
-            JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
 
         // Set the token as a cookie with SameSite attribute
         res.cookie('jwtToken', token, {
@@ -329,13 +324,16 @@ router.post('/login', async (req, res) => {
             redirectUrl = 'https://mystmkra.io/mystmkra.html'; // Custom redirect for mystmkra.io
         }
 
-        res.status(200).json({ message: 'Login successful', redirectUrl });
+      
+       res.status(200).json({ message: 'Login successful', redirectUrl });
+       
+        
 
+        //res.status(200).json({ message: 'Login successful', redirectUrl });
     } catch (err) {
         res.status(500).send('Server error.');
     }
 });
-
 
   
 
