@@ -314,7 +314,7 @@ router.post('/login', async (req, res) => {
 
         // Set the token as a cookie with SameSite attribute
         res.cookie('jwtToken', token, {
-            httpOnly: true,  // or false, depending on your requirements
+            httpOnly: false,  // or false, depending on your requirements
             sameSite: 'Strict', // or 'Lax' or 'None', based on your needs
             secure: host === 'mystmkra.io', // Use HTTPS (secure) only if on mystmkra.io
         });
