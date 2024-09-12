@@ -15,6 +15,7 @@ const userSchema = new Schema({
       message: props => `${props.value} is not a valid email address!`
     },
   },
+  role: {type: String, required: false, default:"user"},
   password: { type: String, required: true },
   emailVerificationToken: { type: String, required: true },
   emailVerificationTokenExpires: {

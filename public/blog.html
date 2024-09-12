@@ -31,53 +31,71 @@
 
     <div class="file-list" id="fileList"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script>
         const apiUrl = '/dropbox/mdfiles/';
 
-async function fetchFiles() {
-    try {
-        const response = await fetch(apiUrl);
-        const files = await response.json();
-        renderFileList(files);
-    } catch (error) {
-        console.error('Error fetching files:', error);
-    }
-}
+        async function fetchFiles() {
+            try {
+                const response = await fetch(apiUrl);
+                const files = await response.json();
+                renderFileList(files);
+            } catch (error) {
+                console.error('Error fetching files:', error);
+            }
+        }
 
-async function renderFileList(files) {
-    const fileList = document.getElementById('fileList');
-    fileList.innerHTML = '';
+        async function renderFileList(files) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
 
-    for (const file of files) {
-        const content = file.content;
-        const lines = content.split('\n');
-        
-        // Extract image URL from the first line if present
-        const imgMatch = lines[0].match(/!\[.*?\]\((.*?)\)/);
-        const imgUrl = imgMatch ? imgMatch[1] : '';
-
-        const previewText = lines.slice(1, 6).join(' '); // Get the first 5 lines as preview (excluding the image line)
-        
-        const fileItem = document.createElement('div');
-        fileItem.className = 'card';
-
-        fileItem.innerHTML = `
-            ${imgUrl ? `<img src="${imgUrl}" class="card-img-top" alt="Image">` : ''}
-            <div class="card-body">
-                <h5 class="card-title"></h5>
-                <p class="card-content">
-                    ${previewText}
-                </p>
-                <a href="/dropbox/md/${file._id}.md" class="btn btn-primary">Read more</a>
+            for (const file of files) {
+                const content = file.content;
+                const lines = content.split('\n');
                 
-            </div>
-        `;
-        fileList.appendChild(fileItem);
-    }
-}
+                // Extract image URL from the first line if present
+                const imgMatch = lines[0].match(/!\[.*?\]\((.*?)\)/);
+                const imgUrl = imgMatch ? imgMatch[1] : '';
 
-// Fetch files on page load
-fetchFiles();
+                const previewText = lines.slice(1, 6).join(' '); // Get the first 5 lines as preview (excluding the image line)
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'card';
+
+                fileItem.innerHTML = `
+                    ${imgUrl ? `<img src="${imgUrl}" class="card-img-top" alt="Image">` : ''}
+                    <div class="card-body">
+                        <h5 class="card-title"></h5>
+                        <p class="card-content">
+                            ${previewText}
+                        </p>
+                        <a href="/dropbox/md/${file._id}.md" class="btn btn-primary">Read more</a>
+                    </div>
+                `;
+                fileList.appendChild(fileItem);
+            }
+        }
+
+        // Utility function to get a cookie by name
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Function to get user role from JWT token
+        function getUserRole() {
+            const token = getCookie('jwtToken');
+            if (token) {
+                try {
+                    const decodedToken = jwt_decode(token);
+                    return decodedToken.role; // Access the role from the decoded token
+                } catch (error) {
+                    console.error('Error decoding JWT:', error);
+                }
+            }
+            return null;
+        }
 
         function loadMenu() {
             fetch('/menu.html')
@@ -86,6 +104,14 @@ fetchFiles();
                     document.getElementById('menu-container').innerHTML = data;
                     initializeLanguageSelector(); // Initialize the language selector after loading the menu
                     checkAuthStatus(); // Check auth status after loading the menu
+
+                    // Use the user role as needed
+                    const userRole = getUserRole();
+                    if (userRole) {
+                        console.log("User role:", userRole);
+                        // Perform actions based on user role
+                        // For example, show/hide certain menu items based on the role
+                    }
                 })
                 .catch(error => console.error('Error loading menu:', error));
         }
@@ -93,6 +119,7 @@ fetchFiles();
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM fully loaded and parsed");
             loadMenu();
+            fetchFiles();
         });
     </script>
 </body>

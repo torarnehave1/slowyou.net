@@ -287,7 +287,7 @@ router.get('/list-image-files', ensureValidToken, async (req, res) => {
 
   // Endpoint to get all documents from mongodb mdfile
   
-  router.get('/mdfiles', async (req, res) => {
+  router.get('/mdfiles',isAuthenticated, async (req, res) => {
     try {
   const mdfiles = await MDfile.find({ $or: [ { locked: { $exists: false } }, { locked: false } ] });
  
