@@ -317,8 +317,12 @@ router.post('/login', async (req, res) => {
             return res.status(400).send('Invalid username or password.');
         }
 
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
-       
+       // const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: user._id, role: user.role }, // Include user role in the token payload
+            JWT_SECRET,
+            { expiresIn: '4h' }
+        );
         // Set the token as a cookie with SameSite attribute
         res.cookie('jwtToken', token, {
             httpOnly: false,
