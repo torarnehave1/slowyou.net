@@ -42,6 +42,16 @@ function isAuthenticated(req, res, next) {
     return res.redirect('/login.html'); // Redirect to login if token verification fails
   }
 }
+
+function authorizeRoles(...roles) {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).send('Access denied. You do not have permission to perform this action.');
+    }
+    next();
+  };
+}
+
 // Protected route app.use('/prot', protectedRoutes);
 router.get('/protected', isAuthenticated, async (req, res) => {
   try {
@@ -72,7 +82,7 @@ router.get('/faq', (req, res) => {
   });
 
   
-  router.get('/contacts', isAuthenticated,async (req, res) => {
+  router.get('/contacts', isAuthenticated,authorizeRoles('admin', 'owner'), async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('username');
         //res.send(`You are authenticated as ${user.username}`);
