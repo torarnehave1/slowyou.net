@@ -72,7 +72,7 @@ router.get('/faq', (req, res) => {
   });
 
   
-  router.get('/contacts', isAuthenticated, authorizeRoles('admin', 'owner'),async (req, res) => {
+  router.get('/contacts', isAuthenticated,async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('username');
         //res.send(`You are authenticated as ${user.username}`);
