@@ -56,3 +56,12 @@ export function isAuthenticated(req, res, next) {
     return res.status(401).json({ message: 'Invalid token. Please log in.' });
   }
 }
+
+export function authorizeRoles(...roles) {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).send('Access denied. You do not have permission to perform this action.');
+    }
+    next();
+  };
+}
