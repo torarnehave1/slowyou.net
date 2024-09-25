@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta Tags and CSS links -->
+    <!-- ... (same as before) -->
+    <title>Event Participation</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <div id="menu-container"></div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <h1 class="text-center">Participate in Our Event</h1>
+        <p class="text-center">Please choose an option below to proceed.</p>
+        
+        <div class="row mt-4">
+            <!-- Option A: Existing User -->
+            <div class="col-md-6 text-center">
+                <h3>I am register already</h3>
+                <p>If you already have an account, please log in to register for the event.</p>
+                <button class="btn btn-primary" onclick="showLoginForm()">Log In</button>
+            </div>
+            <!-- Option B: New Client -->
+            <div class="col-md-6 text-center">
+                <h3>I want to register to the AlivenessLAb community.</h3>
+                <p>If you are new, please register to participate in the event.</p>
+                <button class="btn btn-success" onclick="showRegistrationForm()">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Form Modal -->
+    <div id="loginModal" class="modal" tabindex="-1" role="dialog">
+        <!-- Modal content -->
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="loginForm" onsubmit="event.preventDefault(); loginUser();">
+                    <div class="modal-header">
+                        <h5 class="modal-title">User Login</h5>
+                        <button type="button" class="close" onclick="closeModal('loginModal')" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Login Form Fields -->
+                        <div class="form-group">
+                            <label for="loginUsername">Email:</label>
+                            <input type="email" class="form-control" id="loginUsername" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password:</label>
+                            <input type="password" class="form-control" id="loginPassword" name="password" required>
+                        </div>
+                        <div id="loginMessage" class="message"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Log In</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('loginModal')">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Form Modal -->
+    <div id="registrationModal" class="modal" tabindex="-1" role="dialog">
+        <!-- Modal content -->
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form id="registrationForm" onsubmit="event.preventDefault(); registerUser();">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Client Registration</h5>
+                        <button type="button" class="close" onclick="closeModal('registrationModal')" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Registration Form Fields -->
+                        <input type="hidden" id="fromPage" name="fromPage" value="VAGUS">
+                        <div class="form-group">
+                            <label for="fullName">Full Name:</label>
+                            <input type="text" class="form-control" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Email:</label>
+                            <input type="email" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password:</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <div id="registrationMessage" class="message"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Register</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('registrationModal')">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <!-- ... (same as before) -->
+
+    <!-- Custom Scripts -->
+    <script>
+        // Function to show the login form modal
+        function showLoginForm() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        // Function to show the registration form modal
+        function showRegistrationForm() {
+            document.getElementById('registrationModal').style.display = 'block';
+        }
+
+        // Function to close modals
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Login User Function
+        async function loginUser() {
+            const formData = new FormData(document.getElementById('loginForm'));
+            const messageDiv = document.getElementById('loginMessage');
+
+            try {
+                const response = await fetch('/a/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: formData.get('username'),
+                        password: formData.get('password')
+                    })
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    // On successful login, redirect to event registration page
+                    window.location.href = '/event-registration';
+                } else {
+                    messageDiv.textContent = 'Login failed: ' + responseData.message;
+                    messageDiv.classList.add('error');
+                }
+            } catch (err) {
+                console.error('Network error occurred:', err);
+                messageDiv.textContent = 'A network error occurred while logging in. Please try again later.';
+                messageDiv.classList.add('error');
+            }
+        }
+
+        // Existing registerUser function for new client registration
+        async function registerUser() {
+            if (!validatePassword()) return;
+
+            const formData = new FormData(document.getElementById('registrationForm'));
+            const messageDiv = document.getElementById('registrationMessage');
+
+            try {
+                const response = await fetch('/a/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fullName: formData.get('fullName'),
+                        username: formData.get('username'),
+                        password: formData.get('password'),
+                        fromPage: formData.get('fromPage')
+                    })
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = responseData.message;
+                    messageDiv.classList.remove('error');
+                    messageDiv.classList.add('success');
+                    // Optionally redirect the user to event registration page
+                    window.location.href = '/event-registration';
+                } else {
+                    handleServerError(response, responseData, messageDiv);
+                }
+            } catch (err) {
+                console.error('Network error occurred:', err);
+                messageDiv.textContent = 'A network error occurred while registering. Please try again later.';
+                messageDiv.classList.add('error');
+                messageDiv.classList.remove('success');
+            }
+        }
+
+        // Password validation function
+        function validatePassword() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageDiv = document.getElementById('registrationMessage');
+            if (password !== confirmPassword) {
+                messageDiv.textContent = 'Passwords do not match!';
+                messageDiv.classList.add('error');
+                return false;
+            }
+            return true;
+        }
+
+        // Handle server errors
+        function handleServerError(response, responseData, messageDiv) {
+            if (response.status === 400) {
+                messageDiv.textContent = 'Validation error: ' + responseData.message;
+            } else if (response.status === 500) {
+                messageDiv.textContent = 'Server error: Please try again later.';
+            } else {
+                messageDiv.textContent = 'An unexpected error occurred: ' + responseData.message;
+            }
+            messageDiv.classList.add('error');
+            messageDiv.classList.remove('success');
+        }
+
+        // Modal styling and functionality
+        window.onclick = function(event) {
+            const loginModal = document.getElementById('loginModal');
+            const registrationModal = document.getElementById('registrationModal');
+            if (event.target == loginModal) {
+                loginModal.style.display = 'none';
+            }
+            if (event.target == registrationModal) {
+                registrationModal.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
