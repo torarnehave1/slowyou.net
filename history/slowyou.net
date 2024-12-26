@@ -37,7 +37,7 @@ server {
 
     # New location for YouTube search endpoint
     location /youtube/search {
-        proxy_pass http://localhost:8888; # Forward to the forward proxy on port 8888
+        proxy_pass http://localhost:3000; # Forward to the forward proxy on port 8888
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';

@@ -51,8 +51,8 @@ if __name__ == "__main__":
     print(f"Output PDF filename: {filename}")
 
     proxies = {
-        "http": "http://localhost:8888",
-        "https": "http://localhost:8888",
+        "http": "http://localhost:3000",
+        "https": "http://localhost:3000",
     }
 
     # Test proxy configuration
