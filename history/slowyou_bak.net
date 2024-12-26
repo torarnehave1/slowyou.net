@@ -1,0 +1,145 @@
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name slowyou.net www.slowyou.net;
+
+    # SSL Certificate Configuration
+    ssl_certificate /etc/letsencrypt/live/slowyou.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/slowyou.net/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Root directory for static files
+    root /var/www/html/slowyou.net/public;
+    index index.html index.htm;
+
+    location / {
+        # Try to serve static files and fall back to application routes
+        try_files $uri $uri/ @app;
+    }
+
+    location /openai/ {
+        add_header 'Access-Control-Allow-Origin' 'https://mystmkra.io';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
+
+        # Handle OPTIONS requests (CORS preflight)
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /md/snippets {
+        add_header 'Access-Control-Allow-Origin' 'https://mystmkra.io';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
+
+        # Handle OPTIONS requests (CORS preflight)
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /dropbox/protected {
+        add_header 'Access-Control-Allow-Origin' 'https://mystmkra.io';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
+
+        # Handle OPTIONS requests (CORS preflight)
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+
+    location /dropbox/file {
+        add_header 'Access-Control-Allow-Origin' 'https://mystmkra.io';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
+
+        # Handle OPTIONS requests (CORS preflight)
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+
+location /dropbox/md {
+        add_header 'Access-Control-Allow-Origin' 'https://mystmkra.io';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
+
+        # Handle OPTIONS requests (CORS preflight)
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+
+    location /dropbox/search {
+        add_header 'Access-Control-Allow-Origin' 'https://mystmkra.io';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization';
+
+        # Handle OPTIONS requests (CORS preflight)
+        if ($request_method = 'OPTIONS') {
+            return 204;
+        }
+
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location @app {
+        # Proxy requests to Node.js application
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}

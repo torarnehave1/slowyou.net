@@ -1,10 +1,3 @@
-import os
-import sys
-import json
-import xhtml2pdf.pisa as pisa
-from functools import reduce
-from youtube_transcript_api import YouTubeTranscriptApi
-
 # 14052024
 #Tor Arne Haave
 #Micro
@@ -16,6 +9,17 @@ from youtube_transcript_api import YouTubeTranscriptApi
 # gL4j-a-g9pA = Example youtubevideoID
 #https://youtu.be/gL4j-a-g9pA?si=mFWjqxF2qGdJIdzf
 
+import os
+import sys
+import json
+import requests
+import xhtml2pdf.pisa as pisa
+from functools import reduce
+from youtube_transcript_api import YouTubeTranscriptApi, ProxyError
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
 def wrap(text, width):
     """Wrap text for better formatting in PDF."""
     return reduce(lambda line, word, width=width: '%s%s%s' %
@@ -24,18 +28,18 @@ def wrap(text, width):
                          + len(word.split('\n', 1)[0]
                               ) >= width)],
                    word),
-                  text.split(' ')
-                  )
+                  text.split(' '))
 
 def printPdf(text, filename):
     """Generate PDF from text and save to a file."""
     text = wrap(text, 100)
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, "wb") as f:
         pisa.CreatePDF(text, f)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python script_name.py <video_id>", file=sys.stderr)
+        print("Usage: python transcript_pdf.py <video_id>", file=sys.stderr)
         sys.exit(1)
 
     video_id = sys.argv[1]  # Get video ID from command-line arguments
@@ -46,13 +50,30 @@ if __name__ == "__main__":
     print(f"Script directory: {script_dir}")
     print(f"Output PDF filename: {filename}")
 
+    proxies = {
+        "http": "http://localhost:8888",
+        "https": "http://localhost:8888",
+    }
+
+    # Test proxy configuration
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        response = requests.get("http://youtube.com", proxies=proxies, timeout=5)
+        if response.status_code == 200:
+            print("Proxy is working.")
+    except Exception as e:
+        print(f"Proxy test failed: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, proxies=proxies)
         json_output = json.dumps(transcript, indent=4)  # Convert to JSON formatted string
         print("Transcript retrieved successfully")
         printPdf(json_output, filename)  # Call the function to create PDF
         print("PDF created successfully")
         print(json_output)  # Print the JSON output to be captured by Node.js
+    except ProxyError as e:
+        print("Proxy error: Unable to connect through the configured proxy.", file=sys.stderr)
+        sys.exit(1)
     except Exception as e:
-        print("Failed to retrieve or convert transcript:", str(e), file=sys.stderr)
+        print(f"Failed to retrieve or convert transcript for video ID {video_id}: {e}", file=sys.stderr)
         sys.exit(1)
