@@ -402,8 +402,8 @@ document.getElementById('viewAllNotes').addEventListener('click', viewAllNotes);
                 <option value="Follow Up" ${result.Status === 'Follow Up' ? 'selected' : ''}>Follow Up</option>
             </select>
         
-            <button class="btn btn-secondary edit-button" onclick="editContactForm('${result._id}')">Edit</button>
-            <button class="btn btn-danger delete-button" onclick="deleteContact('${result._id}')">Delete</button>
+            <button class="btn btn-secondary edit-button" data-contact-id="${result._id}">Edit</button>
+            <button class="btn btn-danger delete-button" data-contact-id="${result._id}">Delete</button>
         `;
         listItem.id = `${result._id}`;
         listItem.querySelector('.status-select').addEventListener('change', () => {
@@ -627,6 +627,13 @@ const showNoteSection = (contactId, contactName, contactEmail) => {
 
 
 
+        document.getElementById('searchResults').addEventListener('click', (event) => {
+            if (event.target.classList.contains('edit-button')) {
+                const contactId = event.target.dataset.contactId;
+                editContactForm(contactId);
+            }
+        });
+        
         document.getElementById('selectAll').addEventListener('change', (e) => {
    
             const selectAllCheckbox = e.target;
