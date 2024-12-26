@@ -43,15 +43,10 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(__file__)  # Get the directory containing the script
     filename = os.path.join(script_dir, '..', '..', 'public', 'pdf_video_transcripts', f"{video_id}.pdf")  # Set the output PDF filename in the parallel directory
 
-    print(f"Script directory: {script_dir}")
-    print(f"Output PDF filename: {filename}")
-
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
         json_output = json.dumps(transcript, indent=4)  # Convert to JSON formatted string
-        print("Transcript retrieved successfully")
         printPdf(json_output, filename)  # Call the function to create PDF
-        print("PDF created successfully")
         print(json_output)  # Print the JSON output to be captured by Node.js
     except Exception as e:
         print("Failed to retrieve or convert transcript:", str(e), file=sys.stderr)
