@@ -10,8 +10,8 @@ import { spawn } from 'child_process';
 import dotenv from 'dotenv';
 import config from '../../config/config.js';
 
-
-
+import pkg  from 'youtube-transcript';
+const { YouTubeTranscript } = pkg
 console.log(`The application is running PYTHON VERSION ${config.PYTHON_VERSION}.`);
 
 dotenv.config();
@@ -139,6 +139,74 @@ const py_ver = config.PYTHON_VERSION
 });
 
 
+router.get('/trans/markdown/:videoId', async (req, res) => {
+    const { videoId } = req.params;
+
+    console.debug('Received request for videoId:', videoId);
+
+    try {
+        // Validate videoId
+        if (!videoId || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+            console.debug('Invalid or missing video ID:', videoId);
+            return res.status(400).send('Invalid or missing video ID');
+        }
+
+        // Fetch video information from YouTube API
+        console.debug('Fetching video information for videoId:', videoId);
+        const videoResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+            params: {
+                part: 'snippet',
+                id: videoId,
+                key: process.env.YOUTUBE_API_KEY,
+            },
+        });
+
+        const videoInfo = videoResponse.data.items[0];
+        console.debug('Video information fetched:', videoInfo);
+
+        if (!videoInfo) {
+            console.debug('Video not found for videoId:', videoId);
+            return res.status(404).send('Video not found');
+        }
+
+        // Fetch transcript
+        console.debug('Fetching transcript for videoId:', videoId);
+        const transcript = await YouTubeTranscript.fetchTranscript(videoId);
+        console.debug('Transcript fetched:', transcript);
+
+        if (!transcript || transcript.length === 0) {
+            console.debug('Transcript not available for videoId:', videoId);
+            return res.status(404).send('Transcript not available for this video');
+        }
+
+        // Convert transcript to Markdown
+        console.debug('Converting transcript to Markdown for videoId:', videoId);
+        const markdown = transcript.map(entry => {
+            const timestamp = new Date(entry.start * 1000).toISOString().substring(11, 19).replace(/\.\d{3}Z$/, ''); // Convert seconds to HH:mm:ss
+            return `**[${timestamp}]** ${entry.text}`;
+        }).join('\n\n');
+
+        // Send Markdown response
+        console.debug('Sending Markdown response for videoId:', videoId);
+        res.setHeader('Content-Type', 'text/markdown');
+        res.send(markdown);
+    } catch (error) {
+        console.error('Error processing request:', error.message);
+
+        if (error.response) {
+            if (error.response.status === 404) {
+                console.debug('Transcript or video not found for videoId:', videoId);
+                return res.status(404).send('Transcript or video not found');
+            }
+        }
+
+        res.status(500).send('Failed to retrieve or convert transcript');
+    }
+});
 
 
   export default router;
+
+function importYouTubeTranscript() {
+    return require('youtube-transcript');
+}
