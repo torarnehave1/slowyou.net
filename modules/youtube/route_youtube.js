@@ -12,6 +12,7 @@ import config from '../../config/config.js';
 
 import pkg  from 'youtube-transcript';
 const { YouTubeTranscript } = pkg
+
 console.log(`The application is running PYTHON VERSION ${config.PYTHON_VERSION}.`);
 
 dotenv.config();
@@ -140,6 +141,103 @@ const py_ver = config.PYTHON_VERSION
 
 
 router.get('/trans/markdown/:videoId', async (req, res) => {
+    const { videoId } = req.params;
+
+    try {
+        // Validate video ID
+        if (!videoId || !/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
+            return res.status(400).send('Invalid or missing video ID');
+        }
+
+        // Fetch video metadata
+        const videoResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+            params: {
+                part: 'snippet',
+                id: videoId,
+                key: process.env.YOUTUBE_API_KEY,
+            },
+        });
+
+        const videoInfo = videoResponse.data.items[0];
+        if (!videoInfo) {
+            return res.status(404).send('Video not found');
+        }
+
+        // Use the configured Python version
+        const py_ver = config.PYTHON_VERSION;
+
+        // Call the Python script to generate Markdown transcript
+        const pythonProcess = spawn(py_ver, [
+            path.join(__dirname, '..', '..', 'modules', 'micro', 'transcript_markdown.py'),
+            videoId,
+        ]);
+
+        let transcript = '';
+        let errorOutput = '';
+
+        pythonProcess.stdout.on('data', (data) => {
+            transcript += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            errorOutput += data.toString();
+            console.error(`stderr: ${data}`);
+            if (!res.headersSent) {
+                res.status(500).send(data.toString());
+            }
+        });
+
+        pythonProcess.on('close', (code) => {
+            if (code !== 0) {
+                if (!res.headersSent) {
+                    console.error('Python script exited with non-zero code:', code);
+                    res.status(500).send(`Python script exited with code ${code}`);
+                }
+            } else {
+                if (!res.headersSent) {
+                    // Combine metadata and transcript into Markdown format with dynamic iframe embedding
+                    const metadataMarkdown = `
+# ${videoInfo.snippet.title}
+
+## Description  
+${videoInfo.snippet.description}
+
+## Channel  
+${videoInfo.snippet.channelTitle}
+
+## Watch the Video  
+[![Watch on YouTube](https://img.youtube.com/vi/${videoId}/hqdefault.jpg)](https://www.youtube.com/watch?v=${videoId})
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Published Date  
+${new Date(videoInfo.snippet.publishedAt).toLocaleString()}
+
+---
+
+# Transcript
+${transcript}
+                    `.trim();
+
+                    // Set response type to Markdown and send the response
+                    res.setHeader('Content-Type', 'text/markdown');
+                    res.send(metadataMarkdown);
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error processing request:', error.message);
+        if (!res.headersSent) {
+            res.status(500).send('Failed to retrieve or process video metadata or transcript');
+        }
+    }
+});
+
+
+
+
+
+router.get('/BAKtrans/markdown/:videoId', async (req, res) => {
     const { videoId } = req.params;
 
     console.debug('Received request for videoId:', videoId);

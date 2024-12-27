@@ -59,7 +59,7 @@ if __name__ == "__main__":
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(markdown_content)
 
-        print(f"Markdown file saved at: {filename}")  # Indicate success
+      #  print(f"Markdown file saved at: {filename}")  # Indicate success
         print(markdown_content)  # Print the Markdown output to be captured by Node.js
 
     except Exception as e:

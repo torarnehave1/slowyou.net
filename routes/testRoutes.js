@@ -245,7 +245,7 @@ router.get('/youtube-search', async (req, res) => {
         part: 'id,snippet',
         q: req.query.q, // 'Mindfulness',
         maxResults: 50,
-        key: 'AIzaSyDCU6jz1cY4TJb9uMn_EoHs63wd7w-hRGk',//process.env.YOUTUBE_API_KEY,
+        key: process.env.YOUTUBE_API_KEY,
         type: 'video'
       },
     });
