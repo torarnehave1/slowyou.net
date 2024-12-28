@@ -44,7 +44,7 @@ if __name__ == "__main__":
     filename = os.path.join(script_dir, '..', '..', 'public', 'pdf_video_transcripts', f"{video_id}.pdf")  # Set the output PDF filename in the parallel directory
 
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en-GB', 'en'])
         json_output = json.dumps(transcript, indent=4)  # Convert to JSON formatted string
         printPdf(json_output, filename)  # Call the function to create PDF
         print(json_output)  # Print the JSON output to be captured by Node.js

@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
     try:
         # Retrieve the transcript from YouTube
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en-GB', 'en'])
 
         # Format the transcript into Markdown
         markdown_content = format_markdown(transcript)
